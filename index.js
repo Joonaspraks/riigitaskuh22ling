@@ -51,6 +51,9 @@ function getVideos(id, callback){
   });
 } */
 
+var accessToken = '';
+var mediaKey = '';
+
 function downloadAudio(id, title){
   // sync
   shell.exec("downloadVideo.sh" + " " + id);
@@ -71,11 +74,12 @@ function getPodBeanAccessToken(fileName){
     })
     .end((err, res) => {
       if (err) return console.log(err);
-      authorizeUpload(res.body.access_token, fileName);
+      accessToken = res.body.access_token;
+      authorizeUpload(fileName);
     })
 }
 
-function authorizeUpload(accessToken, fileName){
+function authorizeUpload(fileName){
   var ext = '.mp3';
   var fileSize = fs.statSync('clips/'+fileName+'.mp3').size;
   console.log(accessToken);
@@ -92,8 +96,8 @@ function authorizeUpload(accessToken, fileName){
       if (err) {
         console.log(err);
       }
+      mediaKey = res.body.file_key;
       uploadPodcast(res.body.presigned_url, fileName);
-      res.body.file_key;
     })
 }
 
@@ -105,17 +109,22 @@ function uploadPodcast(url, fileName){
     if (err){ 
       console.log(err.status);
     };
-    console.log(res.body.toString('utf-8'));
+    console.log(res.status);
+    if (res.status==200);
+      publishPodcast(fileName)
   })
 }
 
-function publishPodcast(accessToken, fileName){
+function publishPodcast(fileName){
   fileName+'.mp3';
   superagent.post('https://api.podbean.com/v1/episodes')
     .send({
       access_token: accessToken,
       type: 'public',
-      title: fileName
+      title: fileName,
+      status: 'publish',
+      media_key: mediaKey,
+      // content: 'lore ipsum'
     })
     .type('application/x-www-form-urlencoded')
     .end((err, res) => {
@@ -127,9 +136,17 @@ function publishPodcast(accessToken, fileName){
 http.createServer(function (request, response) {
 
   console.log('Server was called!');
+  var challenge = '';
   request.setEncoding('utf8');
+  request.on('response', function (res) {
+    console.log(res)
+  })
   request.on('data', function (data) {
     parseString(data, function (err, result) {
+      if(err){
+        console.log(err)
+      }
+      // challenge = result.hub.challenge;
       var entry = result.feed.entry[0];
       var id = entry['yt:videoId'][0];
       var title = entry.title;
@@ -138,6 +155,7 @@ http.createServer(function (request, response) {
 
       // Stops the notifications for current item
       response.writeHead('200');
+      // response.write(challenge);
       response.end();
     });
   });
