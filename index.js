@@ -6,6 +6,8 @@ const superagent = require('superagent');
 var {google} = require('googleapis');
 const fs = require("fs");
 const url = require('url');
+const ytdl = require('ytdl-core');
+const ffmpeg   = require('fluent-ffmpeg');
 
 var service = google.youtube('v3');
 
@@ -54,13 +56,6 @@ function getVideos(id, callback){
 
 var accessToken = '';
 var mediaKey = '';
-
-function downloadAudio(id, title){
-  // sync
-  shell.exec("downloadVideo.sh" + " " + id);
-  console.log('Shell downloaded audio');
-  startUploading(title);
-}
 
 function startUploading(fileName){
   getPodBeanAccessToken(fileName);
@@ -134,9 +129,21 @@ function publishPodcast(fileName){
     })
 }
 
+function downloadAudio(id, title){
+  ffmpeg(ytdl(id))
+  .audioBitrate(128)
+  .save(`${title}.mp3`)
+  // sync
+  // shell.exec("downloadVideo.sh" + " " + id);
+  // console.log('Shell downloaded audio');
+  // startUploading(title);
+}
+
 http.createServer(function (request, response) {
   console.log('Server was called!');
-  const { method, url: requestUrl } = request;
+  const { method, requestUrl } = request;
+  console.log('Method: '+ method);
+  console.log('Url: '+ requestUrl);
   if(method==='GET'){
     var result = url.parse(requestUrl, true).query['hub.challenge'];
     if(result){
@@ -153,15 +160,12 @@ http.createServer(function (request, response) {
         if(err){
           console.log(err)
         }
-        if (parsedData.hub){
-          subscribtionConfirm = result.hub.challenge;
-        } else{
-          var entry = parsedData.feed.entry[0];
-          var id = entry['yt:videoId'][0];
-          var title = entry.title;
-          console.log('Video title: ' + title);
-          downloadAudio(id, title);
-        }
+        var entry = parsedData.feed.entry[0];
+        var id = entry['yt:videoId'][0];
+        var title = entry.title[0];
+        console.log('Video title: ' + title);
+        downloadAudio(id, title);
+        
 
         // Stops the notifications for current item
         response.writeHead('200');
