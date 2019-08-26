@@ -5,6 +5,7 @@ const shell = require('shelljs');
 const superagent = require('superagent');
 var {google} = require('googleapis');
 const fs = require("fs");
+const url = require('url');
 
 var service = google.youtube('v3');
 
@@ -110,7 +111,7 @@ function uploadPodcast(url, fileName){
       console.log(err.status);
     };
     console.log(res.status);
-    if (res.status==200);
+    if (res.status===200);
       publishPodcast(fileName)
   })
 }
@@ -128,35 +129,44 @@ function publishPodcast(fileName){
     })
     .type('application/x-www-form-urlencoded')
     .end((err, res) => {
-      if (err) return console.log(err);
-      console.log(res);
+      // if (err) return console.log(err);
+      // console.log(res);
     })
 }
 
 http.createServer(function (request, response) {
-
   console.log('Server was called!');
-  var challenge = '';
-  request.setEncoding('utf8');
-  request.on('response', function (res) {
-    console.log(res)
-  })
-  request.on('data', function (data) {
-    parseString(data, function (err, result) {
-      if(err){
-        console.log(err)
-      }
-      // challenge = result.hub.challenge;
-      var entry = result.feed.entry[0];
-      var id = entry['yt:videoId'][0];
-      var title = entry.title;
-      console.log('Video title: ' + title);
-      downloadAudio(id, title);
-
-      // Stops the notifications for current item
+  const { method, url: requestUrl } = request;
+  if(method==='GET'){
+    var result = url.parse(requestUrl, true).query['hub.challenge'];
+    if(result){
       response.writeHead('200');
-      // response.write(challenge);
+      response.write(result);
       response.end();
+    }
+  }
+  // request.setEncoding('utf8');
+  if(method==='POST'){
+  // Parse feed data
+    request.on('data', function (data) {
+      parseString(data, function (err, parsedData) {
+        if(err){
+          console.log(err)
+        }
+        if (parsedData.hub){
+          subscribtionConfirm = result.hub.challenge;
+        } else{
+          var entry = parsedData.feed.entry[0];
+          var id = entry['yt:videoId'][0];
+          var title = entry.title;
+          console.log('Video title: ' + title);
+          downloadAudio(id, title);
+        }
+
+        // Stops the notifications for current item
+        response.writeHead('200');
+        response.end();
+      });
     });
-  });
+  }
 }).listen(process.env.PORT || 8080);
