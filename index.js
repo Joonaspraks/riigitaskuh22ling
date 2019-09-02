@@ -86,7 +86,7 @@ function getPodBeanAccessToken(fileName){
 
 function authorizeUpload(fileName){
   var ext = '.mp3';
-  var fileSize = fs.statSync('clips/'+fileName+'.mp3').size;
+  var fileSize = fs.statSync(fileName+'.mp3').size;
   console.log(accessToken);
   console.log(fileName+ext);
   console.log(fileSize);
@@ -109,7 +109,7 @@ function authorizeUpload(fileName){
 function uploadPodcast(url, fileName){
   superagent.put(url)
   .type('audio/mpeg')
-  .attach(fileName, fs.readFileSync('clips/'+fileName+'.mp3'))
+  .attach(fileName, fs.readFileSync(fileName+'.mp3'))
   .end((err, res) => {
     if (err){ 
       console.log(err.status);
@@ -143,7 +143,7 @@ function downloadAudio(id, title){
   .audioBitrate(128).on('end',()=>{
     startUploading(title);
   })
-  .save(`clips/${title}.mp3`)  
+  .save(`${title}.mp3`)  
 }
 
 http.createServer(function (request, response) {
@@ -188,7 +188,6 @@ http.createServer(function (request, response) {
           console.log('Video title: ' + title);
           downloadAudio(id, title);
         }
-        console.log('');
         // Stops the notifications for current item
         response.writeHead('200');
         response.end();
