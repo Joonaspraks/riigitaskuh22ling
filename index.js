@@ -188,7 +188,7 @@ http.createServer(function (request, response) {
           console.log('Video title: ' + title);
           downloadAudio(id, title);
         }
-
+        console.log('');
         // Stops the notifications for current item
         response.writeHead('200');
         response.end();
