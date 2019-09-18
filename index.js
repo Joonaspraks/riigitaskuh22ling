@@ -3,16 +3,12 @@ var http = require('http');
 const url = require('url');
 const ytdl = require('ytdl-core');
 const ffmpeg   = require('fluent-ffmpeg');
-const credentials = require('./credentials.json');
+const literals = require('./literals.json');
 const podBeanAPI = require('./podBeanAPI.js');
 const fs = require("fs");
 
-var siteEnum = {
-  NONE:'',
-  KONVERENTSID:'ValitsuseUudised',
-  ISTUNGID:'UCS1xJUQbauo60LJCEbiiJvg',
-  TEST:'UCl2a12GbW8e9itYOJDyjNoA'
-}
+const credentials = literals.credentials;
+const channels = literals.channels;
 
 var accessToken = '';
 var mediaKey = '';
@@ -59,13 +55,13 @@ http.createServer(function (request, response) {
         var entry = parsedData.feed.entry[0];
         var channelId = entry['yt:channelId'][0];
         
-        if (channelId === siteEnum.KONVERENTSID){
+        if (channelId === channels.KONVERENTSID){
           currentCredentials = credentials.konverentsid;
           console.log('Podbean konverentsid')
-        } else if (channelId === siteEnum.ISTUNGID){
+        } else if (channelId === channels.ISTUNGID){
           currentCredentials = credentials.istungid;
           console.log('Podbean istungid')
-        } else if (channelId === siteEnum.TEST){
+        } else if (channelId === channels.TEST){
           currentCredentials = credentials.test;
           console.log('Podbean test')
         }
