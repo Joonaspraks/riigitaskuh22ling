@@ -6,6 +6,7 @@ const ffmpeg   = require('fluent-ffmpeg');
 const literals = require('./literals.json');
 const podBeanAPI = require('./podBeanAPI.js');
 const fs = require("fs");
+const renewSubscriptions = require("./subscriber.js")
 
 const credentials = literals.credentials;
 const channels = literals.channels;
@@ -29,6 +30,9 @@ function downloadAudio(id, title){
   })
   .save(`${title}.mp3`)  
 }
+
+renewSubscriptions();
+// console.log(subscriber);
 
 http.createServer(function (request, response) {
   console.log('Server was called!');

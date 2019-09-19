@@ -71,3 +71,11 @@ function startUploading(fileName){
         console.log(res.status);
       })
     }
+  
+  function checkSpace(){
+
+  }
+
+  function deleteEarliest(){
+    
+  }
