@@ -24,3 +24,7 @@ clips/
 *.rar
 *.tar
 *.zip
+
+# General files
+*.mp3
+*.mp4

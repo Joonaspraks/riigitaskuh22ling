@@ -32,4 +32,4 @@ function renewSubscriptions(){
     }
 }
 
-module.exports = renewSubscriptions;
+module.exports = {renewSubscriptions: renewSubscriptions};

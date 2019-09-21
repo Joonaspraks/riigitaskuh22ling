@@ -6,7 +6,7 @@ const ffmpeg   = require('fluent-ffmpeg');
 const literals = require('./literals.json');
 const podBeanAPI = require('./podBeanAPI.js');
 const fs = require("fs");
-const renewSubscriptions = require("./subscriber.js")
+const subscriber = require("./subscriber.js")
 
 const credentials = literals.credentials;
 const channels = literals.channels;
@@ -26,12 +26,13 @@ function downloadAudio(id, title){
   console.log('Downloading audio for '+title)
   ffmpeg(ytdl(id))
   .audioBitrate(128).on('end',()=>{
-    podBeanAPI.startUploading(title);
+    
+    podBeanAPI.startUploading(title, currentCredentials);
   })
   .save(`${title}.mp3`)  
 }
 
-renewSubscriptions();
+subscriber.renewSubscriptions();
 // console.log(subscriber);
 
 http.createServer(function (request, response) {

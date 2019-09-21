@@ -1,16 +1,16 @@
 const superagent = require('superagent');
 const fs = require("fs");
 
-function startUploading(fileName){
-    getPodBeanAccessToken(fileName);
+function startUploading(fileName, credentials){
+    getPodBeanAccessToken(fileName, credentials);
   }
   
-  function getPodBeanAccessToken(fileName){
+  function getPodBeanAccessToken(fileName, credentials){
     superagent.post('https://api.podbean.com/v1/oauth/token')
       .send({
         grant_type: 'client_credentials',
-        client_id: currentCredentials.id,
-        client_secret: currentCredentials.secret
+        client_id: credentials.id,
+        client_secret: credentials.secret
       })
       .end((err, res) => {
         if (err) console.log(err);
@@ -77,5 +77,7 @@ function startUploading(fileName){
   }
 
   function deleteEarliest(){
-    
+
   }
+
+  module.exports = {startUploading: startUploading};
