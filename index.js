@@ -5,6 +5,7 @@ const ytdl = require('ytdl-core');
 const ffmpeg   = require('fluent-ffmpeg');
 const literals = require('./literals.json');
 const podBeanAPI = require('./podBeanAPI.js');
+const rssModule = require('./rssModule.js')
 const fs = require("fs");
 const subscriber = require("./subscriber.js")
 
@@ -28,6 +29,7 @@ function downloadAudio(id, title){
   .audioBitrate(128).on('end',()=>{
     
     podBeanAPI.startUploading(title, currentCredentials);
+    rssModule.propagate();
   })
   .save(`${title}.mp3`)  
 }
@@ -49,7 +51,7 @@ http.createServer(function (request, response) {
       response.end();
     }
   }
-  // request.setEncoding('utf8');
+
   if(method==='POST'){
   // Parse feed data
     request.on('data', function (data) {
@@ -75,7 +77,7 @@ http.createServer(function (request, response) {
           var title = entry.title[0];
           
           fs.appendFileSync('log.txt',title+'\n', {'flags': 'a+'});
-          console.log('Video title: ' + title);
+          console.log('\nVideo title: ' + title);
           // TODO
           //podBeanAPI.clearSpace();
           downloadAudio(id, title);

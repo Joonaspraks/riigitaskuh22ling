@@ -15,6 +15,7 @@ function startUploading(fileName, credentials){
       .end((err, res) => {
         if (err) console.log(err);
         accessToken = res.body.access_token;
+        // console.log('\n Avoiding upload when testing.')
         authorizeUpload(fileName);
       })
   }
