@@ -1,18 +1,18 @@
 var RSS = require('rss');
 
 function propagate(){
-  createRSS();
-  upload();
+  return createRSS();
+  //upload();
 }
 
 function createRSS(){
 
   var feed = new RSS({
-      title: 'title',
-      description: 'description',
-      feed_url: 'http://example.com/rss.xml',
-      site_url: 'http://example.com',
-      image_url: 'http://example.com/icon.png',
+      title: 'Istungid ja press',
+      description: 'Eesti Vabariigi parlamendi istungid ning valitsuse pressikonverentsid YouTube\'ist',
+      feed_url: 'http://88.196.184.57:8080/rss',
+      site_url: 'http://88.196.184.57:8080/',
+/*       image_url: 'http://example.com/icon.png',
       docs: 'http://example.com/rss/docs.html',
       managingEditor: 'Dylan Greene',
       webMaster: 'Dylan Greene',
@@ -20,8 +20,8 @@ function createRSS(){
       language: 'en',
       categories: ['Category 1','Category 2','Category 3'],
       pubDate: 'May 20, 2012 04:00:00 GMT',
-      ttl: '60',
-      custom_namespaces: {
+      ttl: '60', */
+/*       custom_namespaces: {
         'itunes': 'http://www.itunes.com/dtds/podcast-1.0.dtd'
       },
       custom_elements: [
@@ -47,22 +47,22 @@ function createRSS(){
             }
           }}
         ]}
-      ]
+      ] */
   });
 
   /* loop over data and add to feed */
   feed.item({
-      title:  'item title',
-      description: 'use this for the content. It can include html.',
-      url: 'http://example.com/article4?this&that', // link to the item
-      guid: '1123', // optional - defaults to url
-      categories: ['Category 1','Category 2','Category 3','Category 4'], // optional - array of item categories
-      author: 'Guest Author', // optional - defaults to feed author property
-      date: 'May 27, 2012', // any format that js Date can parse.
-      lat: 33.417974, //optional latitude field for GeoRSS
-      long: -111.933231, //optional longitude field for GeoRSS
-      enclosure: {url:'...', file:'path-to-file'}, // optional enclosure
-      custom_elements: [
+      title:  'Istung1',
+      description: 'Martin Helme',
+      url: 'http://88.196.184.57:8080/file', // link to the item
+      guid: 'http://88.196.184.57:8080/file', // optional - defaults to url
+      /*categories: ['Category 1','Category 2','Category 3','Category 4'], // optional - array of item categories
+      author: 'Guest Author', // optional - defaults to feed author property */
+      //date: 'October 20, 2019', // any format that js Date can parse.
+/*       lat: 33.417974, //optional latitude field for GeoRSS
+      long: -111.933231, //optional longitude field for GeoRSS */
+      // enclosure: {url:'...', file:'path-to-file'}, // optional enclosure
+/*       custom_elements: [
         {'itunes:author': 'John Doe'},
         {'itunes:subtitle': 'A short primer on table spices'},
         {'itunes:image': {
@@ -71,8 +71,16 @@ function createRSS(){
           }
         }},
         {'itunes:duration': '7:04'}
-      ]
-  });
+      ] */
+  } 
+  );
+
+  feed.item({
+    title:  'Istung2',
+    description: 'Martin Helmer',
+    url: 'http://88.196.184.57:8080/test', // link to the item
+    guid: 'http://88.196.184.57:8080/test', // optional - defaults to url
+  })
 
   // cache the xml to send to clients
   return feed.xml();

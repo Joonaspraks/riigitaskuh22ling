@@ -2,11 +2,13 @@ var parseString = require('xml2js').parseString;
 var http = require('http');
 const url = require('url');
 const ytdl = require('ytdl-core');
+const fs = require("fs");
 const ffmpeg   = require('fluent-ffmpeg');
+const path = require('path');
+
 const literals = require('./literals.json');
 const podBeanAPI = require('./podBeanAPI.js');
 const rssModule = require('./rssModule.js')
-const fs = require("fs");
 const subscriber = require("./subscriber.js")
 
 const credentials = literals.credentials;
@@ -52,7 +54,48 @@ http.createServer(function (request, response) {
     }
   }
 
-  if(method==='POST'){
+  if(method=='GET' && requestUrl=='/'){
+    response.writeHead('200');
+    response.write('<html><body><h1>Welcome to my start page</h1><p>Pride is good</p></body></html>');
+    response.end();
+  
+   }
+  /*
+    if endpoint get + filename, lookup and return file
+  */
+ if(method=='GET' && requestUrl.includes('file')){
+  var filePath = path.join(__dirname, 'istung.mp3');
+  var stat = fs.statSync(filePath);
+
+  response.writeHead(200, {
+    'Content-Type': 'audio/mpeg',
+    'Content-Length': stat.size
+  });
+
+  var readStream = fs.createReadStream(filePath);
+  readStream.pipe(response);
+ }
+
+ if(method=='GET' && requestUrl.includes('rss')){
+  const result = rssModule.propagate();
+
+  response.writeHead(200, {
+    'Content-Type': 'application/rss+xml',
+  });
+
+  response.write(result);
+  response.end();
+
+ }
+
+ if(method=='GET' && requestUrl.includes('test')){
+  response.writeHead('200');
+  response.write('<html><body><h1>Welcome to my test page</h1><p>Greed is good</p></body></html>');
+  response.end();
+
+ }
+
+  if(method==='POST' && requestUrl == 'TODOREMOVE'){
   // Parse feed data
     request.on('data', function (data) {
       parseString(data, function (err, parsedData) {
