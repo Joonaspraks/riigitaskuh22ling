@@ -1,8 +1,8 @@
 const superagent = require('superagent');
 const fs = require("fs");
 
-const mediaKey = "";
-const accessToken = "";
+let mediaKey = "";
+let accessToken = "";
 
 function startUploading(fileName, credentials){
     getPodBeanAccessToken(fileName, credentials);
