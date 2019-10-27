@@ -1,6 +1,9 @@
 const superagent = require('superagent');
 const fs = require("fs");
 
+const mediaKey = "";
+const accessToken = "";
+
 function startUploading(fileName, credentials){
     getPodBeanAccessToken(fileName, credentials);
   }
@@ -15,7 +18,7 @@ function startUploading(fileName, credentials){
       .end((err, res) => {
         if (err) console.log(err);
         accessToken = res.body.access_token;
-        // console.log('\n Avoiding upload when testing.')
+        console.log("Accestoken: " + accessToken);
         authorizeUpload(fileName);
       })
   }
@@ -23,7 +26,6 @@ function startUploading(fileName, credentials){
   function authorizeUpload(fileName){
     var ext = '.mp3';
     var fileSize = fs.statSync(fileName+'.mp3').size;
-    console.log(accessToken);
     console.log(fileName+ext);
     console.log(fileSize);
     superagent.get('https://api.podbean.com/v1/files/uploadAuthorize')
@@ -38,6 +40,7 @@ function startUploading(fileName, credentials){
           console.log(err);
         }
         mediaKey = res.body.file_key;
+        console.log("Mediakey: " + mediaKey);
         uploadPodcast(res.body.presigned_url, fileName);
       })
   }

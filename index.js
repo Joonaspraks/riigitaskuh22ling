@@ -95,7 +95,7 @@ http.createServer(function (request, response) {
 
  }
 
-  if(method==='POST' && requestUrl == 'TODOREMOVE'){
+  if(method==='POST'){
   // Parse feed data
     request.on('data', function (data) {
       parseString(data, function (err, parsedData) {
@@ -109,7 +109,7 @@ http.createServer(function (request, response) {
           currentCredentials = credentials.konverentsid;
           console.log('Podbean konverentsid')
         } else if (channelId === channels.ISTUNGID){
-          currentCredentials = credentials.istungid;
+          currentCredentials = credentials.konverentsid;
           console.log('Podbean istungid')
         } else if (channelId === channels.TEST){
           currentCredentials = credentials.test;
