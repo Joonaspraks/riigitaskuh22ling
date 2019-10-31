@@ -61,7 +61,7 @@ function startUploading(fileName, credentials){
   
   function publishPodcast(fileName){
     fileName+'.mp3';
-    superagent.post('https://api.w.com/v1/episodes')
+    superagent.post('https://api.podbean.com/v1/episodes')
       .send({
         access_token: accessToken,
         type: 'public',
@@ -72,7 +72,7 @@ function startUploading(fileName, credentials){
       .type('application/x-www-form-urlencoded')
       .end((err, res) => {
         if (err) console.log(err);
-        console.log(res.status);
+        else console.log(res.status);
       })
     }
   

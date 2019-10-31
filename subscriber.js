@@ -1,4 +1,5 @@
 const superagent = require('superagent');
+const ip = require('ip');
 const literals = require('./literals.json');
 
 function renewSubscriptions(){
@@ -17,7 +18,7 @@ function renewSubscriptions(){
         'hub.mode':'subscribe',
         'hub.topic':'https://www.youtube.com/xml/feeds/videos.xml?channel_id='+channel,
         'hub.verify':'async',
-        'hub.callback':'http://88.196.184.57:8080'
+        'hub.callback':'http://'+ip.address+':'+process.env.PORT
         })
         .end((err, res) => {
         if (err) console.log(err);

@@ -3,19 +3,17 @@ var http = require('http');
 const url = require('url');
 const ytdl = require('ytdl-core');
 const fs = require("fs");
-const ffmpeg   = require('fluent-ffmpeg');
 const path = require('path');
 
 const literals = require('./literals.json');
 const podBeanAPI = require('./podBeanAPI.js');
 const rssModule = require('./rssModule.js')
 const subscriber = require("./subscriber.js")
+const soundFixer = require("./soundFixer.js")
 
 const credentials = literals.credentials;
 const channels = literals.channels;
 
-var accessToken = '';
-var mediaKey = '';
 var currentCredentials = '';
 
 //TODO Polling for Gov
@@ -26,14 +24,21 @@ var currentCredentials = '';
 //TODO es5->es6
 
 function downloadAudio(id, title){
-  console.log('Downloading audio for '+title)
-  ffmpeg(ytdl(id))
+  console.log('Downloading audio for '+title);
+
+ soundFixer.editAudio(ytdl(id)).on('end',()=>{
+
+  podBeanAPI.startUploading(title, currentCredentials);
+  rssModule.propagate();
+ })
+  
+/*   ffmpeg(ytdl(id))
   .audioBitrate(128).on('end',()=>{
     
     podBeanAPI.startUploading(title, currentCredentials);
     rssModule.propagate();
   })
-  .save(`${title}.mp3`)  
+  .save(`${title}.mp3`)  */
 }
 
 subscriber.renewSubscriptions();

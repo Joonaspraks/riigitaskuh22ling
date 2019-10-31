@@ -1,6 +1,7 @@
 const ffmpeg   = require('fluent-ffmpeg');
 
-ffmpeg('istung2.mp4')
+function editAudio(fileName){
+  return ffmpeg(fileName)
   .on('start', () => console.log('start'))
   //noise removal
   //detect general audio level to cut silence
@@ -20,7 +21,9 @@ ffmpeg('istung2.mp4')
               ) //what dB constitutes a 'silence'
 
   .on('progress', progress => console.log(progress.percent))
-  .on('end', () => console.log('end'))
   //.save('earwaxIstung2.mp3');
   .save('dynaudnormIstung2.mp3');
   //.save('loudnormIstung2.mp3');
+}
+
+module.exports = {editAudio: editAudio};
