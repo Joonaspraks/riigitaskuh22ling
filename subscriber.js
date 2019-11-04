@@ -13,17 +13,18 @@ function renewSubscriptions(){
     })
 
     function subscribeTo(channel){
+        console.log('http://'+ip.address()+':'+(process.env.PORT || 8080))
         superagent.post('https://pubsubhubbub.appspot.com/subscribe')
         .query({
         'hub.mode':'subscribe',
         'hub.topic':'https://www.youtube.com/xml/feeds/videos.xml?channel_id='+channel,
         'hub.verify':'async',
-        'hub.callback':'http://'+ip.address()+':'+process.env.PORT || 8080
+        'hub.callback':'http://'+ip.address()+':'+(process.env.PORT || 8080)
         })
         .end((err, res) => {
         if (err) console.log(err);
         else {
-            console.log('Subscribed to ' + channel);
+            console.log('Request for subsrciption to ' + channel + ' sent.');
         }
         })
     }

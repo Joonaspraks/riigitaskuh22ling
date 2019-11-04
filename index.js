@@ -51,8 +51,10 @@ http.createServer(function (request, response) {
   console.log('Method: '+ method);
   console.log('Url: '+ requestUrl);
   if(method==='GET' && requestUrl){
+   console.log("Subscribing!");
     var result = url.parse(requestUrl, true).query['hub.challenge'];
     if(result){
+      console.log(JSON.stringify(requestUrl));
       response.writeHead('200');
       response.write(result);
       response.end();

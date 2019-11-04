@@ -22,7 +22,7 @@ function editAudio(fileName){
 
   .on('progress', progress => console.log(progress.percent))
   //.save('earwaxIstung2.mp3');
-  .save('dynaudnormIstung2.mp3');
+  .save(fileName+'.mp3');
   //.save('loudnormIstung2.mp3');
 }
 
