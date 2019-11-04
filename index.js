@@ -26,8 +26,9 @@ var currentCredentials = '';
 function downloadAudio(id, title){
   console.log('Downloading audio for '+title);
 
- soundFixer.editAudio(ytdl(id)).on('end',()=>{
+ soundFixer.editAudio(ytdl(id), title).on('end',()=>{
 
+  // For some reason no file
   podBeanAPI.startUploading(title, currentCredentials);
   rssModule.propagate();
  })
@@ -42,9 +43,9 @@ function downloadAudio(id, title){
 }
 
 subscriber.renewSubscriptions();
-// console.log(subscriber);
 
 http.createServer(function (request, response) {
+
   console.log('Server was called!');
   const method = request.method;
   const requestUrl = request.url;
@@ -100,7 +101,10 @@ http.createServer(function (request, response) {
 
  }
 
-  if(method==='POST'){
+  if(method==='POST' ){
+
+    console.log(JSON.stringify(request.headers));
+  
   // Parse feed data
     request.on('data', function (data) {
       parseString(data, function (err, parsedData) {

@@ -29,3 +29,4 @@ testingFiles/
 # General files
 *.mp3
 *.mp4
+*log*
