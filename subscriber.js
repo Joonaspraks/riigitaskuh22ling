@@ -13,6 +13,7 @@ function renewSubscriptions(){
     })
 
     function subscribeTo(channel){
+        console.log('http://'+ip.address()+':'+(process.env.PORT || 8080))
         superagent.post('https://pubsubhubbub.appspot.com/subscribe')
         .query({
         'hub.mode':'subscribe',
@@ -23,7 +24,7 @@ function renewSubscriptions(){
         .end((err, res) => {
         if (err) console.log(err);
         else {
-            console.log('Subscribed to ' + channel);
+            console.log('Request for subsrciption to ' + channel + ' sent.');
         }
         })
     }
