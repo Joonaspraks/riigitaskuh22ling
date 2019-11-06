@@ -103,9 +103,7 @@ http.createServer(function (request, response) {
 
  }
 
-  if(method==='POST' ){
-
-    console.log(JSON.stringify(request.headers));
+  if(method==='POST' && request.headers.link.contains('http://pubsubhubbub.appspot.com/')){
   
   // Parse feed data
     request.on('data', function (data) {
