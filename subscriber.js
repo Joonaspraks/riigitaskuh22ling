@@ -8,8 +8,6 @@ function renewSubscriptions(){
     channelsAsList.forEach(channel =>{
         subscribeTo(channel);
         setInterval(()=> {subscribeTo(channel)}, 1000*60*60*24);
-    /*     intervalTest(channel);
-        setInterval(()=> {intervalTest(channel)}, 5000);   */ 
     })
 
     function subscribeTo(channel){
@@ -27,10 +25,6 @@ function renewSubscriptions(){
             console.log('Request for subsrciption to ' + channel + ' sent.');
         }
         })
-    }
-
-    function intervalTest(input){
-        console.log(input);
     }
 }
 
