@@ -110,7 +110,7 @@ function parse(request, response){
             
             fs.appendFileSync('log.txt',title+'\n', {'flags': 'a+'});
             console.log('\nVideo title: ' + title);
-            fileManager.checkSpace();
+            //fileManager.checkSpace();
             downloadAudio(id, title);
           }
           // Stops the notifications for current item
