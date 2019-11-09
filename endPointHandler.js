@@ -46,12 +46,13 @@ function parse(request, response) {
   if (method === "GET" && requestUrl == "/") {
     response.writeHead("200");
     response.write(
-      "<html><body><h1>Welcome to my start page</h1><p>Pride is good</p></body></html>"
+      "<html><head><meta name='google-site-verification' content='71QmVVJaUYxxAbp0YHhwaQ-gHcNnct4LtzaTt4ESPV0' /></head>"+
+      "<body><h1>Welcome to my start page</h1><p>Pride is good</p></body></html>"
     );
     response.end();
   }
 
-  if (method === "GET" && requestUrl === ("/feed")) {
+  if (method === "GET" && requestUrl === "/feed") {
     const result = rssModule.propagate();
 
     response.writeHead(200, {
