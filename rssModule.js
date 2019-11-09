@@ -1,7 +1,7 @@
 const ip = require("ip");
 var RSS = require("rss");
 
-const siteUrl = "http://" + ip.address() + ":" + (process.env.PORT || 8080);
+const siteUrl = "http://" + ip.address() + ":" + (process.env.PORT || 80);
 
 function propagate() {
   return createRSS();

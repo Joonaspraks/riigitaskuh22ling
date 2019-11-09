@@ -9,4 +9,4 @@ http
   .createServer(function(request, response) {
     endPointHandler.parse(request, response);
   })
-  .listen(process.env.PORT || 8080);
+  .listen(process.env.PORT || 80);

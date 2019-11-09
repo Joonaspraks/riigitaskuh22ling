@@ -13,7 +13,7 @@ function renewSubscriptions() {
   });
 
   function subscribeTo(channel) {
-    console.log("http://" + ip.address() + ":" + (process.env.PORT || 8080));
+    console.log("http://" + ip.address() + ":" + (process.env.PORT || 80));
     superagent
       .post("https://pubsubhubbub.appspot.com/subscribe")
       .query({
@@ -22,7 +22,7 @@ function renewSubscriptions() {
           "https://www.youtube.com/xml/feeds/videos.xml?channel_id=" + channel,
         "hub.verify": "async",
         "hub.callback":
-          "http://" + ip.address() + ":" + (process.env.PORT || 8080)
+          "http://" + ip.address() + ":" + (process.env.PORT || 80)
       })
       .end((err, res) => {
         if (err) console.log(err);
