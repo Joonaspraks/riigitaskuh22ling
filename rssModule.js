@@ -32,6 +32,13 @@ function createRSS() {
     guid: siteUrl + "/test" // optional - defaults to url
   });
 
+  feed.item({
+    title: "Istung3",
+    description: "<html><body><h1>Important news!</h1><p>Greed is good</p></body></html>",
+    url: siteUrl + "/notExist", // link to the item
+    guid: siteUrl + "/notExist" // optional - defaults to url
+  });
+
   // cache the xml to send to clients
   return feed.xml();
 }
