@@ -14,10 +14,11 @@ const channels = literals.channels;
 
 var currentCredentials = "";
 
+//Refactor to somewhere else
 function downloadAudio(id, title) {
   console.log("Downloading audio for " + title);
 
-  soundFixer.editAudio(ytdl(id), title).on("end", () => {
+  soundFixer.extractAndEditAudio(ytdl(id), title).on("end", () => {
     //podBeanAPI.checkSpace(); Necessary if unlimited space?
     podBeanAPI.startUploading(title, currentCredentials);
     rssModule.propagate();

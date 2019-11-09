@@ -1,6 +1,6 @@
 const ffmpeg = require("fluent-ffmpeg");
 
-function editAudio(file, title) {
+function extractAndEditAudio(file, title) {
   return (
     ffmpeg(file)
       .on("start", () => console.log("start"))
@@ -24,9 +24,9 @@ function editAudio(file, title) {
 
       .on("progress", progress => console.log(JSON.stringify(progress)))
       //.save('earwaxIstung2.mp3');
-      .save(title + ".mp3")
+      .save("./storedAudio/"+title + ".mp3")
   );
   //.save('loudnormIstung2.mp3');
 }
 
-module.exports = { editAudio: editAudio };
+module.exports = { extractAndEditAudio: extractAndEditAudio };

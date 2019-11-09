@@ -5,6 +5,7 @@ let mediaKey = "";
 let accessToken = "";
 
 function startUploading(fileName, credentials) {
+  fileName = "./storedAudio/"+fileName;
   getPodBeanAccessToken(fileName, credentials);
 }
 
