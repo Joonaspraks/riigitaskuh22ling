@@ -22,7 +22,8 @@ function createRSS() {
     title: "Istung1",
     description: "Martin Helme",
     url: siteUrl + "/test1", // link to the item
-    guid: siteUrl + "/test1" // optional - defaults to url
+    guid: siteUrl + "/test1",
+    enclosure: {url:'/test1', file:'./storedAudio/Riigikogu infotund, 6. november 2019.mp3'}, 
   });
 
   feed.item({
