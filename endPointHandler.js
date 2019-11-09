@@ -43,7 +43,7 @@ function parse(request, response) {
     }
   }
 
-  if (method == "GET" && requestUrl == "/") {
+  if (method === "GET" && requestUrl == "/") {
     response.writeHead("200");
     response.write(
       "<html><body><h1>Welcome to my start page</h1><p>Pride is good</p></body></html>"
@@ -51,7 +51,7 @@ function parse(request, response) {
     response.end();
   }
 
-  if (method == "GET" && requestUrl.includes("rss")) {
+  if (method === "GET" && requestUrl === ("feed")) {
     const result = rssModule.propagate();
 
     response.writeHead(200, {
@@ -65,7 +65,7 @@ function parse(request, response) {
   /*
       if endpoint get + filename, lookup and return file
     */
-  if (method == "GET" && requestUrl.includes("test1")) {
+  if (method === "GET" && requestUrl.includes("test1")) {
     var filePath = path.join(__dirname, "test1.mp3");
     var stat = fs.statSync(filePath);
 
@@ -78,7 +78,7 @@ function parse(request, response) {
     readStream.pipe(response);
   }
 
-  if (method == "GET" && requestUrl.includes("test2")) {
+  if (method === "GET" && requestUrl.includes("test2")) {
     response.writeHead("200");
     response.write(
       "<html><body><h1>Welcome to my test page</h1><p>Greed is good</p></body></html>"
