@@ -31,7 +31,7 @@ function parse(request, response) {
   console.log("Method: " + method);
   console.log("Url: " + requestUrl);
 
-  //Parse only permitted requests
+  //Parse only permitted
   if (method === "GET" && requestUrl) {
     console.log("Subscribing!");
     var result = url.parse(requestUrl, true).query["hub.challenge"];
@@ -51,7 +51,7 @@ function parse(request, response) {
     response.end();
   }
 
-  if (method == "GET" && requestUrl.includes("feed")) {
+  if (method == "GET" && requestUrl.includes("rss")) {
     const result = rssModule.propagate();
 
     response.writeHead(200, {
