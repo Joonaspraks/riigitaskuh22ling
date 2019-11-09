@@ -68,7 +68,7 @@ function parse(request, response) {
       if endpoint get + filename, lookup and return file
     */
   if (method === "GET" && requestUrl.includes("test1")) {
-    var filePath = path.join(__dirname, "storedAudio/Riigikogu infotund, 6. november 2019.mp3.mp3");
+    var filePath = path.join(__dirname, "storedAudio/Riigikogu infotund, 6. november 2019.mp3");
     var stat = fs.statSync(filePath);
 
     response.writeHead(200, {
