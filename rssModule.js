@@ -21,15 +21,15 @@ function createRSS() {
   feed.item({
     title: "Istung1",
     description: "Martin Helme",
-    url: siteUrl + "/file", // link to the item
-    guid: siteUrl + "/file" // optional - defaults to url
+    url: siteUrl + "/test1", // link to the item
+    guid: siteUrl + "/test1" // optional - defaults to url
   });
 
   feed.item({
     title: "Istung2",
     description: "Martin Helmer",
-    url: siteUrl + "/test", // link to the item
-    guid: siteUrl + "/test" // optional - defaults to url
+    url: siteUrl + "/test2", // link to the item
+    guid: siteUrl + "/test2" // optional - defaults to url
   });
 
   feed.item({

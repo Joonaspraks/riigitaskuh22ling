@@ -30,6 +30,8 @@ function parse(request, response) {
   const requestUrl = request.url;
   console.log("Method: " + method);
   console.log("Url: " + requestUrl);
+
+  //Parse only permitted requests
   if (method === "GET" && requestUrl) {
     console.log("Subscribing!");
     var result = url.parse(requestUrl, true).query["hub.challenge"];
