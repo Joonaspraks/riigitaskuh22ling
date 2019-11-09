@@ -48,11 +48,24 @@ function parse(request, response){
       response.end();
     
      }
+
+     if(method=='GET' && requestUrl.includes('rss')){
+      const result = rssModule.propagate();
+    
+      response.writeHead(200, {
+        'Content-Type': 'application/rss+xml',
+      });
+    
+      response.write(result);
+      response.end();
+    
+     }
+
     /*
       if endpoint get + filename, lookup and return file
     */
-   if(method=='GET' && requestUrl.includes('file')){
-    var filePath = path.join(__dirname, 'istung.mp3');
+   if(method=='GET' && requestUrl.includes('test1')){
+    var filePath = path.join(__dirname, 'test1.mp3');
     var stat = fs.statSync(filePath);
   
     response.writeHead(200, {
@@ -64,19 +77,9 @@ function parse(request, response){
     readStream.pipe(response);
    }
   
-   if(method=='GET' && requestUrl.includes('rss')){
-    const result = rssModule.propagate();
   
-    response.writeHead(200, {
-      'Content-Type': 'application/rss+xml',
-    });
   
-    response.write(result);
-    response.end();
-  
-   }
-  
-   if(method=='GET' && requestUrl.includes('test')){
+   if(method=='GET' && requestUrl.includes('test2')){
     response.writeHead('200');
     response.write('<html><body><h1>Welcome to my test page</h1><p>Greed is good</p></body></html>');
     response.end();
