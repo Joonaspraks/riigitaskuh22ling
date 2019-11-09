@@ -83,7 +83,7 @@ function parse(request, response){
   
    }
   
-    if(method==='POST' && request.headers.link.includes('http://pubsubhubbub.appspot.com/')){
+    if(method==='POST' &&  request.headers.link && request.headers.link.includes('http://pubsubhubbub.appspot.com/')){
     
     // Parse feed data
       request.on('data', function (data) {
