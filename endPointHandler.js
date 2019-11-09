@@ -51,7 +51,7 @@ function parse(request, response) {
     response.end();
   }
 
-  if (method == "GET" && requestUrl.includes("rss")) {
+  if (method == "GET" && requestUrl.includes("feed")) {
     const result = rssModule.propagate();
 
     response.writeHead(200, {
