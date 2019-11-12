@@ -34,6 +34,7 @@ function createRSS() {
       });
     });
   });
+  return feed.xml();
 } 
 
 function createRSSTest() {
