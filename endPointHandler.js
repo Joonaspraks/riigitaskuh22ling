@@ -54,7 +54,7 @@ function parse(request, response) {
   }
 
   if (method === "GET" && requestUrl === "/feed") {
-    const result = rssModule.propagate();
+    const result = rssModule.propagate().;
 
     response.writeHead(200, {
       "Content-Type": "application/rss+xml"

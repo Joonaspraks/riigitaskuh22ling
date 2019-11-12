@@ -20,7 +20,7 @@ function createRSS() {
   });
 
   /* loop over data and add to feed */
-  fs.readdir("./storedAudio/", (err, files) => {
+  fs.readdirSync("./storedAudio/", (err, files) => {
     console.log(JSON.stringify(files));
     files.forEach(file => {
       feed.item({
@@ -34,9 +34,9 @@ function createRSS() {
         }
       });
     });
-    
-    return feed.xml();
   });
+  
+  return feed.xml();
 } 
 
 function createRSSTest() {
