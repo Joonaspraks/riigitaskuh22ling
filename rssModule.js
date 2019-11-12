@@ -20,24 +20,22 @@ function createRSS() {
   });
 
   /* loop over data and add to feed */
-  fs.readdirSync("./storedAudio/", (err, files) => {
-    console.log(JSON.stringify(files));
-    files.forEach(file => {
-      feed.item({
-        title: file,
-        description: "Martin Helme",
-        url: siteUrl + "/" + file, // link to the item
-        guid: siteUrl + "/" + file,
-        enclosure: {
-          url: "/" + file,
-          file: "./storedAudio/" + file
-        }
-      });
+  const files = fs.readdirSync("./storedAudio/");
+  files.forEach(file => {
+    feed.item({
+      title: file,
+      description: "Martin Helme",
+      url: siteUrl + "/" + file, // link to the item
+      guid: siteUrl + "/" + file,
+      enclosure: {
+        url: "/" + file,
+        file: "./storedAudio/" + file
+      }
     });
   });
-  
+
   return feed.xml();
-} 
+}
 
 function createRSSTest() {
   var feed = new RSS({
