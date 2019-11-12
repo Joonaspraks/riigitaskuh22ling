@@ -5,10 +5,37 @@ const siteUrl = "http://" + ip.address() + ":" + (process.env.PORT || 80);
 
 function propagate() {
   return createRSS();
+  //return createRSSTest();
   //upload();
 }
 
 function createRSS() {
+  var feed = new RSS({
+    title: "Istungid ja press",
+    description:
+      "Eesti Vabariigi parlamendi istungid ning valitsuse pressikonverentsid YouTube'ist",
+    feed_url: siteUrl + "/rss",
+    site_url: siteUrl
+  });
+
+  /* loop over data and add to feed */
+  fs.readdir("./storedAudio/", (err, files) => {
+    files.forEach(file => {
+      feed.item({
+        title: "Istung1",
+        description: "Martin Helme",
+        url: siteUrl + "/" + file, // link to the item
+        guid: siteUrl + "/" + file,
+        enclosure: {
+          url: "/" + file,
+          file: "./storedAudio/" + file
+        }
+      });
+    });
+  });
+} 
+
+function createRSSTest() {
   var feed = new RSS({
     title: "Istungid ja press",
     description:
@@ -23,7 +50,10 @@ function createRSS() {
     description: "Martin Helme",
     url: siteUrl + "/test1", // link to the item
     guid: siteUrl + "/test1",
-    enclosure: {url:'/test1', file:'./storedAudio/Riigikogu infotund, 6. november 2019.mp3'}, 
+    enclosure: {
+      url: "/test1",
+      file: "./storedAudio/Riigikogu infotund, 6. november 2019.mp3"
+    }
   });
 
   feed.item({
@@ -35,7 +65,8 @@ function createRSS() {
 
   feed.item({
     title: "Istung3",
-    description: "<html><body><h1>Important news!</h1><p>Greed is good</p></body></html>",
+    description:
+      "<html><body><h1>Important news!</h1><p>Greed is good</p></body></html>",
     url: siteUrl + "/notExist", // link to the item
     guid: siteUrl + "/notExist" // optional - defaults to url
   });
