@@ -24,7 +24,7 @@ function createRSS() {
     console.log(JSON.stringify(files));
     files.forEach(file => {
       feed.item({
-        title: "Istung1",
+        title: file,
         description: "Martin Helme",
         url: siteUrl + "/" + file, // link to the item
         guid: siteUrl + "/" + file,
@@ -34,8 +34,9 @@ function createRSS() {
         }
       });
     });
+    
+    return feed.xml();
   });
-  return feed.xml();
 } 
 
 function createRSSTest() {
