@@ -21,6 +21,7 @@ function createRSS() {
 
   /* loop over data and add to feed */
   fs.readdir("./storedAudio/", (err, files) => {
+    console.log(JSON.stringify(files));
     files.forEach(file => {
       feed.item({
         title: "Istung1",
