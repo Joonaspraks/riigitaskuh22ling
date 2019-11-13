@@ -2,7 +2,7 @@ const ip = require("ip");
 var RSS = require("rss");
 const fs = require("fs");
 
-const siteUrl = "http://" + ip.address() + ":" + (process.env.PORT || 80);
+const siteUrl = "http://" + "riigipodcast.ee" + ":" + (process.env.PORT || 80);
 
 function propagate() {
   return createRSS();
