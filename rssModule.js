@@ -12,10 +12,10 @@ function propagate() {
 
 function createRSS() {
   var feed = new RSS({
-    title: "Istungid ja press",
+    title: "Riigi Podcast",
     description:
       "Eesti Vabariigi parlamendi istungid ning valitsuse pressikonverentsid YouTube'ist",
-    feed_url: siteUrl + "/rss",
+    feed_url: siteUrl + "/feed",
     site_url: siteUrl
   });
 
@@ -24,7 +24,7 @@ function createRSS() {
   files.forEach(file => {
     feed.item({
       title: file,
-      description: "Martin Helme",
+      description: "ADD CORRECT DESCRIPTION",
       //url: siteUrl + "/" + file, // link to the item
       guid: file,
       enclosure: {
@@ -37,7 +37,7 @@ function createRSS() {
   return feed.xml();
 }
 
-function createRSSTest() {
+/* function createRSSTest() {
   var feed = new RSS({
     title: "Istungid ja press",
     description:
@@ -46,7 +46,7 @@ function createRSSTest() {
     site_url: siteUrl
   });
 
-  /* loop over data and add to feed */
+  // loop over data and add to feed
   feed.item({
     title: "Istung1",
     description: "Martin Helme",
@@ -71,10 +71,11 @@ function createRSSTest() {
       "<html><body><h1>Important news!</h1><p>Greed is good</p></body></html>",
     url: siteUrl + "/notExist", // link to the item
     guid: siteUrl + "/notExist" // optional - defaults to url
-  });
+  }); 
 
   // cache the xml to send to clients
   return feed.xml();
 }
+*/
 
 module.exports = { propagate: propagate };

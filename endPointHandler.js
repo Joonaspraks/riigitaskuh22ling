@@ -67,7 +67,7 @@ function parse(request, response) {
   /*
       if endpoint get + filename, lookup and return file
     */
-  if (method === "GET" && requestUrl.includes("test1")) {
+/*   if (method === "GET" && requestUrl.includes("test1")) {
     var filePath = path.join(__dirname, "storedAudio/Riigikogu infotund, 6. november 2019.mp3");
     var stat = fs.statSync(filePath);
 
@@ -86,7 +86,7 @@ function parse(request, response) {
       "<html><body><h1>Welcome to my test page</h1><p>Greed is good</p></body></html>"
     );
     response.end();
-  }
+  } */
 
   if (
     method === "POST" &&
@@ -118,7 +118,7 @@ function parse(request, response) {
 
           fs.appendFileSync("log.txt", title + "\n", { flags: "a+" });
           console.log("\nVideo title: " + title);
-          //fileManager.checkSpace();
+          //rssModule.checkSpace();
           downloadAudio(id, title);
         }
         // Stops the notifications for current item
