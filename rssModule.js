@@ -25,8 +25,8 @@ function createRSS() {
     feed.item({
       title: file,
       description: "Martin Helme",
-      url: siteUrl + "/" + file, // link to the item
-      guid: siteUrl + "/" + file,
+      //url: siteUrl + "/" + file, // link to the item
+      guid: file,
       enclosure: {
         url: "/" + file,
         file: "./storedAudio/" + file
