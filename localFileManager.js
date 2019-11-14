@@ -4,10 +4,24 @@ const fs = require("fs");
 
 const siteUrl = "http://" + "riigipodcast.ee" + ":" + (process.env.PORT || 80);
 
-function propagate() {
-  return createRSS();
-  //return createRSSTest();
-  //upload();
+function removeOldContent() {
+  const contentDir = "./storedAudio/";
+  const maxSize = 20;
+  const fileNames = fs.readdirSync(contentDir);
+
+  const filesToBeRemoved = fileNames
+    .map(name => {
+      return {
+        name: name,
+        time: fs.statSync(contentDir + name).birthtime
+      };
+    })
+    .sort((file1, file2) => file1.time - file2.time)
+    .slice(maxSize);
+
+  filesToBeRemoved.forEach(file => {
+    fs.unlinkSync(contentDir + file.name);
+  });
 }
 
 function createRSS() {
@@ -78,4 +92,4 @@ function createRSS() {
 }
 */
 
-module.exports = { propagate: propagate };
+module.exports = { createRSS: createRSS, removeOldContent: removeOldContent };

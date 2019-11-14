@@ -6,7 +6,7 @@ const path = require("path");
 
 const literals = require("./literals.json");
 const podBeanAPI = require("./podBeanAPI.js");
-const rssModule = require("./rssModule.js");
+const localFileManager = require("./localFileManager.js");
 const soundFixer = require("./soundFixer.js");
 
 const credentials = literals.credentials;
@@ -21,7 +21,8 @@ function downloadAudio(id, title) {
   soundFixer.extractAndEditAudio(ytdl(id), title).on("end", () => {
     //podBeanAPI.checkSpace(); Necessary if unlimited space?
     podBeanAPI.startUploading(title, currentCredentials);
-    rssModule.propagate();
+    localFileManager.removeOldContent();
+    localFileManager.createRSS();
   });
 }
 
@@ -54,7 +55,7 @@ function parse(request, response) {
   }
 
   if (method === "GET" && requestUrl === "/feed") {
-    const result = rssModule.propagate();
+    const result = localFileManager.propagate();
 
     response.writeHead(200, {
       "Content-Type": "application/rss+xml"
@@ -118,7 +119,6 @@ function parse(request, response) {
 
           fs.appendFileSync("log.txt", title + "\n", { flags: "a+" });
           console.log("\nVideo title: " + title);
-          //rssModule.checkSpace();
           downloadAudio(id, title);
         }
         // Stops the notifications for current item
