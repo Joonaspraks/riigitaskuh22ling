@@ -55,7 +55,7 @@ function parse(request, response) {
   }
 
   if (method === "GET" && requestUrl === "/feed") {
-    const result = localFileManager.propagate();
+    const result = localFileManager.createRSS();
 
     response.writeHead(200, {
       "Content-Type": "application/rss+xml"
