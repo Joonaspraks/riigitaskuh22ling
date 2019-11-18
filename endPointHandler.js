@@ -101,6 +101,9 @@ function parse(request, response) {
           console.log(err);
         }
         var entry = parsedData.feed.entry[0];
+        var title = entry.title[0];
+        localFileManager.checkIfFileIsNew(title);
+
         var channelId = entry["yt:channelId"][0];
 
         if (channelId === channels.KONVERENTSID) {
@@ -115,7 +118,6 @@ function parse(request, response) {
         }
         if (currentCredentials !== "") {
           var id = entry["yt:videoId"][0];
-          var title = entry.title[0];
 
           fs.appendFileSync("log.txt", title + "\n", { flags: "a+" });
           console.log("\nVideo title: " + title);
