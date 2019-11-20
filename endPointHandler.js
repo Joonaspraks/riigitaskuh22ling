@@ -46,10 +46,14 @@ function parse(request, response) {
   }
 
   if (method === "GET" && requestUrl == "/") {
+    //localFileManager.populateSiteWithFiles(); actually use id to inject body with list
     response.writeHead("200");
     response.write(
       "<html><head><meta name='google-site-verification' content='71QmVVJaUYxxAbp0YHhwaQ-gHcNnct4LtzaTt4ESPV0' /></head>"+
-      "<body><h1>Welcome to my start page</h1><p>Pride is good</p></body></html>"
+      "<body><h1>Welcome to my start page</h1>"+
+      "<p>Pride is good</p>"+
+      "<ul id=itemList></ul>"+
+      "</body></html>"
     );
     response.end();
   }

@@ -64,49 +64,26 @@ function createRSS() {
   return feed.xml();
 }
 
-/* function createRSSTest() {
-  var feed = new RSS({
-    title: "Istungid ja press",
-    description:
-      "Eesti Vabariigi parlamendi istungid ning valitsuse pressikonverentsid YouTube'ist",
-    feed_url: siteUrl + "/rss",
-    site_url: siteUrl
-  });
-
-  // loop over data and add to feed
-  feed.item({
-    title: "Istung1",
-    description: "Martin Helme",
-    url: siteUrl + "/test1", // link to the item
-    guid: siteUrl + "/test1",
-    enclosure: {
-      url: "/test1",
-      file: "./storedAudio/Riigikogu infotund, 6. november 2019.mp3"
-    }
-  });
-
-  feed.item({
-    title: "Istung2",
-    description: "Martin Helmer",
-    url: siteUrl + "/test2", // link to the item
-    guid: siteUrl + "/test2" // optional - defaults to url
-  });
-
-  feed.item({
-    title: "Istung3",
-    description:
-      "<html><body><h1>Important news!</h1><p>Greed is good</p></body></html>",
-    url: siteUrl + "/notExist", // link to the item
-    guid: siteUrl + "/notExist" // optional - defaults to url
-  }); 
-
-  // cache the xml to send to clients
-  return feed.xml();
+function checkIfFileIsNew(newFileName) {
+  const extension = ".mp3";
+  return (
+    fs
+      .readdirSync(contentDir)
+      .filter(
+        oldFileName =>
+          oldFileName.substring(0, oldFileName.length - extension.length) ===
+          newFileName
+      ) === 0
+  );
 }
-*/
+
+function populateSiteWithFiles(){
+  return fs.readdirSync(contentDir);
+}
 
 module.exports = {
   createRSS: createRSS,
   removeOldContent: removeOldContent,
-  checkIfFileIsNew: checkIfFileIsNew
+  checkIfFileIsNew: checkIfFileIsNew,
+  populateSiteWithFiles: populateSiteWithFiles
 };

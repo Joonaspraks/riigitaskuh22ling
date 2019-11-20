@@ -1,0 +1,19 @@
+<html>
+  <body>
+    <h1>Welcome to my start page</h1>
+    <p>Pride is good</p>
+    <ul id="itemList"></ul>
+  </body>
+</html>
+<script>
+  var list = document.getElementById("itemList");
+  var array = ['test6.mp3', 'test7.mp3', 'test8.mp3'];
+  array.forEach(
+    item =>
+      (list.innerHTML +=
+        "<audio controls>" +
+        "<source src='./generatingHTMLTestFolder/"+item+"' type='audio/mpeg'>" +
+        "Your browser does not support the audio tag." +
+        "</audio>")
+  );
+</script>
