@@ -13,7 +13,10 @@ subscriber.renewSubscriptions();
 
 http
   .createServer(function(request, response) {
-    log.info('Server called at ', new Date().toJSON());
     endPointHandler.parse(request, response);
   })
   .listen(process.env.PORT || 80);
+
+module.exports = {
+  log: log
+}
