@@ -16,7 +16,7 @@ function removeOldContent() {
         time: fs.statSync(contentDir + name).birthtime
       };
     })
-    .sort((file1, file2) => file1.time - file2.time)
+    .sort((file1, file2) => file2.time - file1.time)
     .slice(maxSize);
 
   filesToBeRemoved.forEach(file => {
