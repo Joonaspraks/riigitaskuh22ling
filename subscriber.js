@@ -29,8 +29,8 @@ function renewSubscriptions() {
         if (err) console.log(err);
         else {    
           //index.log.info("Request for subsrciption to " + channel + " sent.", new Date().toJSON());
-          console.log(JSON.stringify(index.func))
-          index.func();
+          console.log(JSON.stringify(index.helloWorld))
+          index.helloWorld();
         }
       });
   }

@@ -19,7 +19,11 @@ http
 
 const func = () => console.log("I work!");
 
+function helloWorld() {
+  console.log("helloWorld");
+}
 module.exports = {
   log: log,
-  func: func
+  func: func,
+  helloWorld: helloWorld
 }
