@@ -1,6 +1,6 @@
 const http = require("http");
 const opts = {
-  logDirectory: "./logs", // NOTE: folder must exist and be writable...
+  logDirectory:  __dirname + '/log', // NOTE: folder must exist and be writable...
   fileNamePattern: "<DATE>.log",
   dateFormat: "YYYY.MM.DD"
 };
