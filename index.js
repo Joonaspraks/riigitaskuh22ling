@@ -17,6 +17,9 @@ http
   })
   .listen(process.env.PORT || 80);
 
+const func = console.log("I work!");
+
 module.exports = {
-  log: log
+  log: log,
+  func: func
 }
