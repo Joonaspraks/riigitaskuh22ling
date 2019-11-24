@@ -1,21 +1,18 @@
 {
   "name": "riigipodcast",
   "version": "1.0.0",
-  "description": "",
+  "description": "Service for fetching and distributing Estonian state affairs as a series of podcasts",
   "main": "index.js",
   "dependencies": {
     "feedparser": "^2.2.9",
     "fluent-ffmpeg": "^2.1.2",
     "forever": "^1.0.0",
-    "google-auth-library": "^4.2.5",
-    "googleapis": "^41.0.0",
     "ip": "^1.1.5",
     "request": "^2.88.0",
     "rss": "^1.2.2",
-    "shelljs": "^0.8.3",
+    "simple-node-logger": "^18.12.23",
     "superagent": "^5.1.0",
     "xml2js": "^0.4.19",
-    "ytdl": "^0.12.0",
     "ytdl-core": "^0.29.5",
     "zlib": "^1.0.5"
   },
@@ -24,6 +21,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "Joonas Praks",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Joonaspraks/riigitaskuh22ling.git"
+  }
 }
