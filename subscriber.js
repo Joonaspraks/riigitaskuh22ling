@@ -1,7 +1,7 @@
 const superagent = require("superagent");
 const ip = require("ip");
 const literals = require("./literals.json");
-const index = require("./index.js")
+const logger = require("./logger.js")
 
 function renewSubscriptions() {
   const channelsAsList = literals.channelsAsList;
@@ -28,9 +28,7 @@ function renewSubscriptions() {
       .end((err, res) => {
         if (err) console.log(err);
         else {    
-          //index.log.info("Request for subsrciption to " + channel + " sent.", new Date().toJSON());
-          console.log(JSON.stringify(index))
-          //index.helloWorld();
+          logger.log.info("Request for subsrciption to " + channel + " sent.", new Date().toJSON());
         }
       });
   }
