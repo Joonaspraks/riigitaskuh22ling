@@ -9,7 +9,11 @@ const log = require('simple-node-logger').createRollingFileLogger( opts );
 const subscriber = require("./subscriber.js");
 const endPointHandler = require("./endPointHandler.js");
 
-subscriber.renewSubscriptions();
+setTimeout(function() {
+  subscriber.renewSubscriptions();
+}, 10000);
+
+
 
 http
   .createServer(function(request, response) {
