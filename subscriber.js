@@ -1,7 +1,7 @@
 const superagent = require("superagent");
 const ip = require("ip");
 const literals = require("./literals.json");
-const log = require("./index.js")
+const log = require("./index.js").log
 
 function renewSubscriptions() {
   const channelsAsList = literals.channelsAsList;
