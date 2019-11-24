@@ -64,19 +64,6 @@ function createRSS() {
   return feed.xml();
 }
 
-function checkIfFileIsNew(newFileName) {
-  const extension = ".mp3";
-  return (
-    fs
-      .readdirSync(contentDir)
-      .filter(
-        oldFileName =>
-          oldFileName.substring(0, oldFileName.length - extension.length) ===
-          newFileName
-      ) === 0
-  );
-}
-
 function populateSiteWithFiles(){
   return fs.readdirSync(contentDir);
 }
