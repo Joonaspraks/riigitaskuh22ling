@@ -1,12 +1,11 @@
 const superagent = require("superagent");
 const ip = require("ip");
-const literals = require("./literals.json");
+const channels = require("./constants/youTubeChannels.json");
 const log = require("./logger.js").log;
 
 function renewSubscriptions() {
-  const channelsAsList = literals.channelsAsList;
 
-  channelsAsList.forEach(channel => {
+  channels.forEach(channel => {
     subscribeTo(channel);
     setInterval(() => {
       subscribeTo(channel);

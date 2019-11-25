@@ -8,7 +8,7 @@ const localFileManager = require("./localFileManager.js");
 const soundFixer = require("./soundFixer.js");
 
 const podBeanCredentials = require("./constants/podBeanCredentials.json");
-const youTubechannels = require("./constants/youTubechannels.json");
+const youTubechannels = require("./constants/youTubeChannels.json");
 const topic = "hub.topic";
 const challenge = "hub.challenge";
 
