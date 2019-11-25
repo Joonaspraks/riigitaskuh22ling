@@ -35,7 +35,7 @@ function parse(request, response) {
 
   if (
     method === "GET" &&
-    request.includes("https://www.youtube.com/xml/feeds/")
+    requestUrl.includes("https://www.youtube.com/xml/feeds/")
   ) {
     const parsedUrl = url.parse(requestUrl, true);
     log.info(
