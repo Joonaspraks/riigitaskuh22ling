@@ -1,9 +1,9 @@
 const ffmpeg = require("fluent-ffmpeg");
+const log = require("./logger.js").log;
 
 function extractAndEditAudio(file, title) {
   return (
     ffmpeg(file)
-      .on("start", () => console.log("start"))
       //noise removal
       //detect general audio level to cut silence
       //note that questioneers mic sound can be lower than the ministers
@@ -22,9 +22,9 @@ function extractAndEditAudio(file, title) {
         "dynaudnorm"
       ) //what dB constitutes a 'silence'
 
-      .on("progress", progress => console.log(JSON.stringify(progress)))
+      .on("progress", progress => log.info(JSON.stringify(progress)))
       //.save('earwaxIstung2.mp3');
-      .save("./storedAudio/"+title + ".mp3")
+      .save("./storedAudio/" + title + ".mp3")
   );
   //.save('loudnormIstung2.mp3');
 }

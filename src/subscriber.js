@@ -1,7 +1,7 @@
 const superagent = require("superagent");
 const ip = require("ip");
 const literals = require("./literals.json");
-const logger = require("./logger.js")
+const log = require("./logger.js").log;
 
 function renewSubscriptions() {
   const channelsAsList = literals.channelsAsList;
@@ -14,7 +14,6 @@ function renewSubscriptions() {
   });
 
   function subscribeTo(channel) {
-    console.log("http://" + ip.address() + ":" + (process.env.PORT || 80));
     superagent
       .post("https://pubsubhubbub.appspot.com/subscribe")
       .query({
@@ -26,9 +25,13 @@ function renewSubscriptions() {
           "http://" + ip.address() + ":" + (process.env.PORT || 80)
       })
       .end((err, res) => {
-        if (err) console.log(err);
-        else {    
-          logger.log.info("Request for subsrciption to " + channel + " sent.", new Date().toJSON());
+        if (err) {
+          log.error(err);
+        } else {
+          log.info(
+            "Request for subsrciption to " + channel + " sent.",
+            new Date().toJSON()
+          );
         }
       });
   }

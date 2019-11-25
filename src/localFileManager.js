@@ -64,7 +64,7 @@ function createRSS() {
   return feed.xml();
 }
 
-function populateSiteWithFiles(){
+function populateSiteWithFiles() {
   return fs.readdirSync(contentDir);
 }
 

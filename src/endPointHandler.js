@@ -1,22 +1,22 @@
-var parseString = require("xml2js").parseString;
+const parseString = require("xml2js").parseString;
 const url = require("url");
 const ytdl = require("ytdl-core");
-const fs = require("fs");
-const path = require("path");
 
-const literals = require("./literals.json");
+const log = require("./logger.js").log;
 const podBeanAPI = require("./podBeanAPI.js");
 const localFileManager = require("./localFileManager.js");
 const soundFixer = require("./soundFixer.js");
 
-const credentials = literals.credentials;
-const channels = literals.channels;
+const podBeanCredentials = require("./constants/podBeanCredentials.json");
+const youTubechannels = require("./constants/youTubechannels.json");
+const topic = "hub.topic";
+const challenge = "hub.challenge";
 
-var currentCredentials = "";
+let currentCredentials = "";
 
 //Refactor to somewhere else
 function downloadAudio(id, title) {
-  console.log("Downloading audio for " + title);
+  log.info("Downloading audio for " + title);
 
   soundFixer.extractAndEditAudio(ytdl(id), title).on("end", () => {
     //podBeanAPI.checkSpace(); Necessary if unlimited space?
@@ -27,20 +27,26 @@ function downloadAudio(id, title) {
 }
 
 function parse(request, response) {
-  console.log("Server was called!");
   const method = request.method;
   const requestUrl = request.url;
-  console.log("Method: " + method);
-  console.log("Url: " + requestUrl);
+  log.info(
+    "Server was called with Method: " + method + " and Url: " + requestUrl
+  );
 
-  //Parse only permitted
-  if (method === "GET" && requestUrl) {
-    console.log("Subscribing!");
-    var result = url.parse(requestUrl, true).query["hub.challenge"];
-    if (result) {
-      console.log(JSON.stringify(requestUrl));
+  if (
+    method === "GET" &&
+    request.includes("https://www.youtube.com/xml/feeds/")
+  ) {
+    const parsedUrl = url.parse(requestUrl, true);
+    log.info(
+      "Websub  request from " + parsedUrl.query[topic],
+      new Date().toJSON()
+    );
+    var challengeCode = url.parse(requestUrl, true).query[challenge];
+
+    if (challengeCode) {
       response.writeHead("200");
-      response.write(result);
+      response.write(challengeCode);
       response.end();
     }
   }
@@ -49,11 +55,11 @@ function parse(request, response) {
     //localFileManager.populateSiteWithFiles(); actually use id to inject body with list
     response.writeHead("200");
     response.write(
-      "<html><head><meta name='google-site-verification' content='71QmVVJaUYxxAbp0YHhwaQ-gHcNnct4LtzaTt4ESPV0' /></head>"+
-      "<body><h1>Welcome to my start page</h1>"+
-      "<p>Pride is good</p>"+
-      "<ul id=itemList></ul>"+
-      "</body></html>"
+      "<html><head><meta name='google-site-verification' content='71QmVVJaUYxxAbp0YHhwaQ-gHcNnct4LtzaTt4ESPV0' /></head>" +
+        "<body><h1>Welcome to my start page</h1>" +
+        "<p>Pride is good</p>" +
+        "<ul id=itemList></ul>" +
+        "</body></html>"
     );
     response.end();
   }
@@ -72,7 +78,7 @@ function parse(request, response) {
   /*
       if endpoint get + filename, lookup and return file
     */
-/*   if (method === "GET" && requestUrl.includes("test1")) {
+  /*   if (method === "GET" && requestUrl.includes("test1")) {
     var filePath = path.join(__dirname, "storedAudio/Riigikogu infotund, 6. november 2019.mp3");
     var stat = fs.statSync(filePath);
 
@@ -102,7 +108,7 @@ function parse(request, response) {
     request.on("data", function(data) {
       parseString(data, function(err, parsedData) {
         if (err) {
-          console.log(err);
+          log.error(err);
         }
         var entry = parsedData.feed.entry[0];
         var title = entry.title[0];
@@ -110,21 +116,14 @@ function parse(request, response) {
 
         var channelId = entry["yt:channelId"][0];
 
-        if (channelId === channels.KONVERENTSID) {
-          currentCredentials = credentials.konverentsid;
-          console.log("Podbean konverentsid");
-        } else if (channelId === channels.ISTUNGID) {
-          currentCredentials = credentials.konverentsid;
-          console.log("Podbean istungid");
-        } else if (channelId === channels.TEST) {
-          currentCredentials = credentials.test;
-          console.log("Podbean test");
+        if (youTubechannels.includes(channelId)) {
+          currentCredentials = podBeanCredentials;
+          log.info("Notification from channel " + channelId);
         }
         if (currentCredentials !== "") {
           var id = entry["yt:videoId"][0];
 
-          fs.appendFileSync("log.txt", title + "\n", { flags: "a+" });
-          console.log("\nVideo title: " + title);
+          log.info("Video title: " + title);
           downloadAudio(id, title);
         }
         // Stops the notifications for current item
