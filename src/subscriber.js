@@ -4,7 +4,6 @@ const channels = require("./constants/youTubeChannels.json");
 const log = require("./logger.js").log;
 
 function renewSubscriptions() {
-
   channels.forEach(channel => {
     subscribeTo(channel);
     setInterval(() => {
@@ -27,10 +26,7 @@ function renewSubscriptions() {
         if (err) {
           log.error(err);
         } else {
-          log.info(
-            "Request for subsrciption to " + channel + " sent.",
-            new Date().toJSON()
-          );
+          log.info("Request for subsrciption to " + channel + " sent.");
         }
       });
   }

@@ -39,9 +39,7 @@ function parse(request, response) {
   ) {
     const parsedUrl = url.parse(requestUrl, true);
     log.info(
-      "Websub  request from " + parsedUrl.query[topic],
-      new Date().toJSON()
-    );
+      "Websub  request from " + parsedUrl.query[topic]);
     var challengeCode = url.parse(requestUrl, true).query[challenge];
 
     if (challengeCode) {
