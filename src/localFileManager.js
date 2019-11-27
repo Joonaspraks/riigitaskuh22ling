@@ -64,7 +64,7 @@ function createRSS() {
   return feed.xml();
 }
 
-function populateSiteWithFiles() {
+function getAllFiles() {
   return fs.readdirSync(contentDir);
 }
 
@@ -72,5 +72,5 @@ module.exports = {
   createRSS: createRSS,
   removeOldContent: removeOldContent,
   checkIfFileIsNew: checkIfFileIsNew,
-  populateSiteWithFiles: populateSiteWithFiles
+  getAllFiles: getAllFiles
 };

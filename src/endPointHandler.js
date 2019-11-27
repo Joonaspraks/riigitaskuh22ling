@@ -38,8 +38,7 @@ function parse(request, response) {
     requestUrl.includes("https://www.youtube.com/xml/feeds/")
   ) {
     const parsedUrl = url.parse(requestUrl, true);
-    log.info(
-      "Websub  request from " + parsedUrl.query[topic]);
+    log.info("Websub  request from " + parsedUrl.query[topic]);
     var challengeCode = url.parse(requestUrl, true).query[challenge];
 
     if (challengeCode) {
@@ -51,12 +50,15 @@ function parse(request, response) {
 
   if (method === "GET" && requestUrl == "/") {
     //localFileManager.populateSiteWithFiles(); actually use id to inject body with list
+    // const html; // get file with fs
+    const fileNames = localFileManager.getAllFiles();
     response.writeHead("200");
     response.write(
       "<html><head><meta name='google-site-verification' content='71QmVVJaUYxxAbp0YHhwaQ-gHcNnct4LtzaTt4ESPV0' /></head>" +
-        "<body><h1>Welcome to my start page</h1>" +
-        "<p>Pride is good</p>" +
-        "<ul id=itemList></ul>" +
+        "<body><h1>Riigi Podcast</h1>" +
+        "<ul>" +
+        fileNames.map(name => {return "tere"}) +
+        "</ul>" +
         "</body></html>"
     );
     response.end();
@@ -76,26 +78,34 @@ function parse(request, response) {
   /*
       if endpoint get + filename, lookup and return file
     */
-  /*   if (method === "GET" && requestUrl.includes("test1")) {
-    var filePath = path.join(__dirname, "storedAudio/Riigikogu infotund, 6. november 2019.mp3");
-    var stat = fs.statSync(filePath);
+  if (method === "GET" && requestUrl.includes("file")) {
+    const fileNum = parseInt(url.parse(requestUrl, true).query["file"]);
+    if (
+      !isNan(fileNum) &&
+      fileNum > 0 &&
+      fileNum < 20 //replace with const
+    ) {
+      const fileNames = localFileManager.getAllFiles();
+      if (fileNames.length >= 20) {
+        //replace with const
+        const fileName = fileNames[fileNum - 1];
 
-    response.writeHead(200, {
-      "Content-Type": "audio/mpeg",
-      "Content-Length": stat.size
-    });
+        var filePath = path.join(
+          __dirname, // remove dirname
+          "storedAudio/" + fileName //replace dir with const
+        );
+        var stat = fs.statSync(filePath);
 
-    var readStream = fs.createReadStream(filePath);
-    readStream.pipe(response);
+        response.writeHead(200, {
+          "Content-Type": "audio/mpeg",
+          "Content-Length": stat.size
+        });
+
+        var readStream = fs.createReadStream(filePath);
+        readStream.pipe(response);
+      }
+    }
   }
-
-  if (method === "GET" && requestUrl.includes("test2")) {
-    response.writeHead("200");
-    response.write(
-      "<html><body><h1>Welcome to my test page</h1><p>Greed is good</p></body></html>"
-    );
-    response.end();
-  } */
 
   if (
     method === "POST" &&
