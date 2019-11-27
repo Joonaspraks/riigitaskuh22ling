@@ -57,9 +57,19 @@ function parse(request, response) {
       "<html><head><meta name='google-site-verification' content='71QmVVJaUYxxAbp0YHhwaQ-gHcNnct4LtzaTt4ESPV0' /></head>" +
         "<body><h1>Riigi Podcast</h1>" +
         "<ul>" +
-        fileNames.map(name => {return "tere"}) +
-        "</ul>" +
-        "</body></html>"
+        fileNames.map((name, index) => {
+          return (
+            "<audio controls>" +
+            "<source src='" +
+            index +
+            1 +
+            "' type='audio/mpeg'>" +
+            "Your browser does not support the audio tag." +
+            "</audio>" +
+            "</ul>" +
+            "</body></html>"
+          );
+        })
     );
     response.end();
   }

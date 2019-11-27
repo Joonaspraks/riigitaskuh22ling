@@ -3,6 +3,8 @@ const http = require("http");
 const subscriber = require("./subscriber.js");
 const endPointHandler = require("./endPointHandler.js");
 
+console.log("Service has started.")
+
 subscriber.renewSubscriptions();
 
 http
