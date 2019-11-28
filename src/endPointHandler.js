@@ -91,7 +91,7 @@ function parse(request, response) {
   if (method === "GET" && requestUrl.includes("file")) {
     const fileNum = parseInt(url.parse(requestUrl, true).query["file"]);
     if (
-      !isNan(fileNum) &&
+      !isNaN(fileNum) &&
       fileNum > 0 &&
       fileNum < 20 //replace with const
     ) {
