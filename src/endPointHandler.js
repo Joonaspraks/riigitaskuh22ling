@@ -60,9 +60,8 @@ function parse(request, response) {
         fileNames.map((name, index) => {
           return (
             "<audio controls>" +
-            "<source src='http://136.244.105.53:8080/file=" +
-            index +
-            1 +
+            "<source src='http://136.244.105.53:8080?file=" +
+            (index + 1) +
             "' type='audio/mpeg'>" +
             "Your browser does not support the audio tag." +
             "</audio>" +
@@ -88,7 +87,7 @@ function parse(request, response) {
   /*
       if endpoint get + filename, lookup and return file
     */
-  if (method === "GET" && requestUrl.includes("file")) {
+  if (method === "GET" && requestUrl.includes("?file")) {
     const fileNum = parseInt(url.parse(requestUrl, true).query["file"]);
     if (
       !isNaN(fileNum) &&

@@ -18,6 +18,16 @@
             "program": "${file}",
             "cwd": "${fileDirname}",
             "port": 9000
-        }
+        },
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Attach to remote",
+            "address": "127.0.0.1",
+            "port": 9221,
+            "localRoot": "C:\\Users\\XPS\\Desktop\\riigiPodcast\\src",
+            "remoteRoot": "/home/joonas/riigitaskuh22ling/src",
+            "sourceMaps": true
+          }
     ]
 }
