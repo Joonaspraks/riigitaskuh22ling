@@ -105,7 +105,7 @@ function parse(request, response) {
       fileNum > 0 &&
       fileNum < 20 //replace with const
     ) {
-      const fileNames = localFileManager.getAllFiles();
+      const fileNames = localFileManager.getFilesSortedByDate();
       if (fileNames.length >= 20) {
         //replace with const
         const fileName = fileNames[fileNum - 1];
