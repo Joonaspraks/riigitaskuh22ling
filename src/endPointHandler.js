@@ -60,7 +60,7 @@ function parse(request, response) {
         fileNames.map((name, index) => {
           return (
             "<audio controls>" +
-            "<source src='http://136.244.105.53:8080?file=" +
+            "<source src='riigipodcast.ee?file=" +
             (index + 1) +
             "' type='audio/mpeg'>" +
             "Your browser does not support the audio tag." +
@@ -99,10 +99,7 @@ function parse(request, response) {
         //replace with const
         const fileName = fileNames[fileNum - 1];
 
-        var filePath = path.join(
-          __dirname, // remove dirname
-          "storedAudio/" + fileName //replace dir with const
-        );
+        var filePath = "./storedAudio/" + fileName; //replace dir with const
         var stat = fs.statSync(filePath);
 
         response.writeHead(200, {
