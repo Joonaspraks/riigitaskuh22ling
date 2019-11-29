@@ -60,16 +60,18 @@ function parse(request, response) {
         "<ul>" +
         fileNames.map((name, index) => {
           return (
+            "<li>" +
+            `<h1>${name}</h1>` +
             "<audio controls>" +
-            "<source src='riigipodcast.ee?file=" +
-            (index + 1) +
+            `<source src='riigipodcast.ee?file=${index + 1}` +
             "' type='audio/mpeg'>" +
             "Your browser does not support the audio tag." +
             "</audio>" +
-            "</ul>" +
-            "</body></html>"
+            "</li>"
           );
-        })
+        }) +
+        "</ul>" +
+        "</body></html>"
     );
     response.end();
   }
