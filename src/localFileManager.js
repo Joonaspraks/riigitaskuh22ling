@@ -72,5 +72,5 @@ module.exports = {
   createRSS: createRSS,
   removeOldContent: removeOldContent,
   checkIfFileIsNew: checkIfFileIsNew,
-  getAllFiles: getAllFiles
+  getFilesSortedByDate: getFilesSortedByDate
 };
