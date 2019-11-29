@@ -59,25 +59,20 @@ function parse(request, response) {
         "name='google-site-verification' content='71QmVVJaUYxxAbp0YHhwaQ-gHcNnct4LtzaTt4ESPV0' /></head>" +
         "<body><h1>Riigi Podcast</h1>" +
         "<ul>" +
-        fileNames.map((name, index) => {
-          return (
-            "<li>" +
-            `<h3>${name}</h3>` +
-            "<audio controls>" +
-            `<source src='riigipodcast.ee?file=${index + 1}` +
-            "' type='audio/mpeg'>" +
-            "Your browser does not support the audio tag." +
-            "</audio>" +
-            "</li>"
-          )
-        }) +
-        "</ul>" +
-        "<ul>" +
-        fileNames.map((name, index) => {
-          return (
-            "<div></div>"
-          )
-        }) +
+        fileNames
+          .map((name, index) => {
+            return (
+              "<li>" +
+              `<h3>${name}</h3>` +
+              "<audio controls>" +
+              `<source src='riigipodcast.ee?file=${index + 1}` +
+              "' type='audio/mpeg'>" +
+              "Your browser does not support the audio tag." +
+              "</audio>" +
+              "</li>"
+            );
+          })
+          .join("") +
         "</ul>" +
         "</body></html>"
     );
@@ -99,16 +94,19 @@ function parse(request, response) {
       if endpoint get + filename, lookup and return file
     */
   if (method === "GET" && requestUrl.includes("?file")) {
-    const fileNum = parseInt(url.parse(requestUrl, true).query["file"]);
+    const requestedFileNum = parseInt(
+      url.parse(requestUrl, true).query["file"]
+    );
     if (
-      !isNaN(fileNum) &&
-      fileNum > 0 &&
-      fileNum < 20 //replace with const
+      !isNaN(requestedFileNum) &&
+      requestedFileNum > 0 &&
+      requestedFileNum < 20 //replace with const
     ) {
       const fileNames = localFileManager.getFilesSortedByDate();
-      if (fileNames.length >= 20) {
+      //Making sure that there are enough files for the request
+      if (fileNames.length >= requestedFileNum) {
         //replace with const
-        const fileName = fileNames[fileNum - 1];
+        const fileName = fileNames[requestedFileNum - 1];
 
         var filePath = "./storedAudio/" + fileName; //replace dir with const
         var stat = fs.statSync(filePath);
