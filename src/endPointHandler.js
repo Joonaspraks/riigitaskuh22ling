@@ -52,7 +52,7 @@ function parse(request, response) {
   if (method === "GET" && requestUrl == "/") {
     //localFileManager.populateSiteWithFiles(); actually use id to inject body with list
     // const html; // get file with fs
-    const fileNames = localFileManager.getAllFiles();
+    const fileNames = localFileManager.getFilesSortedByDate();
     response.writeHead("200");
     response.write(
       "<html><head><meta charset='UTF-8'" +
@@ -69,7 +69,14 @@ function parse(request, response) {
             "Your browser does not support the audio tag." +
             "</audio>" +
             "</li>"
-          );
+          )
+        }) +
+        "</ul>" +
+        "<ul>" +
+        fileNames.map((name, index) => {
+          return (
+            "<div></div>"
+          )
         }) +
         "</ul>" +
         "</body></html>"

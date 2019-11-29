@@ -1,5 +1,4 @@
-const ip = require("ip");
-var RSS = require("rss");
+const RSS = require("rss");
 const fs = require("fs");
 
 const siteUrl = "http://" + "riigipodcast.ee" + ":" + (process.env.PORT || 80);
@@ -20,20 +19,11 @@ function checkIfFileIsNew(newFileName) {
 
 function removeOldContent() {
   const maxSize = 20;
-  const fileNames = fs.readdirSync(contentDir);
 
-  const filesToBeRemoved = fileNames
-    .map(name => {
-      return {
-        name: name,
-        time: fs.statSync(contentDir + name).birthtime
-      };
-    })
-    .sort((file1, file2) => file2.time - file1.time)
-    .slice(maxSize);
+  const filesToBeRemoved = getFilesSortedByDate().slice(maxSize);
 
-  filesToBeRemoved.forEach(file => {
-    fs.unlinkSync(contentDir + file.name);
+  filesToBeRemoved.forEach(name => {
+    fs.unlinkSync(contentDir + name);
   });
 }
 
@@ -64,8 +54,18 @@ function createRSS() {
   return feed.xml();
 }
 
-function getAllFiles() {
-  return fs.readdirSync(contentDir);
+function getFilesSortedByDate() {
+  const fileNames = fs.readdirSync(contentDir);
+
+  return fileNames
+    .map(name => {
+      return {
+        name: name,
+        time: fs.statSync(contentDir + name).birthtime
+      };
+    })
+    .sort((file1, file2) => file2.time - file1.time)
+    .map(file => {return file.name});
 }
 
 module.exports = {
