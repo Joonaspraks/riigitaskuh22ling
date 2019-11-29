@@ -55,13 +55,14 @@ function parse(request, response) {
     const fileNames = localFileManager.getAllFiles();
     response.writeHead("200");
     response.write(
-      "<html><head><meta name='google-site-verification' content='71QmVVJaUYxxAbp0YHhwaQ-gHcNnct4LtzaTt4ESPV0' /></head>" +
+      "<html><head><meta charset='UTF-8'" +
+        "name='google-site-verification' content='71QmVVJaUYxxAbp0YHhwaQ-gHcNnct4LtzaTt4ESPV0' /></head>" +
         "<body><h1>Riigi Podcast</h1>" +
         "<ul>" +
         fileNames.map((name, index) => {
           return (
             "<li>" +
-            `<h1>${name}</h1>` +
+            `<h3>${name}</h3>` +
             "<audio controls>" +
             `<source src='riigipodcast.ee?file=${index + 1}` +
             "' type='audio/mpeg'>" +
