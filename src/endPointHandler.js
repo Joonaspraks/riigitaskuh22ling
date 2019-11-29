@@ -1,6 +1,7 @@
 const parseString = require("xml2js").parseString;
 const url = require("url");
 const ytdl = require("ytdl-core");
+const fs = require("fs");
 
 const log = require("./logger.js").log;
 const podBeanAPI = require("./podBeanAPI.js");
