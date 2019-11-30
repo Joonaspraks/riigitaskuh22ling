@@ -19,17 +19,19 @@ let currentCredentials = "";
 function downloadAudio(id, title) {
   log.info("Downloading audio for " + title);
 
-  soundFixer.extractAndEditAudio(
-    ytdl(id), title)
-    .on("info", (info) => {
-      console.log(JSON.stringify(info));
-    })
+  soundFixer
+    .extractAndEditAudio(
+      ytdl(id).on("info", info => {
+        console.log(JSON.stringify(info));
+      }),
+      title
+    )
+
     .on("end", () => {
-   
-    // podBeanAPI.startUploading(title, currentCredentials);
-    // localFileManager.removeOldContent();
-    // localFileManager.createRSS();
-  });
+      // podBeanAPI.startUploading(title, currentCredentials);
+      // localFileManager.removeOldContent();
+      // localFileManager.createRSS();
+    });
 }
 
 function parse(request, response) {
@@ -160,7 +162,7 @@ function parse(request, response) {
     });
   }
 
-/*   response.writeHead(404);
+  /*   response.writeHead(404);
   response.end(); */
 }
 
