@@ -10,7 +10,7 @@ let accessToken = "";
 const extension = ".mp3";
 const storageDir = "./storedAudio/";
 
-function startUploading(fileName, credentials, description) {
+function startUploading(fileName, description, credentials) {
   this.description = description;
   getPodBeanAccessToken(fileName, credentials);
 }
