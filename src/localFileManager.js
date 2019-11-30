@@ -44,10 +44,11 @@ function createRSS() {
       title: file,
       description: "ADD CORRECT DESCRIPTION",
       guid: file,
-      enclosure: {
+      link: siteUrl +  + "/?file=" + (index+1)
+/*       enclosure: {
         url: siteUrl + "/?file=" + (index+1),
         file: contentDir + file
-      }
+      } */
     });
   });
 
