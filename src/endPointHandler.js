@@ -19,11 +19,16 @@ let currentCredentials = "";
 function downloadAudio(id, title) {
   log.info("Downloading audio for " + title);
 
-  soundFixer.extractAndEditAudio(ytdl(id), title).on("end", () => {
-    //podBeanAPI.checkSpace(); Necessary if unlimited space?
-    podBeanAPI.startUploading(title, currentCredentials);
-    localFileManager.removeOldContent();
-    localFileManager.createRSS();
+  soundFixer.extractAndEditAudio(
+    ytdl(id), title)
+    .on("info", (info) => {
+      console.log(JSON.stringify(info));
+    })
+    .on("end", () => {
+   
+    // podBeanAPI.startUploading(title, currentCredentials);
+    // localFileManager.removeOldContent();
+    // localFileManager.createRSS();
   });
 }
 
