@@ -3,7 +3,7 @@ const fs = require("fs");
 
 const log = require("./logger.js").log;
 
-let description = "";
+let content = "";
 let mediaKey = "";
 let accessToken = "";
 
@@ -11,7 +11,7 @@ const extension = ".mp3";
 const storageDir = "./storedAudio/";
 
 function startUploading(fileName, description, credentials) {
-  this.description = description;
+  content = description;
   getPodBeanAccessToken(fileName, credentials);
 }
 
@@ -78,7 +78,7 @@ function publishPodcast(fileName) {
       access_token: accessToken,
       type: "public",
       title: fileName,
-      content: this.description,
+      content: content,
       status: "publish",
       media_key: mediaKey
     })

@@ -24,7 +24,7 @@ function extractAndEditAudio(file, title, description) {
 
       .on("progress", progress => log.info(JSON.stringify(progress)))
       //.save('earwaxIstung2.mp3');
-      .outputOption(`-metadata comment=${description}`)
+      .outputOption(`-metadata title=${description}`) 
       .save("./storedAudio/" + title + ".mp3")
   );
   //.save('loudnormIstung2.mp3');
