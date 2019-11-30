@@ -37,15 +37,16 @@ function createRSS() {
   });
 
   /* loop over data and add to feed */
-  const files = fs.readdirSync("./storedAudio/");
-  files.forEach(file => {
+  const files = getFilesSortedByDate();
+  files.forEach((file, index) => {
+    
     feed.item({
       title: file,
       description: "ADD CORRECT DESCRIPTION",
       //url: siteUrl + "/" + file, // link to the item
       guid: file,
       enclosure: {
-        url: "/" + file,
+        url: "/?file=" + (index+1),
         file: "./storedAudio/" + file
       }
     });
