@@ -53,7 +53,9 @@ function parse(request, response) {
     //localFileManager.populateSiteWithFiles(); actually use id to inject body with list
     // const html; // get file with fs
     const fileNames = localFileManager.getFilesSortedByDate();
-    response.writeHead(200/* , {"Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload"} */);
+    response.writeHead(
+      200 /* , {"Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload"} */
+    );
     response.write(
       "<html><head><meta charset='UTF-8'" +
         "name='google-site-verification' content='71QmVVJaUYxxAbp0YHhwaQ-gHcNnct4LtzaTt4ESPV0' /></head>" +
@@ -63,7 +65,7 @@ function parse(request, response) {
           .map((name, index) => {
             return (
               "<li>" +
-              `<a href='riigipodcast.ee?file=${index + 1}'>`+
+              `<a href='riigipodcast.ee?file=${index + 1}'>` +
               `<h3>${name}</h3>` +
               "</a>" +
               "</li>"
@@ -152,6 +154,9 @@ function parse(request, response) {
       });
     });
   }
+
+  response.writeHead(404);
+  response.end();
 }
 
 module.exports = { parse: parse };
