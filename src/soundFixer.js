@@ -1,7 +1,7 @@
 const ffmpeg = require("fluent-ffmpeg");
 const log = require("./logger.js").log;
 
-function extractAndEditAudio(file, title) {
+function extractAndEditAudio(file, title, description) {
   return (
     ffmpeg(file)
       //noise removal
@@ -24,6 +24,7 @@ function extractAndEditAudio(file, title) {
 
       .on("progress", progress => log.info(JSON.stringify(progress)))
       //.save('earwaxIstung2.mp3');
+      .outputOption(`-metadata comment=${description}`)
       .save("./storedAudio/" + title + ".mp3")
   );
   //.save('loudnormIstung2.mp3');

@@ -18,19 +18,21 @@ let currentCredentials = "";
 //Refactor to somewhere else
 function downloadAudio(id, title) {
   log.info("Downloading audio for " + title);
+  let description = "";
 
   soundFixer
     .extractAndEditAudio(
       ytdl(id).on("info", info => {
-        console.log(JSON.stringify(info));
+        description = info.description;
       }),
-      title
+      title,
+      description
     )
-
     .on("end", () => {
-      // podBeanAPI.startUploading(title, currentCredentials);
-      // localFileManager.removeOldContent();
-      // localFileManager.createRSS();
+      podBeanAPI.startUploading(title, description, currentCredentials);
+
+      localFileManager.removeOldContent();
+      localFileManager.createRSS();
     });
 }
 
