@@ -19,8 +19,7 @@ function renewSubscriptions() {
         "hub.topic":
           "https://www.youtube.com/xml/feeds/videos.xml?channel_id=" + channel,
         "hub.verify": "async",
-        "hub.callback":
-          "http://" + ip.address() + ":" + (process.env.PORT || 443)
+        "hub.callback": "https://www.riigipodcast.ee"
       })
       .end((err, res) => {
         if (err) {

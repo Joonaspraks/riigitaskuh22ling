@@ -1,7 +1,7 @@
 const RSS = require("rss");
 const fs = require("fs");
 
-const siteUrl = "http://" + "riigipodcast.ee" + ":" + (process.env.PORT || 443);
+const siteUrl = "https://www.riigipodcast.ee";
 const contentDir = "./storedAudio/";
 
 function checkIfFileIsNew(newFileName) {
@@ -43,11 +43,10 @@ function createRSS() {
     feed.item({
       title: file,
       description: "ADD CORRECT DESCRIPTION",
-      //url: siteUrl + "/" + file, // link to the item
       guid: file,
       enclosure: {
         url: "/?file=" + (index+1),
-        file: "./storedAudio/" + file
+        file: contentDir + file
       }
     });
   });
