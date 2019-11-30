@@ -44,7 +44,7 @@ function createRSS() {
       title: file,
       description: "ADD CORRECT DESCRIPTION",
       guid: file,
-      link: siteUrl +  + "/?file=" + (index+1)
+      url: siteUrl +  + "/?file=" + (index+1)
 /*       enclosure: {
         url: siteUrl + "/?file=" + (index+1),
         file: contentDir + file
