@@ -1,4 +1,5 @@
 const https = require("https");
+const fs = require("fs");
 
 const subscriber = require("./subscriber.js");
 const endPointHandler = require("./endPointHandler.js");
