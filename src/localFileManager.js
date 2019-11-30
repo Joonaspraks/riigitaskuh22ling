@@ -1,7 +1,7 @@
 const RSS = require("rss");
 const fs = require("fs");
 
-const siteUrl = "http://" + "riigipodcast.ee" + ":" + (process.env.PORT || 80);
+const siteUrl = "http://" + "riigipodcast.ee" + ":" + (process.env.PORT || 443);
 const contentDir = "./storedAudio/";
 
 function checkIfFileIsNew(newFileName) {

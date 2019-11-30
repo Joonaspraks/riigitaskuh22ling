@@ -17,4 +17,4 @@ https
   .createServer(options, function(request, response) {
     endPointHandler.parse(request, response);
   })
-  .listen(process.env.PORT || 80);
+  .listen(process.env.PORT || 443);

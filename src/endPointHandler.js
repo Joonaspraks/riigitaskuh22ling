@@ -63,12 +63,9 @@ function parse(request, response) {
           .map((name, index) => {
             return (
               "<li>" +
+              `<a href='riigipodcast.ee?file=${index + 1}'>`+
               `<h3>${name}</h3>` +
-              "<audio controls>" +
-              `<source src='riigipodcast.ee?file=${index + 1}` +
-              "' type='audio/mpeg'>" +
-              "Your browser does not support the audio tag." +
-              "</audio>" +
+              "</a>" +
               "</li>"
             );
           })
