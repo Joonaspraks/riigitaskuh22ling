@@ -1,4 +1,5 @@
 const https = require("https");
+const http = require("http");
 const fs = require("fs");
 
 const subscriber = require("./subscriber.js");
@@ -18,3 +19,10 @@ https
     endPointHandler.parse(request, response);
   })
   .listen(process.env.PORT || 443);
+
+http.createServer(function(req, res){
+    res.writeHead(301, {
+      'Content-Type': 'text/plain', 
+      'Location':'https://'+req.headers.host+req.url});
+    res.end('Redirecting to SSL\n');
+ }).listen(80);

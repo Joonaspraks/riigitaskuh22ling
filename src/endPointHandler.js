@@ -53,7 +53,7 @@ function parse(request, response) {
     //localFileManager.populateSiteWithFiles(); actually use id to inject body with list
     // const html; // get file with fs
     const fileNames = localFileManager.getFilesSortedByDate();
-    res.writeHead(200, {"Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload"});
+    res.writeHead(200/* , {"Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload"} */);
     response.write(
       "<html><head><meta charset='UTF-8'" +
         "name='google-site-verification' content='71QmVVJaUYxxAbp0YHhwaQ-gHcNnct4LtzaTt4ESPV0' /></head>" +
