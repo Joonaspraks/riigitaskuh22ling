@@ -16,7 +16,7 @@ const challenge = "hub.challenge";
 
 let currentCredentials = "";
 
-//Refactor to somewhere else
+/* //Refactor to somewhere else
 function downloadAudio(id, title) {
   log.info("Downloading audio for " + title);
   let description = "";
@@ -45,6 +45,16 @@ function downloadAudio(id, title) {
           localFileManager.createRSS();
         });
     });
+} */
+
+function downloadAudio(id, title) {
+  log.info("Downloading audio for " + title);
+
+  soundFixer.extractAndEditAudio(ytdl(id), title).on("end", () => {
+    // podBeanAPI.startUploading(title, currentCredentials);
+    localFileManager.removeOldContent();
+    localFileManager.createRSS();
+  });
 }
 
 function parse(request, response) {
