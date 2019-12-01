@@ -2,6 +2,7 @@ const parseString = require("xml2js").parseString;
 const url = require("url");
 const ytdl = require("ytdl-core");
 const fs = require("fs");
+const stream = require("stream");
 
 const log = require("./logger.js").log;
 const podBeanAPI = require("./podBeanAPI.js");
@@ -20,27 +21,30 @@ function downloadAudio(id, title) {
   log.info("Downloading audio for " + title);
   let description = "";
   let data = "";
+
+  const bufferStream = new stream.PassThrough();
+
   ytdl(id)
     .on("info", info => {
       description = info.description;
     })
     .on("data", chunk => {
-      // data += chunk;
-      soundFixer.extractAndEditAudio(chunk, title, description).on("end", () => {
-        // podBeanAPI.startUploading(title, description, currentCredentials);
-
-        localFileManager.removeOldContent();
-        localFileManager.createRSS();
-      });
+      data += chunk;
     })
-/*     .on("end", () => {
-      soundFixer.extractAndEditAudio(data, title, description).on("end", () => {
-        // podBeanAPI.startUploading(title, description, currentCredentials);
+    .on("end", () => {
+      soundFixer
+        .extractAndEditAudio(
+          bufferStream.end(new Buffer(data)),
+          title,
+          description
+        )
+        .on("end", () => {
+          // podBeanAPI.startUploading(title, description, currentCredentials);
 
-        localFileManager.removeOldContent();
-        localFileManager.createRSS();
-      });
-    }) */;
+          localFileManager.removeOldContent();
+          localFileManager.createRSS();
+        });
+    });
 }
 
 function parse(request, response) {
