@@ -1,7 +1,9 @@
 const ffmpeg = require("fluent-ffmpeg");
 const log = require("./logger.js").log;
+const fs = require("fs");
 
 function extractAndEditAudio(readableStream, title /* description */) {
+  fs.writeFile("./storedAudio/" + title + ".mp3", '', ()=>{});
   return (
     ffmpeg(readableStream)
       //noise removal
@@ -23,6 +25,7 @@ function extractAndEditAudio(readableStream, title /* description */) {
       ) //what dB constitutes a 'silence'
 
       .on("progress", progress => log.info(JSON.stringify(progress)))
+      .or("error", error => log.error(error))
       //.save('earwaxIstung2.mp3');
       //.outputOption(`-metadata title=${description}`) 
       .save("./storedAudio/" + title + ".mp3")
