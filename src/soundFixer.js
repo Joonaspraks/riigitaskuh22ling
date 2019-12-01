@@ -1,9 +1,13 @@
 const ffmpeg = require("fluent-ffmpeg");
 const log = require("./logger.js").log;
 
-function extractAndEditAudio(data, title /* description */) {
+function extractAndEditAudio(ytStream, title /* description */) {
+  let description = "";
+  ytStream.on("info", info => {
+    description = info.description;
+  })
   return (
-    ffmpeg(data)
+    ffmpeg(ytStream)
       //noise removal
       //detect general audio level to cut silence
       //note that questioneers mic sound can be lower than the ministers
@@ -24,7 +28,7 @@ function extractAndEditAudio(data, title /* description */) {
 
       .on("progress", progress => log.info(JSON.stringify(progress)))
       //.save('earwaxIstung2.mp3');
-      //.outputOption(`-metadata title=${description}`) 
+      .outputOption(`-metadata title=${description}`) 
       .save("./storedAudio/" + title + ".mp3")
   );
   //.save('loudnormIstung2.mp3');
