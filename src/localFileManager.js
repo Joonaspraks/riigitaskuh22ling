@@ -43,12 +43,16 @@ function createRSS() {
     feed.item({
       title: file,
       description: "ADD CORRECT DESCRIPTION",
+/*       ffmetadata.read("song.mp3", function(err, data) {
+        if (err) console.error("Error reading metadata", err);
+        else console.log(JSON.stringify(data));
+    }); */
       guid: file,
-      url: siteUrl + "/?file=" + (index+1)
-/*       enclosure: {
+      url: siteUrl + "/?file=" + (index+1),
+      enclosure: {
         url: siteUrl + "/?file=" + (index+1),
         file: contentDir + file
-      } */
+      }
     });
   });
 

@@ -20,19 +20,17 @@ function downloadAudio(id, title) {
   log.info("Downloading audio for " + title);
   let description = "";
 
-  soundFixer
-    .extractAndEditAudio(
-      ytdl(id).on("info", info => {
-        description = info.description;
-      }),
-      title,
-      description
-    )
-    .on("end", () => {
-      podBeanAPI.startUploading(title, description, currentCredentials);
+  ytdl(id)
+    .on("info", info => {
+      description = info.description;
+    })
+    .on("end", file => {
+      soundFixer.extractAndEditAudio(file, title, description).on("end", () => {
+        // podBeanAPI.startUploading(title, description, currentCredentials);
 
-      localFileManager.removeOldContent();
-      localFileManager.createRSS();
+        localFileManager.removeOldContent();
+        localFileManager.createRSS();
+      });
     });
 }
 
