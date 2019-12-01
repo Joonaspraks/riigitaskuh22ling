@@ -25,7 +25,7 @@ function extractAndEditAudio(readableStream, title /* description */) {
       ) //what dB constitutes a 'silence'
 
       .on("progress", progress => log.info(JSON.stringify(progress)))
-      .or("error", error => log.error(error))
+      .on("error", error => log.error(error))
       //.save('earwaxIstung2.mp3');
       //.outputOption(`-metadata title=${description}`) 
       .save("./storedAudio/" + title + ".mp3")
