@@ -7,7 +7,7 @@ function extractAndEditAudio(ytStream, title /* description */) {
     .on("info", info => {
       description = info.description;
     })
-    .end(() => {
+    .on("end", () => {
       return (
         ffmpeg(ytStream)
           //noise removal
