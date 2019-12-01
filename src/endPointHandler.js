@@ -25,16 +25,22 @@ function downloadAudio(id, title) {
       description = info.description;
     })
     .on("data", chunk => {
-      data += chunk;
+      // data += chunk;
+      soundFixer.extractAndEditAudio(chunk, title, description).on("end", () => {
+        // podBeanAPI.startUploading(title, description, currentCredentials);
+
+        localFileManager.removeOldContent();
+        localFileManager.createRSS();
+      });
     })
-    .on("end", () => {
+/*     .on("end", () => {
       soundFixer.extractAndEditAudio(data, title, description).on("end", () => {
         // podBeanAPI.startUploading(title, description, currentCredentials);
 
         localFileManager.removeOldContent();
         localFileManager.createRSS();
       });
-    });
+    }) */;
 }
 
 function parse(request, response) {
