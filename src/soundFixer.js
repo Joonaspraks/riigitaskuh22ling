@@ -1,9 +1,9 @@
 const ffmpeg = require("fluent-ffmpeg");
 const log = require("./logger.js").log;
 
-function extractAndEditAudio(file, title, description) {
+function extractAndEditAudio(data, title, description) {
   return (
-    ffmpeg(file)
+    ffmpeg(data)
       //noise removal
       //detect general audio level to cut silence
       //note that questioneers mic sound can be lower than the ministers

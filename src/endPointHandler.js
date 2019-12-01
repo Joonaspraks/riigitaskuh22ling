@@ -19,13 +19,16 @@ let currentCredentials = "";
 function downloadAudio(id, title) {
   log.info("Downloading audio for " + title);
   let description = "";
-
+  let data = "";
   ytdl(id)
     .on("info", info => {
       description = info.description;
     })
-    .on("end", file => {
-      soundFixer.extractAndEditAudio(file, title, description).on("end", () => {
+    .on("data", chunk => {
+      data += chunk;
+    })
+    .on("end", () => {
+      soundFixer.extractAndEditAudio(data, title, description).on("end", () => {
         // podBeanAPI.startUploading(title, description, currentCredentials);
 
         localFileManager.removeOldContent();
