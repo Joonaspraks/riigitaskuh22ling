@@ -51,7 +51,7 @@ function downloadAudio(id, title) {
   log.info("Downloading audio for " + title);
 
   soundFixer.extractAndEditAudio(ytdl(id), title).on("end", () => {
-    // podBeanAPI.startUploading(title, currentCredentials);
+    podBeanAPI.startUploading(title, currentCredentials);
     localFileManager.removeOldContent();
     localFileManager.createRSS();
   });
@@ -178,6 +178,8 @@ function parse(request, response) {
           log.info("Video title: " + title);
           downloadAudio(id, title);
         }
+        // When should this header be sent? Immediately after link has been fetched? Depends on how often the notifications are sent.
+        // Should anything happen then it can be a good thing if another notification is sent
         // Stops the notifications for current item
         response.writeHead("200");
         response.end();

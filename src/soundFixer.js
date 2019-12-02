@@ -3,6 +3,7 @@ const log = require("./logger.js").log;
 const fs = require("fs");
 
 function extractAndEditAudio(readableStream, title /* description */) {
+  // create new file immediately to discourage double file creation
   // fs.writeFile("./storedAudio/" + title + ".mp3", '', ()=>{});
   return (
     ffmpeg(readableStream)
