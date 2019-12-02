@@ -3,7 +3,7 @@ const log = require("./logger.js").log;
 const fs = require("fs");
 
 function extractAndEditAudio(readableStream, title /* description */) {
-  fs.writeFile("./storedAudio/" + title + ".mp3", '', ()=>{});
+  // fs.writeFile("./storedAudio/" + title + ".mp3", '', ()=>{});
   return (
     ffmpeg(readableStream)
       //noise removal
