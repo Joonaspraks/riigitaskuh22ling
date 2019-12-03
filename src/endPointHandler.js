@@ -17,7 +17,7 @@ const challenge = "hub.challenge";
 let currentCredentials = "";
 
 //Refactor to somewhere else
-/* function downloadAudio(id, title) {
+function downloadAudio(id, title) {
   log.info("Downloading audio for " + title);
   let description = "";
   let data = "";
@@ -45,9 +45,9 @@ let currentCredentials = "";
           localFileManager.createRSS();
         });
     });
-} */
+}
 
-function downloadAudio(id, title) {
+/* function downloadAudio(id, title) {
   log.info("Downloading audio for " + title);
 
   soundFixer.extractAndEditAudio(ytdl(id), title).on("end", () => {
@@ -55,7 +55,7 @@ function downloadAudio(id, title) {
     localFileManager.removeOldContent();
     localFileManager.createRSS();
   });
-}
+} */
 
 function parse(request, response) {
   const method = request.method;
