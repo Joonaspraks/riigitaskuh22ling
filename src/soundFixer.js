@@ -5,9 +5,10 @@ const fs = require("fs");
 function extractAndEditAudio(readableStream, title /* description */) {
   // create new file immediately to discourage double file creation
   // fs.writeFile("./storedAudio/" + title + ".mp3", '', ()=>{});
-  const file = fs.createWriteStream("./storedAudio/" + title + ".mp3");
+  const writableStream = fs.createWriteStream("./storedAudio/" + title + ".mp3");
   return (
     ffmpeg(readableStream)
+      .format("mp3") //ffmpeg cant determine format from a stream
       //noise removal
       //detect general audio level to cut silence
       //note that questioneers mic sound can be lower than the ministers
@@ -29,9 +30,9 @@ function extractAndEditAudio(readableStream, title /* description */) {
       .on("progress", progress => log.info(JSON.stringify(progress)))
       .on("error", error => log.error(error))
       //.save('earwaxIstung2.mp3');
-      //.outputOption(`-metadata title=${description}`) 
-      .save(file)
-      //Does ^this also end the stream?
+      //.outputOption(`-metadata title=${description}`)
+      .save(writableStream)
+    //Does ^this also end the stream?
   );
   //.save('loudnormIstung2.mp3');
 }
