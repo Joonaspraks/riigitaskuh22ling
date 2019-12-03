@@ -176,13 +176,14 @@ function parse(request, response) {
           var id = entry["yt:videoId"][0];
 
           log.info("Video title: " + title);
+          // When should this header be sent? Immediately after link has been fetched? Depends on how often the notifications are sent.
+          // Should anything happen then it can be a good thing if another notification is sent
+          // I'll assume that if a notification was received then it can be discarded
+          // Stops the notifications for current item
+          response.writeHead("200");
+          response.end();
           downloadAudio(id, title);
         }
-        // When should this header be sent? Immediately after link has been fetched? Depends on how often the notifications are sent.
-        // Should anything happen then it can be a good thing if another notification is sent
-        // Stops the notifications for current item
-        response.writeHead("200");
-        response.end();
       });
     });
   }
