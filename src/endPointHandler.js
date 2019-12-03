@@ -24,7 +24,7 @@ let currentCredentials = "";
 
   const bufferStream = new stream.PassThrough();
 
-  ytdl(id)
+  ytdl(id) //pipes?
     .on("info", info => {
       description = info.description;
     })

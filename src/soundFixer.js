@@ -5,6 +5,7 @@ const fs = require("fs");
 function extractAndEditAudio(readableStream, title /* description */) {
   // create new file immediately to discourage double file creation
   // fs.writeFile("./storedAudio/" + title + ".mp3", '', ()=>{});
+  const file = fs.createWriteStream("./storedAudio/" + title + ".mp3");
   return (
     ffmpeg(readableStream)
       //noise removal
@@ -29,7 +30,8 @@ function extractAndEditAudio(readableStream, title /* description */) {
       .on("error", error => log.error(error))
       //.save('earwaxIstung2.mp3');
       //.outputOption(`-metadata title=${description}`) 
-      .save("./storedAudio/" + title + ".mp3")
+      .save(file)
+      //Does ^this also end the stream?
   );
   //.save('loudnormIstung2.mp3');
 }
