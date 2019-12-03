@@ -5,7 +5,7 @@ const fs = require("fs");
 const subscriber = require("./subscriber.js");
 const endPointHandler = require("./endPointHandler.js");
 
-console.log("Service has started.")
+console.log("Service has started.");
 
 subscriber.renewSubscriptions();
 
@@ -20,10 +20,10 @@ https
   })
   .listen(process.env.PORT || 443);
 
-http.createServer(function(req, res){
+// todo add back after desciption branch merge
+/* http.createServer(function(req, res){
     res.writeHead(301, {
       'Content-Type': 'text/plain', 
       'Location':'https://'+req.headers.host+req.url});
     res.end('Redirecting to SSL\n');
- }).listen(80);
- 
+ }).listen(80); */
