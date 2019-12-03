@@ -51,7 +51,7 @@ function downloadAudio(id, title) {
   log.info("Downloading audio for " + title);
 
   soundFixer.extractAndEditAudio(ytdl(id), title).on("end", () => {
-    podBeanAPI.startUploading(title, currentCredentials);
+    podBeanAPI.startUploading(title, "ADD DESCRIPTION", currentCredentials);
     localFileManager.removeOldContent();
     localFileManager.createRSS();
   });
