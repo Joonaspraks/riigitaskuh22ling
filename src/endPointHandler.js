@@ -17,14 +17,17 @@ const challenge = "hub.challenge";
 let currentCredentials = "";
 
 //Refactor to somewhere else
-function downloadAudio(id, title) {
+/*function downloadAudio(id, title) {
   log.info("Downloading audio for " + title);
   let description = "";
   let data = "";
 
   const bufferStream = new stream.PassThrough();
 
-  ytdl(id) //pipes?
+  // ytdl.getBasicInfo(url, [options], [callback(err, info)])
+  // ^to fetch description.
+  // after that just use the old downloadAudio method.
+   ytdl(id) //pipes?
     .on("info", info => {
       description = info.description;
     })
@@ -46,16 +49,21 @@ function downloadAudio(id, title) {
         });
     });
 }
-
-/* function downloadAudio(id, title) {
+ */
+function downloadAudio(id, title) {
   log.info("Downloading audio for " + title);
 
-  soundFixer.extractAndEditAudio(ytdl(id), title).on("end", () => {
-    podBeanAPI.startUploading(title, "ADD DESCRIPTION", currentCredentials);
-    localFileManager.removeOldContent();
-    localFileManager.createRSS();
+  ytdl.getBasicInfo(id, (err, info) =>{
+    if (err) log.error(err);
+    else {
+      soundFixer.extractAndEditAudio(ytdl(id), info.description).on("end", () => {
+      podBeanAPI.startUploading(title, info.description, currentCredentials);
+      localFileManager.removeOldContent();
+      localFileManager.createRSS();
+    });
+  }
   });
-} */
+}
 
 function parse(request, response) {
   const method = request.method;
