@@ -2,7 +2,7 @@ const ffmpeg = require("fluent-ffmpeg");
 const log = require("./logger.js").log;
 const fs = require("fs");
 
-function extractAndEditAudio(readableStream, title /* description */) {
+function extractAndEditAudio(readableStream, title, description) {
   // create new file immediately to discourage double file creation
   // fs.writeFile("./storedAudio/" + title + ".mp3", '', ()=>{});
   const writableStream = fs.createWriteStream("./storedAudio/" + title + ".mp3");
@@ -30,7 +30,7 @@ function extractAndEditAudio(readableStream, title /* description */) {
       .on("progress", progress => log.info(JSON.stringify(progress)))
       .on("error", error => log.error(error))
       //.save('earwaxIstung2.mp3');
-      //.outputOption(`-metadata title=${description}`)
+      .outputOption(`-metadata title=${description}`)
       .save(writableStream)
     //Does ^this also end the stream?
   );

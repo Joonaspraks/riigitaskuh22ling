@@ -53,15 +53,21 @@ let currentCredentials = "";
 function downloadAudio(id, title) {
   log.info("Downloading audio for " + title);
 
-  ytdl.getBasicInfo(id, (err, info) =>{
+  ytdl.getBasicInfo(id, (err, info) => {
     if (err) log.error(err);
     else {
-      soundFixer.extractAndEditAudio(ytdl(id), info.description).on("end", () => {
-      podBeanAPI.startUploading(title, info.description, currentCredentials);
-      localFileManager.removeOldContent();
-      localFileManager.createRSS();
-    });
-  }
+      soundFixer
+        .extractAndEditAudio(ytdl(id), title, info.description)
+        .on("end", () => {
+          podBeanAPI.startUploading(
+            title,
+            info.description,
+            currentCredentials
+          );
+          localFileManager.removeOldContent();
+          localFileManager.createRSS();
+        });
+    }
   });
 }
 
