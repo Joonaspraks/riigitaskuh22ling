@@ -17,7 +17,7 @@ const challenge = "hub.challenge";
 let currentCredentials = "";
 
 //Refactor to somewhere else
-function downloadAudio(id, title) {
+/*function downloadAudio(id, title) {
   log.info("Downloading audio for " + title);
   let description = "";
   let data = "";
@@ -27,7 +27,9 @@ function downloadAudio(id, title) {
   // ytdl.getBasicInfo(url, [options], [callback(err, info)])
   // ^to fetch description.
   // after that just use the old downloadAudio method.
-/*   ytdl(id) //pipes?
+   ytdl(id) //pipes?
+
+   ytdl(id) //pipes?
     .on("info", info => {
       description = info.description;
     })
