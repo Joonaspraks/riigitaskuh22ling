@@ -28,6 +28,8 @@ let currentCredentials = "";
   // ^to fetch description.
   // after that just use the old downloadAudio method.
    ytdl(id) //pipes?
+
+   ytdl(id) //pipes?
     .on("info", info => {
       description = info.description;
     })
