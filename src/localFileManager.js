@@ -1,11 +1,12 @@
 const RSS = require("rss");
 const fs = require("fs");
+var Metadata = require("fluent-ffmpeg").Metadata;
 
 const siteUrl = "https://www.riigipodcast.ee";
 const contentDir = "./storedAudio/";
+const extension = ".mp3";
 
 function checkIfFileIsNew(newFileName) {
-  const extension = ".mp3";
   return (
     fs
       .readdirSync(contentDir)
@@ -39,18 +40,20 @@ function createRSS() {
   /* loop over data and add to feed */
   const files = getFilesSortedByDate();
   files.forEach((file, index) => {
-    
+    new Metadata(contentDir + file + extension, function(metadata, err) {
+      console.log(require("util").inspect(metadata, false, null));
+    });
     feed.item({
       title: file,
       description: "ADD CORRECT DESCRIPTION",
-/*       ffmetadata.read("song.mp3", function(err, data) {
+      /*       ffmetadata.read("song.mp3", function(err, data) {
         if (err) console.error("Error reading metadata", err);
         else console.log(JSON.stringify(data));
     }); */
       guid: file,
-      url: siteUrl + "/?file=" + (index+1),
+      url: siteUrl + "/?file=" + (index + 1),
       enclosure: {
-        url: siteUrl + "/?file=" + (index+1),
+        url: siteUrl + "/?file=" + (index + 1),
         file: contentDir + file
       }
     });
@@ -70,7 +73,9 @@ function getFilesSortedByDate() {
       };
     })
     .sort((file1, file2) => file2.time - file1.time)
-    .map(file => {return file.name});
+    .map(file => {
+      return file.name;
+    });
 }
 
 module.exports = {
