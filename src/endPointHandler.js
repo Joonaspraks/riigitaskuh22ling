@@ -4,7 +4,7 @@ const ytdl = require("ytdl-core");
 const fs = require("fs");
 const stream = require("stream");
 
-const log = require("./logger.js").log;
+const log = require("./logger.js");
 const podBeanAPI = require("./podBeanAPI.js");
 const localFileManager = require("./localFileManager.js");
 const soundFixer = require("./soundFixer.js");
@@ -69,7 +69,7 @@ function parse(request, response) {
     requestUrl.includes("https://www.youtube.com/xml/feeds/")
   ) {
     const parsedUrl = url.parse(requestUrl, true);
-    log.info("Websub  request from " + parsedUrl.query[topic]);
+    log.info("Websub request from " + parsedUrl.query[topic]);
     var challengeCode = url.parse(requestUrl, true).query[challenge];
 
     if (challengeCode) {
@@ -79,7 +79,7 @@ function parse(request, response) {
     }
   }
 
-  if (method === "GET" && requestUrl == "/") {
+  if (method === "GET" && requestUrl == config.homeEndpoint) {
     //localFileManager.populateSiteWithFiles(); actually use id to inject body with list
     // const html; // get file with fs
     const fileNames = localFileManager.getFilesSortedByDate();
@@ -108,7 +108,7 @@ function parse(request, response) {
     response.end();
   }
 
-  if (method === "GET" && requestUrl === "/feed") {
+  if (method === "GET" && requestUrl === config.feedEndpoint) {
     const result = localFileManager.createRSS();
 
     response.writeHead(200, {
@@ -122,9 +122,9 @@ function parse(request, response) {
   /*
       if endpoint get + filename, lookup and return file
     */
-  if (method === "GET" && requestUrl.includes("?file")) {
+  if (method === "GET" && requestUrl.includes(config.fileResource)) {
     const requestedFileNum = parseInt(
-      url.parse(requestUrl, true).query["file"]
+      url.parse(requestUrl, true).query[config.fileResource]
     );
     if (
       !isNaN(requestedFileNum) &&
@@ -137,7 +137,7 @@ function parse(request, response) {
         //replace with const
         const fileName = fileNames[requestedFileNum - 1];
 
-        var filePath = "./storedAudio/" + fileName; //replace dir with const
+        var filePath = config.storageDir + fileName; //replace dir with const
         var stat = fs.statSync(filePath);
 
         response.writeHead(200, {

@@ -1,7 +1,7 @@
 const https = require("https");
 const http = require("http");
-const fs = require("fs");
 
+const config = require("./config.js");
 const subscriber = require("./subscriber.js");
 const endPointHandler = require("./endPointHandler.js");
 
@@ -9,10 +9,7 @@ console.log("Service has started.")
 
 subscriber.renewSubscriptions();
 
-const options = {
-  key: fs.readFileSync("/etc/letsencrypt/live/riigipodcast.ee/privkey.pem"),
-  cert: fs.readFileSync("/etc/letsencrypt/live/riigipodcast.ee/fullchain.pem")
-};
+const options = config.SSLCert;
 
 https
   .createServer(options, function(request, response) {
@@ -20,7 +17,7 @@ https
   })
   .listen(process.env.PORT || 443);
 
-http.createServer(function(req, res){
+config.useReroute && http.createServer(function(req, res){
     res.writeHead(301, {
       'Content-Type': 'text/plain', 
       'Location':'https://'+req.headers.host+req.url});

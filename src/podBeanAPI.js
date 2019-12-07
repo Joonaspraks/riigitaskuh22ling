@@ -1,14 +1,12 @@
 const superagent = require("superagent");
 const fs = require("fs");
 
-const log = require("./logger.js").log;
+const log = require("./logger.js");
+const config = require("./config.js");
 
 let content = "";
 let mediaKey = "";
 let accessToken = "";
-
-const extension = ".mp3";
-const storageDir = "./storedAudio/";
 
 function startUploading(fileName, description, credentials) {
   content = description;
@@ -35,12 +33,12 @@ function getPodBeanAccessToken(fileName, credentials) {
 }
 
 function authorizeUpload(fileName) {
-  var fileSize = fs.statSync(storageDir + fileName + extension).size;
+  var fileSize = fs.statSync(config.storageDir + fileName + config.extension).size;
   superagent
     .get("https://api.podbean.com/v1/files/uploadAuthorize")
     .query({
       access_token: accessToken,
-      filename: fileName + extension,
+      filename: fileName + config.extension,
       filesize: fileSize,
       content_type: "audio/mpeg"
     })
@@ -59,19 +57,19 @@ function uploadPodcast(url, fileName) {
   superagent
     .put(url)
     .type("audio/mpeg")
-    .attach(fileName, fs.readFileSync(storageDir + fileName + extension))
+    .attach(fileName, fs.readFileSync(config.storageDir + fileName + config.extension))
     .end((err, res) => {
       if (err) {
         log.error(err);
       } else {
         log.info("Succesfully uploaded");
-        publishPodcast(fileName);
+        config.publish && publishPodcast(fileName);
       }
     });
 }
 
 function publishPodcast(fileName) {
-  fileName + extension;
+  fileName + config.extension;
   superagent
     .post("https://api.podbean.com/v1/episodes")
     .send({
