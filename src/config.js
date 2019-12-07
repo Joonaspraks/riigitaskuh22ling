@@ -9,10 +9,10 @@ config =
         feedEndpoint: "/testFeed",
         fileResource: "testFile",
         homeEndpoint: "/test",
-        loggerDir: ".logs/devLogs",
+        loggerDir: "./logs/devLogs",
         port: 8080,
         publish: false,
-        storageDir: ".audioStorage/devAudio",
+        storageDir: "./audioStorage/devAudio",
         useReroute: false,
         youTubeChannels: ["UCl2a12GbW8e9itYOJDyjNoA"] // Joonas Praks
       }
@@ -20,10 +20,10 @@ config =
         feedEndpoint: "/feed",
         fileResource: "file",
         homeEndpoint: "/",
-        loggerDir: ".logs/productionLogs",
+        loggerDir: "./logs/productionLogs",
         port: 443,
         publish: true,
-        storageDir: ".audioStorage/productionAudio",
+        storageDir: "./audioStorage/productionAudio",
         useReroute: true,
         youTubeChannels: ["ValitsuseUudised", "UCS1xJUQbauo60LJCEbiiJvg"] // valitsus, Riigikogu
       };
