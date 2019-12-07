@@ -6,7 +6,7 @@ const config = require("./config.js");
 const siteUrl = "https://www.riigipodcast.ee";
 
 function checkIfFileIsNew(newFileName) {
-  const extension = ".mp3";
+  const extension = config.extension;
   return (
     fs
       .readdirSync(config.storageDir)
@@ -33,7 +33,7 @@ function createRSS() {
     title: "Riigi Podcast",
     description:
       "Eesti Vabariigi parlamendi istungid ning valitsuse pressikonverentsid YouTube'ist",
-    feed_url: siteUrl + "/feed",
+    feed_url: siteUrl + config.fileResource,
     site_url: siteUrl
   });
 
