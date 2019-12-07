@@ -4,7 +4,6 @@ const fs = require("fs");
 const config = require("./config.js");
 
 const siteUrl = "https://www.riigipodcast.ee";
-const contentDir = "./storedAudio/";
 
 function checkIfFileIsNew(newFileName) {
   const extension = ".mp3";
