@@ -23,7 +23,7 @@ config =
         loggerDir: "./logs/productionLogs/",
         port: 443,
         publish: true,
-        SSLCert = {
+        SSLCert: {
             key: fs.readFileSync("/etc/letsencrypt/live/riigipodcast.ee/privkey.pem"),
             cert: fs.readFileSync("/etc/letsencrypt/live/riigipodcast.ee/fullchain.pem")
           },
