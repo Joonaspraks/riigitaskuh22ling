@@ -48,9 +48,9 @@ function createRSS() {
         else console.log(JSON.stringify(data));
     }); */
       guid: file,
-      url: siteUrl + config.homeEndpoint + "?file=" + (index + 1),
+      url: siteUrl + config.homeEndpoint + "/?file=" + (index + 1),
       enclosure: {
-        url: siteUrl + config.homeEndpoint + "?file=" + (index + 1),
+        url: siteUrl + config.homeEndpoint + "/?file=" + (index + 1),
         file: config.storageDir + file
       }
     });
