@@ -6,7 +6,6 @@ let config;
 config =
   env === "dev"
     ? {
-        feedEndpoint: "/testFeed",
         homeEndpoint: "/test",
         loggerDir: "./logs/devLogs/",
         port: 8080,
@@ -16,7 +15,6 @@ config =
         youTubeChannels: ["UCl2a12GbW8e9itYOJDyjNoA"] // Joonas Praks
       }
     : {
-        feedEndpoint: "/feed",
         homeEndpoint: "/",
         loggerDir: "./logs/productionLogs/",
         port: 443,
