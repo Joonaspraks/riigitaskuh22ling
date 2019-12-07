@@ -2,15 +2,12 @@ const parseString = require("xml2js").parseString;
 const url = require("url");
 const ytdl = require("ytdl-core");
 const fs = require("fs");
-const stream = require("stream");
 
 const log = require("./logger.js");
 const podBeanAPI = require("./podBeanAPI.js");
 const localFileManager = require("./localFileManager.js");
 const soundFixer = require("./soundFixer.js");
 
-const podBeanCredentials = require("./constants/podBeanCredentials.json");
-const youTubechannels = require("./constants/youTubeChannels.json");
 const topic = "hub.topic";
 const challenge = "hub.challenge";
 
@@ -168,8 +165,8 @@ function parse(request, response) {
 
         var channelId = entry["yt:channelId"][0];
 
-        if (youTubechannels.includes(channelId)) {
-          currentCredentials = podBeanCredentials;
+        if (config.youTubeChannels.includes(channelId)) {
+          currentCredentials = config.podbeanCredentials;
           log.info("Notification from channel " + channelId);
         }
         if (currentCredentials !== "") {
