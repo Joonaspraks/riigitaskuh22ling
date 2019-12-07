@@ -5,22 +5,30 @@ const config = require("./config.js");
 const subscriber = require("./subscriber.js");
 const endPointHandler = require("./endPointHandler.js");
 
-console.log("Service has started.")
+console.log("Service has started.");
 
 subscriber.renewSubscriptions();
 
-const options = config.SSLCert;
+if ((process.env.NODE_ENV = "dev")) {
+  http
+    .createServer(function(request, response) {
+      endPointHandler.parse(request, response);
+    })
+    .listen(config.port);
+} else {
+  https
+    .createServer(config.SSLCert, function(request, response) {
+      endPointHandler.parse(request, response);
+    })
+    .listen(config.port);
 
-https
-  .createServer(options, function(request, response) {
-    endPointHandler.parse(request, response);
-  })
-  .listen(config.port);
-
-config.useReroute && http.createServer(function(req, res){
-    res.writeHead(301, {
-      'Content-Type': 'text/plain', 
-      'Location':'https://'+req.headers.host+req.url});
-    res.end('Redirecting to SSL\n');
- }).listen(80);
- 
+  http
+    .createServer(function(req, res) {
+      res.writeHead(301, {
+        "Content-Type": "text/plain",
+        Location: "https://" + req.headers.host + req.url
+      });
+      res.end("Redirecting to SSL\n");
+    })
+    .listen(80);
+}

@@ -23,15 +23,15 @@ config =
         loggerDir: "./logs/productionLogs/",
         port: 443,
         publish: true,
+        SSLCert = {
+            key: fs.readFileSync("/etc/letsencrypt/live/riigipodcast.ee/privkey.pem"),
+            cert: fs.readFileSync("/etc/letsencrypt/live/riigipodcast.ee/fullchain.pem")
+          },
         storageDir: "./audioStorage/productionAudio/",
         useReroute: true,
         youTubeChannels: ["ValitsuseUudised", "UCS1xJUQbauo60LJCEbiiJvg"] // valitsus, Riigikogu
       };
 
-config.SSLCert = {
-  key: fs.readFileSync("/etc/letsencrypt/live/riigipodcast.ee/privkey.pem"),
-  cert: fs.readFileSync("/etc/letsencrypt/live/riigipodcast.ee/fullchain.pem")
-};
 config.extension = ".mp3";
 config.podbeanCredentials = {
   // riigiPodcast.podbean
