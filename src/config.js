@@ -7,7 +7,6 @@ config =
   env === "dev"
     ? {
         feedEndpoint: "/testFeed",
-        fileResource: "testFile",
         homeEndpoint: "/test",
         loggerDir: "./logs/devLogs/",
         port: 8080,
@@ -18,7 +17,6 @@ config =
       }
     : {
         feedEndpoint: "/feed",
-        fileResource: "file",
         homeEndpoint: "/",
         loggerDir: "./logs/productionLogs/",
         port: 443,

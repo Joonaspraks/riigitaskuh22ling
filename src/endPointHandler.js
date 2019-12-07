@@ -93,7 +93,9 @@ function parse(request, response) {
           .map((name, index) => {
             return (
               "<li>" +
-              "<a href='"+config.homeEndpoint+`?file=${index + 1}'>` +
+              "<a href='" +
+              config.homeEndpoint +
+              `?file=${index + 1}'>` +
               `<h3>${name}</h3>` +
               "</a>" +
               "</li>"
@@ -120,9 +122,9 @@ function parse(request, response) {
   /*
       if endpoint get + filename, lookup and return file
     */
-  if (method === "GET" && requestUrl.includes(config.fileResource)) {
+  if (method === "GET" && requestUrl.includes(config.homeEndpoint+"/?file")) {
     const requestedFileNum = parseInt(
-      url.parse(requestUrl, true).query[config.fileResource]
+      url.parse(requestUrl, true).query["file"]
     );
     if (
       !isNaN(requestedFileNum) &&
