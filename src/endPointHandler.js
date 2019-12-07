@@ -93,7 +93,7 @@ function parse(request, response) {
           .map((name, index) => {
             return (
               "<li>" +
-              `<a href='?file=${index + 1}'>` +
+              "<a href='"+config.homeEndpoint+`?file=${index + 1}'>` +
               `<h3>${name}</h3>` +
               "</a>" +
               "</li>"
