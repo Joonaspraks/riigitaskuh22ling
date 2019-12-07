@@ -33,7 +33,8 @@ function getPodBeanAccessToken(fileName, credentials) {
 }
 
 function authorizeUpload(fileName) {
-  var fileSize = fs.statSync(config.storageDir + fileName + config.extension).size;
+  var fileSize = fs.statSync(config.storageDir + fileName + config.extension)
+    .size;
   superagent
     .get("https://api.podbean.com/v1/files/uploadAuthorize")
     .query({
@@ -57,13 +58,16 @@ function uploadPodcast(url, fileName) {
   superagent
     .put(url)
     .type("audio/mpeg")
-    .attach(fileName, fs.readFileSync(config.storageDir + fileName + config.extension))
+    .attach(
+      fileName,
+      fs.readFileSync(config.storageDir + fileName + config.extension)
+    )
     .end((err, res) => {
       if (err) {
         log.error(err);
       } else {
         log.info("Succesfully uploaded");
-        config.publish && publishPodcast(fileName);
+        publishPodcast(fileName);
       }
     });
 }
@@ -77,7 +81,7 @@ function publishPodcast(fileName) {
       type: "public",
       title: fileName,
       content: content,
-      status: "publish",
+      status: config.publish ? "publish" : "draft",
       media_key: mediaKey
     })
     .type("application/x-www-form-urlencoded")
@@ -89,9 +93,5 @@ function publishPodcast(fileName) {
       }
     });
 }
-
-function checkSpace() {}
-
-function deleteEarliest() {}
 
 module.exports = { startUploading: startUploading };
