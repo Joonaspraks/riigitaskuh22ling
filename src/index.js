@@ -15,7 +15,7 @@ https
   .createServer(options, function(request, response) {
     endPointHandler.parse(request, response);
   })
-  .listen(process.env.PORT || 443);
+  .listen(config.port);
 
 config.useReroute && http.createServer(function(req, res){
     res.writeHead(301, {
