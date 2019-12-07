@@ -3,6 +3,7 @@ const url = require("url");
 const ytdl = require("ytdl-core");
 const fs = require("fs");
 
+const config = require("./config.js");
 const log = require("./logger.js");
 const podBeanAPI = require("./podBeanAPI.js");
 const localFileManager = require("./localFileManager.js");
