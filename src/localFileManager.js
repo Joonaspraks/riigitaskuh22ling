@@ -3,7 +3,7 @@ const fs = require("fs");
 
 const config = require("./config.js");
 
-const siteUrl = "https://www.riigipodcast.ee";
+const siteUrl = "https://www.riigipodcast.ee" + config.homeEndpoint;
 
 function checkIfFileIsNew(newFileName) {
   const extension = config.extension;
@@ -33,25 +33,24 @@ function createRSS() {
     title: "Riigi Podcast",
     description:
       "Eesti Vabariigi parlamendi istungid ning valitsuse pressikonverentsid YouTube'ist",
-    feed_url: siteUrl + config.fileResource,
+    feed_url: siteUrl + config.feedResource,
     site_url: siteUrl
   });
 
   /* loop over data and add to feed */
   const files = getFilesSortedByDate();
   files.forEach((file, index) => {
-    
     feed.item({
       title: file,
       description: "ADD CORRECT DESCRIPTION",
-/*       ffmetadata.read("song.mp3", function(err, data) {
+      /*       ffmetadata.read("song.mp3", function(err, data) {
         if (err) console.error("Error reading metadata", err);
         else console.log(JSON.stringify(data));
     }); */
       guid: file,
-      url: siteUrl + "/?"+config.fileResource+"=" + (index+1),
+      url: siteUrl + config.homeEndpoint + "?file=" + (index + 1),
       enclosure: {
-        url: siteUrl + "/?"+config.fileResource+"=" + (index+1),
+        url: siteUrl + config.homeEndpoint + "?file=" + (index + 1),
         file: config.storageDir + file
       }
     });
@@ -71,7 +70,9 @@ function getFilesSortedByDate() {
       };
     })
     .sort((file1, file2) => file2.time - file1.time)
-    .map(file => {return file.name});
+    .map(file => {
+      return file.name;
+    });
 }
 
 module.exports = {
