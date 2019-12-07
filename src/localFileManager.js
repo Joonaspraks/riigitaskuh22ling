@@ -4,7 +4,7 @@ const fs = require("fs");
 const config = require("./config.js");
 
 const siteUrl =
-  "https://www.riigipodcast.ee" + config.port + config.homeEndpoint;
+  "https://www.riigipodcast.ee:" + config.port + config.homeEndpoint;
 
 function checkIfFileIsNew(newFileName) {
   const extension = config.extension;
