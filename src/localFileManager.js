@@ -8,13 +8,12 @@ const siteUrl =
   "www.riigipodcast.ee:" + config.port + "/";
 
 function checkIfFileIsNew(newFileName) {
-  const extension = config.extension;
   return (
     fs
       .readdirSync(config.storageDir)
       .filter(
         oldFileName =>
-          oldFileName.substring(0, oldFileName.length - extension.length) ===
+          oldFileName.substring(0, oldFileName.length - config.extension.length) ===
           newFileName
       ) === 0
   );
@@ -42,7 +41,7 @@ function createRSS() {
   /* loop over data and add to feed */
   const files = getFilesSortedByDate();
   files.forEach((file, index) => {
-    new Metadata(contentDir + file + extension, function(metadata, err) {
+    new Metadata(config.storageDir + file + config.extension, function(metadata, err) {
       console.log(require("util").inspect(metadata, false, null));
     });
     feed.item({
