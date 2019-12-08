@@ -65,7 +65,6 @@ function downloadAudio(id, title) {
             currentCredentials
           );
           localFileManager.removeOldContent();
-          localFileManager.createRSS();
         });
     }
   });
