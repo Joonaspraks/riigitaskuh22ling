@@ -12,7 +12,7 @@ function extractAndEditAudio(readableStream, title, description) {
   );
   return (
     ffmpeg(readableStream)
-      .inputOption(`-metadata title=${description}`)
+      .inputOption(`-metadata title="${description}"`)
       .format("mp3") //ffmpeg cant determine format from a stream
       //noise removal
       //detect general audio level to cut silence
