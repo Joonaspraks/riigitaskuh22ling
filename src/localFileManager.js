@@ -30,7 +30,7 @@ function removeOldContent() {
   });
 }
 
-function createRSS() {
+async function createRSS() {
   var feed = new RSS({
     title: "Riigi Podcast",
     description:
@@ -41,28 +41,34 @@ function createRSS() {
 
   /* loop over data and add to feed */
   const files = getFilesSortedByDate();
+  const promiseList = [];
   files.forEach((file, index) => {
-    let description;
-    ffprobe(config.storageDir + file, (error, metadata) => {
-      if (error) {
-        log.error(error);
-      } else {
-        description = metadata.format.tags.title;
-      }
-      feed.item({
-        title: file,
-        description,
-        guid: file,
-        url: siteUrl + "?file=" + (index + 1),
-        enclosure: {
-          url: siteUrl + "?file=" + (index + 1),
-          file: config.storageDir + file
-        }
-      });
-    });
+    promiseList.push(
+      new Promise((resolve, reject) => {
+        ffprobe(config.storageDir + file, (error, metadata) => {
+          if (error) {
+            log.error(error);
+          } else {
+            feed.item({
+              title: file,
+              description: metadata.format.tags.title,
+              guid: file,
+              url: siteUrl + "?file=" + (index + 1),
+              enclosure: {
+                url: siteUrl + "?file=" + (index + 1),
+                file: config.storageDir + file
+              }
+            });
+            resolve();
+          }
+        });
+      })
+    );
   });
 
-  return feed.xml();
+  return Promise.all(promiseList).then(() => {
+    return feed.xml();
+  });
 }
 
 function getFilesSortedByDate() {

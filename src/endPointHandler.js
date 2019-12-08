@@ -14,42 +14,6 @@ const challenge = "hub.challenge";
 
 let currentCredentials = "";
 
-//Refactor to somewhere else
-/*function downloadAudio(id, title) {
-  log.info("Downloading audio for " + title);
-  let description = "";
-  let data = "";
-
-  const bufferStream = new stream.PassThrough();
-
-  // ytdl.getBasicInfo(url, [options], [callback(err, info)])
-  // ^to fetch description.
-  // after that just use the old downloadAudio method.
-   ytdl(id) //pipes?
-
-   ytdl(id) //pipes?
-    .on("info", info => {
-      description = info.description;
-    })
-    .on("data", chunk => {
-      data += chunk;
-    })
-    .on("end", () => {
-      soundFixer
-        .extractAndEditAudio(
-          bufferStream.end(new Buffer(data)),
-          title,
-          description
-        )
-        .on("end", () => {
-          // podBeanAPI.startUploading(title, description, currentCredentials);
-
-          localFileManager.removeOldContent();
-          localFileManager.createRSS();
-        });
-    });
-}
- */
 function downloadAudio(id, title) {
   log.info("Downloading audio for " + title);
 
@@ -123,14 +87,15 @@ function parse(request, response) {
   }
 
   if (method === "GET" && requestUrl === "/feed") {
-    const result = localFileManager.createRSS();
-
+    localFileManager.createRSS().then((result)=>{
+      
     response.writeHead(200, {
       "Content-Type": "application/rss+xml"
     });
 
     response.write(result);
     response.end();
+    });
   }
 
   /*
