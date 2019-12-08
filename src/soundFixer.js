@@ -1,11 +1,15 @@
 const ffmpeg = require("fluent-ffmpeg");
-const log = require("./logger.js").log;
 const fs = require("fs");
+
+const log = require("./logger.js");
+const config = require("./config.js");
 
 function extractAndEditAudio(readableStream, title, description) {
   // create new file immediately to discourage double file creation
   // fs.writeFile("./storedAudio/" + title + ".mp3", '', ()=>{});
-  const writableStream = fs.createWriteStream("./storedAudio/" + title + ".mp3");
+  const writableStream = fs.createWriteStream(
+    config.storageDir + title + config.extension
+  );
   return (
     ffmpeg(readableStream)
       .format("mp3") //ffmpeg cant determine format from a stream

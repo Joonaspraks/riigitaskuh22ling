@@ -2,15 +2,13 @@ const parseString = require("xml2js").parseString;
 const url = require("url");
 const ytdl = require("ytdl-core");
 const fs = require("fs");
-const stream = require("stream");
 
-const log = require("./logger.js").log;
+const config = require("./config.js");
+const log = require("./logger.js");
 const podBeanAPI = require("./podBeanAPI.js");
 const localFileManager = require("./localFileManager.js");
 const soundFixer = require("./soundFixer.js");
 
-const podBeanCredentials = require("./constants/podBeanCredentials.json");
-const youTubechannels = require("./constants/youTubeChannels.json");
 const topic = "hub.topic";
 const challenge = "hub.challenge";
 
@@ -85,7 +83,7 @@ function parse(request, response) {
     requestUrl.includes("https://www.youtube.com/xml/feeds/")
   ) {
     const parsedUrl = url.parse(requestUrl, true);
-    log.info("Websub  request from " + parsedUrl.query[topic]);
+    log.info("Websub request from " + parsedUrl.query[topic]);
     var challengeCode = url.parse(requestUrl, true).query[challenge];
 
     if (challengeCode) {
@@ -111,7 +109,8 @@ function parse(request, response) {
           .map((name, index) => {
             return (
               "<li>" +
-              `<a href='?file=${index + 1}'>` +
+              "<a href='" +
+              `/?file=${index + 1}'>` +
               `<h3>${name}</h3>` +
               "</a>" +
               "</li>"
@@ -138,7 +137,7 @@ function parse(request, response) {
   /*
       if endpoint get + filename, lookup and return file
     */
-  if (method === "GET" && requestUrl.includes("?file")) {
+  if (method === "GET" && requestUrl.includes("/?file")) {
     const requestedFileNum = parseInt(
       url.parse(requestUrl, true).query["file"]
     );
@@ -153,7 +152,7 @@ function parse(request, response) {
         //replace with const
         const fileName = fileNames[requestedFileNum - 1];
 
-        var filePath = "./storedAudio/" + fileName; //replace dir with const
+        var filePath = config.storageDir + fileName; //replace dir with const
         var stat = fs.statSync(filePath);
 
         response.writeHead(200, {
@@ -184,8 +183,8 @@ function parse(request, response) {
 
         var channelId = entry["yt:channelId"][0];
 
-        if (youTubechannels.includes(channelId)) {
-          currentCredentials = podBeanCredentials;
+        if (config.youTubeChannels.includes(channelId)) {
+          currentCredentials = config.podbeanCredentials;
           log.info("Notification from channel " + channelId);
         }
         if (currentCredentials !== "") {

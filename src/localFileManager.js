@@ -2,14 +2,16 @@ const RSS = require("rss");
 const fs = require("fs");
 var Metadata = require("fluent-ffmpeg").Metadata;
 
-const siteUrl = "https://www.riigipodcast.ee";
-const contentDir = "./storedAudio/";
-const extension = ".mp3";
+const config = require("./config.js");
+
+const siteUrl =
+  "www.riigipodcast.ee:" + config.port + "/";
 
 function checkIfFileIsNew(newFileName) {
+  const extension = config.extension;
   return (
     fs
-      .readdirSync(contentDir)
+      .readdirSync(config.storageDir)
       .filter(
         oldFileName =>
           oldFileName.substring(0, oldFileName.length - extension.length) ===
@@ -24,7 +26,7 @@ function removeOldContent() {
   const filesToBeRemoved = getFilesSortedByDate().slice(maxSize);
 
   filesToBeRemoved.forEach(name => {
-    fs.unlinkSync(contentDir + name);
+    fs.unlinkSync(config.storageDir + name);
   });
 }
 
@@ -33,7 +35,7 @@ function createRSS() {
     title: "Riigi Podcast",
     description:
       "Eesti Vabariigi parlamendi istungid ning valitsuse pressikonverentsid YouTube'ist",
-    feed_url: siteUrl + "/feed",
+    feed_url: siteUrl + "feed",
     site_url: siteUrl
   });
 
@@ -51,10 +53,10 @@ function createRSS() {
         else console.log(JSON.stringify(data));
     }); */
       guid: file,
-      url: siteUrl + "/?file=" + (index + 1),
+      url: siteUrl + "?file=" + (index + 1),
       enclosure: {
-        url: siteUrl + "/?file=" + (index + 1),
-        file: contentDir + file
+        url: siteUrl + "?file=" + (index + 1),
+        file: config.storageDir + file
       }
     });
   });
@@ -63,13 +65,13 @@ function createRSS() {
 }
 
 function getFilesSortedByDate() {
-  const fileNames = fs.readdirSync(contentDir);
+  const fileNames = fs.readdirSync(config.storageDir);
 
   return fileNames
     .map(name => {
       return {
         name: name,
-        time: fs.statSync(contentDir + name).birthtime
+        time: fs.statSync(config.storageDir + name).birthtime
       };
     })
     .sort((file1, file2) => file2.time - file1.time)

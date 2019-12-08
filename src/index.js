@@ -1,7 +1,7 @@
 const https = require("https");
 const http = require("http");
-const fs = require("fs");
 
+const config = require("./config.js");
 const subscriber = require("./subscriber.js");
 const endPointHandler = require("./endPointHandler.js");
 
@@ -9,21 +9,26 @@ console.log("Service has started.");
 
 subscriber.renewSubscriptions();
 
-const options = {
-  key: fs.readFileSync("/etc/letsencrypt/live/riigipodcast.ee/privkey.pem"),
-  cert: fs.readFileSync("/etc/letsencrypt/live/riigipodcast.ee/fullchain.pem")
-};
+if ((process.env.NODE_ENV === "dev")) {
+  http
+    .createServer(function(request, response) {
+      endPointHandler.parse(request, response);
+    })
+    .listen(config.port);
+} else {
+  https
+    .createServer(config.SSLCert, function(request, response) {
+      endPointHandler.parse(request, response);
+    })
+    .listen(config.port);
 
-https
-  .createServer(options, function(request, response) {
-    endPointHandler.parse(request, response);
-  })
-  .listen(process.env.PORT || 443);
-
-// todo add back after desciption branch merge
-/* http.createServer(function(req, res){
-    res.writeHead(301, {
-      'Content-Type': 'text/plain', 
-      'Location':'https://'+req.headers.host+req.url});
-    res.end('Redirecting to SSL\n');
- }).listen(80); */
+  http
+    .createServer(function(req, res) {
+      res.writeHead(301, {
+        "Content-Type": "text/plain",
+        Location: "https://" + req.headers.host + req.url
+      });
+      res.end("Redirecting to SSL\n");
+    })
+    .listen(80);
+}

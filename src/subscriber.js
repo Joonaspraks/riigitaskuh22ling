@@ -1,10 +1,10 @@
 const superagent = require("superagent");
-const ip = require("ip");
-const channels = require("./constants/youTubeChannels.json");
-const log = require("./logger.js").log;
+
+const log = require("./logger.js");
+const config = require("./config.js");
 
 function renewSubscriptions() {
-  channels.forEach(channel => {
+  config.youTubeChannels.forEach(channel => {
     subscribeTo(channel);
     setInterval(() => {
       subscribeTo(channel);
@@ -19,7 +19,7 @@ function renewSubscriptions() {
         "hub.topic":
           "https://www.youtube.com/xml/feeds/videos.xml?channel_id=" + channel,
         "hub.verify": "async",
-        "hub.callback": "https://www.riigipodcast.ee"
+        "hub.callback": config.protocol + "www.riigipodcast.ee:" + config.port
       })
       .end((err, res) => {
         if (err) {
