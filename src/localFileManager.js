@@ -42,21 +42,17 @@ function createRSS() {
   /* loop over data and add to feed */
   const files = getFilesSortedByDate();
   files.forEach((file, index) => {
-    ffprobe(config.storageDir + file, function(
-      err,
-      metadata
-    ) {
-      console.log(config.storageDir + file)
-      console.log(metadata.format? metadata.format.tags.title: "");
+    ffprobe(config.storageDir + file, (error, metadata) => {
+      if (err) {
+        log.error(error);
+      } else {
+        console.log(metadata.format.tags.title);
+      }
     });
 
     feed.item({
       title: file,
       description: "ADD CORRECT DESCRIPTION",
-      /*       ffmetadata.read("song.mp3", function(err, data) {
-        if (err) console.error("Error reading metadata", err);
-        else console.log(JSON.stringify(data));
-    }); */
       guid: file,
       url: siteUrl + "?file=" + (index + 1),
       enclosure: {
