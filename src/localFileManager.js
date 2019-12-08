@@ -48,6 +48,7 @@ async function createRSS() {
         ffprobe(config.storageDir + file, (error, metadata) => {
           if (error) {
             log.error(error);
+            reject();
           } else {
             feed.item({
               title: file,
