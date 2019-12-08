@@ -42,11 +42,11 @@ function createRSS() {
   /* loop over data and add to feed */
   const files = getFilesSortedByDate();
   files.forEach((file, index) => {
-    ffprobe(config.storageDir + file + config.extension, function(
+    ffprobe(config.storageDir + file, function(
       err,
       metadata
     ) {
-      console.log(config.storageDir + file + config.extension)
+      console.log(config.storageDir + file)
       console.log(JSON.stringify(metadata));
     });
 
