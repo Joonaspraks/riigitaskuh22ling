@@ -42,17 +42,18 @@ function createRSS() {
   /* loop over data and add to feed */
   const files = getFilesSortedByDate();
   files.forEach((file, index) => {
+    let description;
     ffprobe(config.storageDir + file, (error, metadata) => {
       if (error) {
         log.error(error);
       } else {
-        console.log(metadata.format.tags.title);
+        description = metadata.format.tags.title;
       }
     });
 
     feed.item({
       title: file,
-      description: "ADD CORRECT DESCRIPTION",
+      description,
       guid: file,
       url: siteUrl + "?file=" + (index + 1),
       enclosure: {
