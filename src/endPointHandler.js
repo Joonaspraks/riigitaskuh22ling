@@ -77,7 +77,7 @@ function parse(request, response) {
     }
   }
 
-  if (method === "GET" && requestUrl == config.homeEndpoint) {
+  if (method === "GET" && requestUrl == "/") {
     //localFileManager.populateSiteWithFiles(); actually use id to inject body with list
     // const html; // get file with fs
     const fileNames = localFileManager.getFilesSortedByDate();
@@ -94,8 +94,7 @@ function parse(request, response) {
             return (
               "<li>" +
               "<a href='" +
-              config.homeEndpoint +
-              `?file=${index + 1}'>` +
+              `/?file=${index + 1}'>` +
               `<h3>${name}</h3>` +
               "</a>" +
               "</li>"
@@ -108,7 +107,7 @@ function parse(request, response) {
     response.end();
   }
 
-  if (method === "GET" && requestUrl === config.homeEndpoint + "feed") {
+  if (method === "GET" && requestUrl === "/feed") {
     const result = localFileManager.createRSS();
 
     response.writeHead(200, {
@@ -122,7 +121,7 @@ function parse(request, response) {
   /*
       if endpoint get + filename, lookup and return file
     */
-  if (method === "GET" && requestUrl.includes(config.homeEndpoint + "?file")) {
+  if (method === "GET" && requestUrl.includes("/?file")) {
     const requestedFileNum = parseInt(
       url.parse(requestUrl, true).query["file"]
     );
