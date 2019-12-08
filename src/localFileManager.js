@@ -49,9 +49,9 @@ function createRSS() {
         else console.log(JSON.stringify(data));
     }); */
       guid: file,
-      url: siteUrl + "/?file=" + (index + 1),
+      url: siteUrl + "?file=" + (index + 1),
       enclosure: {
-        url: siteUrl + "/?file=" + (index + 1),
+        url: siteUrl + "?file=" + (index + 1),
         file: config.storageDir + file
       }
     });

@@ -6,7 +6,7 @@ let config;
 config =
   env === "dev"
     ? {
-        homeEndpoint: "/test",
+        homeEndpoint: "/test/",
         loggerDir: "./logs/devLogs/",
         port: 8080,
         publish: false,

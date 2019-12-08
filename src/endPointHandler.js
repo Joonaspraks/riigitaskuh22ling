@@ -108,7 +108,7 @@ function parse(request, response) {
     response.end();
   }
 
-  if (method === "GET" && requestUrl === config.homeEndpoint + "/feed") {
+  if (method === "GET" && requestUrl === config.homeEndpoint + "feed") {
     const result = localFileManager.createRSS();
 
     response.writeHead(200, {
@@ -122,7 +122,7 @@ function parse(request, response) {
   /*
       if endpoint get + filename, lookup and return file
     */
-  if (method === "GET" && requestUrl.includes(config.homeEndpoint + "/?file")) {
+  if (method === "GET" && requestUrl.includes(config.homeEndpoint + "?file")) {
     const requestedFileNum = parseInt(
       url.parse(requestUrl, true).query["file"]
     );
