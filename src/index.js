@@ -9,7 +9,7 @@ console.log("Service has started.");
 
 subscriber.renewSubscriptions();
 
-if ((process.env.NODE_ENV = "dev")) {
+if ((process.env.NODE_ENV === "dev")) {
   http
     .createServer(function(request, response) {
       endPointHandler.parse(request, response);
