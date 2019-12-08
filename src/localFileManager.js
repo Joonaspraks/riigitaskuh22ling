@@ -49,17 +49,16 @@ function createRSS() {
       } else {
         description = metadata.format.tags.title;
       }
-    });
-
-    feed.item({
-      title: file,
-      description: description,
-      guid: file,
-      url: siteUrl + "?file=" + (index + 1),
-      enclosure: {
+      feed.item({
+        title: file,
+        description,
+        guid: file,
         url: siteUrl + "?file=" + (index + 1),
-        file: config.storageDir + file
-      }
+        enclosure: {
+          url: siteUrl + "?file=" + (index + 1),
+          file: config.storageDir + file
+        }
+      });
     });
   });
 
