@@ -95,7 +95,7 @@ function parse(request, response) {
               "<li>" +
               "<a href='" +
               config.homeEndpoint +
-              `/?file=${index + 1}'>` +
+              `?file=${index + 1}'>` +
               `<h3>${name}</h3>` +
               "</a>" +
               "</li>"

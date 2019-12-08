@@ -34,7 +34,7 @@ function createRSS() {
     title: "Riigi Podcast",
     description:
       "Eesti Vabariigi parlamendi istungid ning valitsuse pressikonverentsid YouTube'ist",
-    feed_url: siteUrl + "/feed",
+    feed_url: siteUrl + "feed",
     site_url: siteUrl
   });
 
