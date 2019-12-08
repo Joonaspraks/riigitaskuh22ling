@@ -43,7 +43,7 @@ function createRSS() {
   const files = getFilesSortedByDate();
   files.forEach((file, index) => {
     ffprobe(config.storageDir + file, (error, metadata) => {
-      if (err) {
+      if (error) {
         log.error(error);
       } else {
         console.log(metadata.format.tags.title);
