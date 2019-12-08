@@ -34,7 +34,7 @@ function extractAndEditAudio(readableStream, title, description) {
       .on("progress", progress => log.info(JSON.stringify(progress)))
       .on("error", error => log.error(error))
       //.save('earwaxIstung2.mp3');
-      .outputOption(`-metadata title=${description}`)
+      .outputOption(`-metadata title='${description}'`)
       .save(writableStream)
     //Does ^this also end the stream?
   );
