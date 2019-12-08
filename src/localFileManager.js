@@ -53,7 +53,7 @@ function createRSS() {
 
     feed.item({
       title: file,
-      description,
+      description: description,
       guid: file,
       url: siteUrl + "?file=" + (index + 1),
       enclosure: {
