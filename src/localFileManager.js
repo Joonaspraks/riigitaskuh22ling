@@ -46,7 +46,8 @@ function createRSS() {
       err,
       metadata
     ) {
-      console.dir(metadata);
+      console.log(config.storageDir + file + config.extension)
+      console.log(JSON.stringify(metadata));
     });
 
     feed.item({
