@@ -47,7 +47,7 @@ function createRSS() {
       metadata
     ) {
       console.log(config.storageDir + file)
-      console.log(metadata.format.tags.title);
+      console.log(metadata.format? metadata.format.tags.title: "");
     });
 
     feed.item({
