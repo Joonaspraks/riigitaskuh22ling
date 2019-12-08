@@ -8,6 +8,7 @@ config =
     ? {
         loggerDir: "./logs/devLogs/",
         port: 8080,
+        protocol: "http://",
         publish: false,
         storageDir: "./audioStorage/devAudio/",
         useReroute: false,
@@ -16,6 +17,7 @@ config =
     : {
         loggerDir: "./logs/productionLogs/",
         port: 443,
+        protocol: "https://",
         publish: true,
         SSLCert: {
             key: fs.readFileSync("/etc/letsencrypt/live/riigipodcast.ee/privkey.pem"),
