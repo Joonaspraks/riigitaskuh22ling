@@ -1,11 +1,10 @@
 const RSS = require("rss");
 const fs = require("fs");
-var Metadata = require("fluent-ffmpeg").Metadata;
+var ffprobe = require("fluent-ffmpeg").ffprobe;
 
 const config = require("./config.js");
 
-const siteUrl =
-  "www.riigipodcast.ee:" + config.port + "/";
+const siteUrl = "www.riigipodcast.ee:" + config.port + "/";
 
 function checkIfFileIsNew(newFileName) {
   return (
@@ -13,8 +12,10 @@ function checkIfFileIsNew(newFileName) {
       .readdirSync(config.storageDir)
       .filter(
         oldFileName =>
-          oldFileName.substring(0, oldFileName.length - config.extension.length) ===
-          newFileName
+          oldFileName.substring(
+            0,
+            oldFileName.length - config.extension.length
+          ) === newFileName
       ) === 0
   );
 }
@@ -41,9 +42,13 @@ function createRSS() {
   /* loop over data and add to feed */
   const files = getFilesSortedByDate();
   files.forEach((file, index) => {
-    new Metadata(config.storageDir + file + config.extension, function(metadata, err) {
-      console.log(require("util").inspect(metadata, false, null));
+    ffprobe(config.storageDir + file + config.extension, function(
+      err,
+      metadata
+    ) {
+      console.dir(metadata);
     });
+
     feed.item({
       title: file,
       description: "ADD CORRECT DESCRIPTION",

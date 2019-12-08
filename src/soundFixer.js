@@ -12,6 +12,7 @@ function extractAndEditAudio(readableStream, title, description) {
   );
   return (
     ffmpeg(readableStream)
+      .inputOption(`-metadata title=${description}`)
       .format("mp3") //ffmpeg cant determine format from a stream
       //noise removal
       //detect general audio level to cut silence
@@ -34,7 +35,6 @@ function extractAndEditAudio(readableStream, title, description) {
       .on("progress", progress => log.info(JSON.stringify(progress)))
       .on("error", error => log.error(error))
       //.save('earwaxIstung2.mp3');
-      .outputOption(`-metadata title=${description}`)
       .save(writableStream)
     //Does ^this also end the stream?
   );
