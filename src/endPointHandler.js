@@ -41,9 +41,17 @@ function parse(request, response) {
     "Server was called with Method: " + method + " and Url: " + requestUrl
   );
 
+  // move this to subscriber.js
   if (
     method === "GET" &&
-    requestUrl.includes("https://www.youtube.com/xml/feeds/")
+    config.youTubeChannels.reduce(
+      (accumulator, youtubeChannel) =>
+        accumulator ||
+        requestUrl.includes(
+          "https://www.youtube.com/xml/feeds/videos.xml?channel_id=" +
+          youtubeChannel
+        )
+    )
   ) {
     const parsedUrl = url.parse(requestUrl, true);
     log.info("Websub request from " + parsedUrl.query[topic]);
@@ -87,14 +95,13 @@ function parse(request, response) {
   }
 
   if (method === "GET" && requestUrl === "/feed") {
-    localFileManager.createRSS().then((result)=>{
-      
-    response.writeHead(200, {
-      "Content-Type": "application/rss+xml"
-    });
+    localFileManager.createRSS().then(result => {
+      response.writeHead(200, {
+        "Content-Type": "application/rss+xml"
+      });
 
-    response.write(result);
-    response.end();
+      response.write(result);
+      response.end();
     });
   }
 
