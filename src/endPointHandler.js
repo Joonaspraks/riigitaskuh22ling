@@ -28,7 +28,7 @@ function downloadAudio(id, title) {
             info.description,
             currentCredentials
           );
-          localFileManager.createDescription(info.description);
+          localFileManager.createDescription(title, info.description);
           localFileManager.removeOldContent();
         });
     }
