@@ -3,6 +3,7 @@ const fs = require("fs");
 var ffprobe = require("fluent-ffmpeg").ffprobe;
 
 const config = require("./config.js");
+const log = require("./logger.js");
 
 const siteUrl = "www.riigipodcast.ee:" + config.port + "/";
 
