@@ -108,9 +108,9 @@ function parse(request, response) {
   /*
       if endpoint get + filename, lookup and return file
     */
-  if (method === "GET" && requestUrl.path === "/?file") {
+  if (method === "GET" && requestUrl.query[file]) {
     const requestedFileNum = parseInt(
-      url.parse(requestUrl, true).query["file"]
+      requestUrl.query[file]
     );
     if (
       !isNaN(requestedFileNum) &&
