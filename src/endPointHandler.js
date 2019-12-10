@@ -161,6 +161,8 @@ function parse(request, response) {
             response.writeHead("200");
             response.end();
             downloadAudio(id, title);
+          } else {
+            log.info(`File ${title} already exists.`)
           }
         }
       });
