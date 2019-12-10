@@ -37,7 +37,12 @@ function downloadAudio(id, title) {
 
 function parse(request, response) {
   const method = request.method;
-  const requestUrl = request.url;
+  let requestUrl = request.url;
+  try { 
+    requestUrl = decodeURI(request.url); 
+  } catch(err) { 
+    log.error(err); 
+  }
   log.info(
     "Server was called with Method: " + method + " and Url: " + requestUrl
   );
