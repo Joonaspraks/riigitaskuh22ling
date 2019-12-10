@@ -11,6 +11,7 @@ const soundFixer = require("./soundFixer.js");
 
 const topic = "hub.topic";
 const challenge = "hub.challenge";
+const file = "file";
 
 let currentCredentials = "";
 
