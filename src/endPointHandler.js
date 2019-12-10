@@ -53,9 +53,9 @@ function parse(request, response) {
       false
     )
   ) {
-    const parsedUrl = url.parse(requestUrl, true);
-    log.info("Websub request from " + parsedUrl.query[topic]);
-    var challengeCode = url.parse(requestUrl, true).query[challenge];
+    //const parsedUrl = url.parse(requestUrl, true);
+    log.info("Websub request from " + requestUrl.query[topic]);
+    var challengeCode = requestUrl.query[challenge];
 
     if (challengeCode) {
       response.writeHead("200");
@@ -64,7 +64,7 @@ function parse(request, response) {
     }
   }
 
-  if (method === "GET" && requestUrl == "/") {
+  if (method === "GET" && requestUrl.path === "/") {
     //localFileManager.populateSiteWithFiles(); actually use id to inject body with list
     // const html; // get file with fs
     const fileNames = localFileManager.getMediaFilesSortedByDate();
@@ -94,7 +94,7 @@ function parse(request, response) {
     response.end();
   }
 
-  if (method === "GET" && requestUrl === "/feed") {
+  if (method === "GET" && requestUrl.path === "/feed") {
     localFileManager.createRSS().then(result => {
       response.writeHead(200, {
         "Content-Type": "application/rss+xml"
@@ -108,7 +108,7 @@ function parse(request, response) {
   /*
       if endpoint get + filename, lookup and return file
     */
-  if (method === "GET" && requestUrl.includes("/?file")) {
+  if (method === "GET" && requestUrl.path === "/?file") {
     const requestedFileNum = parseInt(
       url.parse(requestUrl, true).query["file"]
     );
