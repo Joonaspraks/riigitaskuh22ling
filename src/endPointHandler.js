@@ -20,29 +20,23 @@ function downloadAudio(id, title) {
   ytdl.getBasicInfo(id, (err, info) => {
     if (err) log.error(err);
     else {
-      soundFixer
-        .extractAndEditAudio(ytdl(id), title)
-        .on("end", () => {
-          podBeanAPI.startUploading(
-            title,
-            info.description,
-            currentCredentials
-          );
-          localFileManager.createDescription(title, info.description);
-          localFileManager.removeOldContent();
-        });
+      soundFixer.extractAndEditAudio(ytdl(id), title).on("end", () => {
+        podBeanAPI.startUploading(title, info.description, currentCredentials);
+        localFileManager.createDescription(title, info.description);
+        localFileManager.removeOldContent();
+      });
     }
   });
 }
 
 function parse(request, response) {
   const method = request.method;
-  let requestUrl = request.url;
-  try { 
+  let requestUrl = url.parse(request.url, true);
+  /*   try { 
     requestUrl = decodeURIComponent(request.url); 
   } catch(err) { 
     log.error(err); 
-  }
+  } */
   log.info(
     "Server was called with Method: " + method + " and Url: " + requestUrl
   );
@@ -53,10 +47,10 @@ function parse(request, response) {
     config.youTubeChannels.reduce(
       (accumulator, youtubeChannel) =>
         accumulator ||
-        requestUrl.includes(
+        parsedUrl.query[topic] ===
           "https://www.youtube.com/xml/feeds/videos.xml?channel_id=" +
-          youtubeChannel
-        ), false
+            youtubeChannel,
+      false
     )
   ) {
     const parsedUrl = url.parse(requestUrl, true);
