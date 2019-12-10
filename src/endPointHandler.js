@@ -47,7 +47,7 @@ function parse(request, response) {
     config.youTubeChannels.reduce(
       (accumulator, youtubeChannel) =>
         accumulator ||
-        parsedUrl.query[topic] ===
+        requestUrl.query[topic] ===
           "https://www.youtube.com/xml/feeds/videos.xml?channel_id=" +
             youtubeChannel,
       false
