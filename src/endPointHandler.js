@@ -50,7 +50,7 @@ function parse(request, response) {
         requestUrl.includes(
           "https://www.youtube.com/xml/feeds/videos.xml?channel_id=" +
           youtubeChannel
-        )
+        ), false
     )
   ) {
     const parsedUrl = url.parse(requestUrl, true);
