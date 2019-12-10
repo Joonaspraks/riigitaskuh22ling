@@ -39,7 +39,7 @@ function parse(request, response) {
   const method = request.method;
   let requestUrl = request.url;
   try { 
-    requestUrl = decodeURI(request.url); 
+    requestUrl = decodeURIComponent(request.url); 
   } catch(err) { 
     log.error(err); 
   }
