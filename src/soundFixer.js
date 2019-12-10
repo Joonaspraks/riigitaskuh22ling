@@ -8,7 +8,7 @@ function extractAndEditAudio(readableStream, title) {
   // create new file immediately to discourage double file creation
 
   // TODO if file later empty, remove
-/*   const writableStream = fs.createWriteStream(
+  /*   const writableStream = fs.createWriteStream(
     config.storageDir + title + config.mediaExtension
   ); */
   return (
@@ -32,7 +32,11 @@ function extractAndEditAudio(readableStream, title) {
         "dynaudnorm"
       ) //what dB constitutes a 'silence'
 
-      .on("progress", progress => log.info(progress.percent))
+      .on("progress", progress =>
+        log.info(
+          "The timestamp of the current frame in seconds: " + progress.timemark
+        )
+      )
       .on("error", error => log.error(error))
       //.save('earwaxIstung2.mp3');
       //.outputOption('-metadata', `title=${description}`)
