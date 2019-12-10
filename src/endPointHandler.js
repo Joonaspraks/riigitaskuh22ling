@@ -33,13 +33,8 @@ function downloadAudio(id, title) {
 function parse(request, response) {
   const method = request.method;
   let requestUrl = url.parse(request.url, true);
-  /*   try { 
-    requestUrl = decodeURIComponent(request.url); 
-  } catch(err) { 
-    log.error(err); 
-  } */
   log.info(
-    "Server was called with Method: " + method + " and Url: " + requestUrl
+    "Server was called with Method: " + method + " and Url: " + requestUrl.path
   );
 
   // move this to subscriber.js
@@ -54,7 +49,6 @@ function parse(request, response) {
       false
     )
   ) {
-    //const parsedUrl = url.parse(requestUrl, true);
     log.info("Websub request from " + requestUrl.query[topic]);
     var challengeCode = requestUrl.query[challenge];
 
@@ -110,9 +104,7 @@ function parse(request, response) {
       if endpoint get + filename, lookup and return file
     */
   if (method === "GET" && requestUrl.query[file]) {
-    const requestedFileNum = parseInt(
-      requestUrl.query[file]
-    );
+    const requestedFileNum = parseInt(requestUrl.query[file]);
     if (
       !isNaN(requestedFileNum) &&
       requestedFileNum > 0 &&

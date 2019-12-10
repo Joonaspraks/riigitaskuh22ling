@@ -32,10 +32,14 @@ function removeOldContent() {
   const mediaFilesToBeRemoved = getMediaFilesSortedByDate().slice(maxSize);
 
   mediaFilesToBeRemoved.forEach(mediaFileName => {
+    try{
     fs.unlinkSync(config.storageDir + mediaFileName);
     fs.unlinkSync(
       config.storageDir + getDescriptionFileOfMediaFile(mediaFileName)
-    );
+    );}
+    catch (err){
+      log.error(err);
+    }
   });
 }
 
@@ -50,9 +54,15 @@ async function createRSS() {
 
   const mediaFileNames = getMediaFilesSortedByDate();
   mediaFileNames.forEach((mediaFileName, index) => {
+    let description = "";
+    try{
+    description = fs.readFileSync((config.storageDir+getDescriptionFileOfMediaFile(mediaFileName)));
+    } catch (err){
+      log.error(err);
+    }
     feed.item({
       title: mediaFileName,
-      description: fs.readFileSync((config.storageDir+getDescriptionFileOfMediaFile(mediaFileName))),
+      description,
       guid: mediaFileName,
       url: siteUrl + "?file=" + (index + 1),
       enclosure: {
