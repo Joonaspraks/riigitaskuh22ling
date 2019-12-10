@@ -142,8 +142,6 @@ function parse(request, response) {
           log.error(err);
         }
         var entry = parsedData.feed.entry[0];
-        var title = entry.title[0];
-        localFileManager.checkIfFileIsNew(title);
 
         var channelId = entry["yt:channelId"][0];
 
@@ -152,16 +150,18 @@ function parse(request, response) {
           log.info("Notification from channel " + channelId);
         }
         if (currentCredentials !== "") {
-          var id = entry["yt:videoId"][0];
-
-          log.info("Video title: " + title);
-          // When should this header be sent? Immediately after link has been fetched? Depends on how often the notifications are sent.
-          // Should anything happen then it can be a good thing if another notification is sent
-          // I'll assume that if a notification was received then it can be discarded
-          // Stops the notifications for current item
-          response.writeHead("200");
-          response.end();
-          downloadAudio(id, title);
+          var title = entry.title[0];
+          if (localFileManager.checkIfFileIsNew(title)) {
+            var id = entry["yt:videoId"][0];
+            log.info("Video title: " + title);
+            // When should this header be sent? Immediately after link has been fetched? Depends on how often the notifications are sent.
+            // Should anything happen then it can be a good thing if another notification is sent
+            // I'll assume that if a notification was received then it can be discarded
+            // Stops the notifications for current item
+            response.writeHead("200");
+            response.end();
+            downloadAudio(id, title);
+          }
         }
       });
     });

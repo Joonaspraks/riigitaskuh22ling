@@ -7,15 +7,13 @@ const log = require("./logger.js");
 
 const siteUrl = "www.riigipodcast.ee:" + config.port + "/";
 
-function checkIfFileIsNew(newFileName) {
+function checkIfFileIsNew(incomingFile) {
   return (
-    fs.readdirSync(config.storageDir).filter(
-      oldFileName =>
-        oldFileName.substring(
-          0,
-          oldFileName.length - config.mediaExtension.length // TODO rework with Regex match
-        ) === newFileName
-    ) === 0
+    getMediaFiles().filter(
+      existingFile =>
+        existingFile.replace(new RegExp(`${config.mediaExtension}$`), "") ===
+        incomingFile
+    ).length === 0
   );
 }
 
@@ -32,12 +30,12 @@ function removeOldContent() {
   const mediaFilesToBeRemoved = getMediaFilesSortedByDate().slice(maxSize);
 
   mediaFilesToBeRemoved.forEach(mediaFileName => {
-    try{
-    fs.unlinkSync(config.storageDir + mediaFileName);
-    fs.unlinkSync(
-      config.storageDir + getDescriptionFileOfMediaFile(mediaFileName)
-    );}
-    catch (err){
+    try {
+      fs.unlinkSync(config.storageDir + mediaFileName);
+      fs.unlinkSync(
+        config.storageDir + getDescriptionFileOfMediaFile(mediaFileName)
+      );
+    } catch (err) {
       log.error(err);
     }
   });
@@ -55,9 +53,11 @@ async function createRSS() {
   const mediaFileNames = getMediaFilesSortedByDate();
   mediaFileNames.forEach((mediaFileName, index) => {
     let description = "";
-    try{
-    description = fs.readFileSync((config.storageDir+getDescriptionFileOfMediaFile(mediaFileName)));
-    } catch (err){
+    try {
+      description = fs.readFileSync(
+        config.storageDir + getDescriptionFileOfMediaFile(mediaFileName)
+      );
+    } catch (err) {
       log.error(err);
     }
     feed.item({
@@ -75,19 +75,21 @@ async function createRSS() {
   return feed.xml();
 }
 
-function getDescriptionFileOfMediaFile(mediaFileName){
+function getDescriptionFileOfMediaFile(mediaFileName) {
   return mediaFileName.replace(
     new RegExp(`${config.mediaExtension}$`),
     config.descriptionExtension
-  )
+  );
+}
+
+function getMediaFiles() {
+  return fs
+    .readdirSync(config.storageDir)
+    .filter(fileName => fileName.match(`${config.mediaExtension}$`));
 }
 
 function getMediaFilesSortedByDate() {
-  const fileNames = fs
-    .readdirSync(config.storageDir)
-    .filter(fileName => fileName.match(`${config.mediaExtension}$`));
-
-  return fileNames
+  return getMediaFiles()
     .map(name => {
       return {
         name: name,
