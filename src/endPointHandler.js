@@ -21,13 +21,14 @@ function downloadAudio(id, title) {
     if (err) log.error(err);
     else {
       soundFixer
-        .extractAndEditAudio(ytdl(id), title, info.description)
+        .extractAndEditAudio(ytdl(id), title)
         .on("end", () => {
           podBeanAPI.startUploading(
             title,
             info.description,
             currentCredentials
           );
+          localFileManager.createDescription(info.description);
           localFileManager.removeOldContent();
         });
     }
@@ -67,7 +68,7 @@ function parse(request, response) {
   if (method === "GET" && requestUrl == "/") {
     //localFileManager.populateSiteWithFiles(); actually use id to inject body with list
     // const html; // get file with fs
-    const fileNames = localFileManager.getFilesSortedByDate();
+    const fileNames = localFileManager.getMediaFilesSortedByDate();
     response.writeHead(
       200 /* , {"Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload"} */
     );
@@ -117,7 +118,7 @@ function parse(request, response) {
       requestedFileNum > 0 &&
       requestedFileNum < 20 //replace with const
     ) {
-      const fileNames = localFileManager.getFilesSortedByDate();
+      const fileNames = localFileManager.getMediaFilesSortedByDate();
       //Making sure that there are enough files for the request
       if (fileNames.length >= requestedFileNum) {
         //replace with const

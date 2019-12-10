@@ -4,11 +4,12 @@ const fs = require("fs");
 const log = require("./logger.js");
 const config = require("./config.js");
 
-function extractAndEditAudio(readableStream, title, description) {
+function extractAndEditAudio(readableStream, title) {
   // create new file immediately to discourage double file creation
-  // fs.writeFile("./storedAudio/" + title + ".mp3", '', ()=>{});
+
+  // TODO if file later empty, remove
   const writableStream = fs.createWriteStream(
-    config.storageDir + title + config.extension
+    config.storageDir + title + config.mediaExtension
   );
   return (
     ffmpeg(readableStream)
@@ -34,11 +35,9 @@ function extractAndEditAudio(readableStream, title, description) {
       .on("progress", progress => log.info(JSON.stringify(progress)))
       .on("error", error => log.error(error))
       //.save('earwaxIstung2.mp3');
-      .outputOption('-metadata', `title=${description}`)
+      //.outputOption('-metadata', `title=${description}`)
       .save(writableStream)
-    //Does ^this also end the stream?
   );
-  //.save('loudnormIstung2.mp3');
 }
 
 module.exports = { extractAndEditAudio: extractAndEditAudio };

@@ -9,25 +9,33 @@ const siteUrl = "www.riigipodcast.ee:" + config.port + "/";
 
 function checkIfFileIsNew(newFileName) {
   return (
-    fs
-      .readdirSync(config.storageDir)
-      .filter(
-        oldFileName =>
-          oldFileName.substring(
-            0,
-            oldFileName.length - config.extension.length
-          ) === newFileName
-      ) === 0
+    fs.readdirSync(config.storageDir).filter(
+      oldFileName =>
+        oldFileName.substring(
+          0,
+          oldFileName.length - config.mediaExtension.length // TODO rework with Regex match
+        ) === newFileName
+    ) === 0
+  );
+}
+
+function createDescription(title, description) {
+  fs.writeFileSync(
+    config.storageDir + title + config.descriptionExtension,
+    description
   );
 }
 
 function removeOldContent() {
   const maxSize = 20;
 
-  const filesToBeRemoved = getFilesSortedByDate().slice(maxSize);
+  const mediaFilesToBeRemoved = getMediaFilesSortedByDate().slice(maxSize);
 
-  filesToBeRemoved.forEach(name => {
-    fs.unlinkSync(config.storageDir + name);
+  mediaFilesToBeRemoved.forEach(mediaFileName => {
+    fs.unlinkSync(config.storageDir + mediaFileName);
+    fs.unlinkSync(
+      config.storageDir + getDescriptionFileOfMediaFile(mediaFileName)
+    );
   });
 }
 
@@ -40,41 +48,34 @@ async function createRSS() {
     site_url: siteUrl
   });
 
-  /* loop over data and add to feed */
-  const files = getFilesSortedByDate();
-  const promiseList = [];
-  files.forEach((file, index) => {
-    promiseList.push(
-      new Promise((resolve, reject) => {
-        ffprobe(config.storageDir + file, (error, metadata) => {
-          if (error) {
-            log.error(error);
-            reject();
-          } else {
-            feed.item({
-              title: file,
-              description: metadata.format.tags.title,
-              guid: file,
-              url: siteUrl + "?file=" + (index + 1),
-              enclosure: {
-                url: siteUrl + "?file=" + (index + 1),
-                file: config.storageDir + file
-              }
-            });
-            resolve();
-          }
-        });
-      })
-    );
+  const mediaFileNames = getMediaFilesSortedByDate();
+  mediaFileNames.forEach((mediaFileName, index) => {
+    feed.item({
+      title: mediaFileName,
+      description: fs.readFileSync((config.storageDir+getDescriptionFileOfMediaFile(mediaFileName))),
+      guid: mediaFileName,
+      url: siteUrl + "?file=" + (index + 1),
+      enclosure: {
+        url: siteUrl + "?file=" + (index + 1),
+        file: config.storageDir + mediaFileName
+      }
+    });
   });
 
-  return Promise.all(promiseList).then(() => {
-    return feed.xml();
-  });
+  return feed.xml();
 }
 
-function getFilesSortedByDate() {
-  const fileNames = fs.readdirSync(config.storageDir);
+function getDescriptionFileOfMediaFile(mediaFileName){
+  return mediaFileName.replace(
+    new RegExp(`${config.mediaExtension}$`),
+    config.descriptionExtension
+  )
+}
+
+function getMediaFilesSortedByDate() {
+  const fileNames = fs
+    .readdirSync(config.storageDir)
+    .filter(fileName => fileName.match(`${config.mediaExtension}$`));
 
   return fileNames
     .map(name => {
@@ -90,8 +91,9 @@ function getFilesSortedByDate() {
 }
 
 module.exports = {
-  createRSS: createRSS,
-  removeOldContent: removeOldContent,
   checkIfFileIsNew: checkIfFileIsNew,
-  getFilesSortedByDate: getFilesSortedByDate
+  createDescription: createDescription,
+  createRSS: createRSS,
+  getMediaFilesSortedByDate: getMediaFilesSortedByDate,
+  removeOldContent: removeOldContent
 };

@@ -20,15 +20,20 @@ config =
         protocol: "https://",
         publish: true,
         SSLCert: {
-            key: fs.readFileSync("/etc/letsencrypt/live/riigipodcast.ee/privkey.pem"),
-            cert: fs.readFileSync("/etc/letsencrypt/live/riigipodcast.ee/fullchain.pem")
-          },
+          key: fs.readFileSync(
+            "/etc/letsencrypt/live/riigipodcast.ee/privkey.pem"
+          ),
+          cert: fs.readFileSync(
+            "/etc/letsencrypt/live/riigipodcast.ee/fullchain.pem"
+          )
+        },
         storageDir: "./audioStorage/productionAudio/",
         useReroute: true,
         youTubeChannels: ["ValitsuseUudised", "UCS1xJUQbauo60LJCEbiiJvg"] // valitsus, Riigikogu
       };
 
-config.extension = ".mp3";
+config.descriptionExtension = ".txt";
+config.mediaExtension = ".mp3";
 config.podbeanCredentials = {
   // riigiPodcast.podbean
   id: "1405d6a0497f64f70d6d1",

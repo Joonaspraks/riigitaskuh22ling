@@ -33,13 +33,13 @@ function getPodBeanAccessToken(fileName, credentials) {
 }
 
 function authorizeUpload(fileName) {
-  var fileSize = fs.statSync(config.storageDir + fileName + config.extension)
+  var fileSize = fs.statSync(config.storageDir + fileName + config.mediaExtension)
     .size;
   superagent
     .get("https://api.podbean.com/v1/files/uploadAuthorize")
     .query({
       access_token: accessToken,
-      filename: fileName + config.extension,
+      filename: fileName + config.mediaExtension,
       filesize: fileSize,
       content_type: "audio/mpeg"
     })
@@ -60,7 +60,7 @@ function uploadPodcast(url, fileName) {
     .type("audio/mpeg")
     .attach(
       fileName,
-      fs.readFileSync(config.storageDir + fileName + config.extension)
+      fs.readFileSync(config.storageDir + fileName + config.mediaExtension)
     )
     .end((err, res) => {
       if (err) {
@@ -73,7 +73,7 @@ function uploadPodcast(url, fileName) {
 }
 
 function publishPodcast(fileName) {
-  fileName + config.extension;
+  fileName + config.mediaExtension;
   superagent
     .post("https://api.podbean.com/v1/episodes")
     .send({
