@@ -11,10 +11,10 @@ function extractAndEditAudio(readableStream, title) {
   /*   const writableStream = fs.createWriteStream(
     config.storageDir + title + config.mediaExtension
   ); */
-  return ffmpeg(readableStream)
+/*   return ffmpeg(readableStream)
     .preset("podcast")
     .on("error", error => log.error(error))
-    .save(config.storageDir + title + config.mediaExtension);
+    .save(config.storageDir + title + config.mediaExtension); */
   return (
     ffmpeg(readableStream)
       .format("mp3") //ffmpeg cant determine format from a stream
