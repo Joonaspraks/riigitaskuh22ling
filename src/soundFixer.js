@@ -17,7 +17,7 @@ function extractAndEditAudio(readableStream, title) {
     .save(config.storageDir + title + config.mediaExtension); */
   return (
     ffmpeg(readableStream)
-      .audioBitrate("24k")
+      .audioBitrate("96k") //generally used for speech or low-quality streaming
       //.format("mp3") //ffmpeg cant determine format from a stream
       //noise removal
       //detect general audio level to cut silence
