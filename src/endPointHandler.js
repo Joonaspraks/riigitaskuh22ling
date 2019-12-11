@@ -60,8 +60,6 @@ function parse(request, response) {
   }
 
   if (method === "GET" && requestUrl.path === "/") {
-    //localFileManager.populateSiteWithFiles(); actually use id to inject body with list
-    // const html; // get file with fs
     const fileNames = localFileManager.getMediaFilesSortedByDate();
     response.writeHead(
       200 /* , {"Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload"} */
@@ -90,19 +88,15 @@ function parse(request, response) {
   }
 
   if (method === "GET" && requestUrl.path === "/feed") {
-    localFileManager.createRSS().then(result => {
-      response.writeHead(200, {
-        "Content-Type": "application/rss+xml"
-      });
-
-      response.write(result);
-      response.end();
+    localFileManager.createRSS();
+    response.writeHead(200, {
+      "Content-Type": "application/rss+xml"
     });
+
+    response.write(result);
+    response.end();
   }
 
-  /*
-      if endpoint get + filename, lookup and return file
-    */
   if (method === "GET" && requestUrl.query[file]) {
     const requestedFileNum = parseInt(requestUrl.query[file]);
     if (
@@ -111,12 +105,11 @@ function parse(request, response) {
       requestedFileNum < 20 //replace with const
     ) {
       const fileNames = localFileManager.getMediaFilesSortedByDate();
-      //Making sure that there are enough files for the request
+      //Making sure that there exists a file for the request
       if (fileNames.length >= requestedFileNum) {
-        //replace with const
         const fileName = fileNames[requestedFileNum - 1];
 
-        var filePath = config.storageDir + fileName; //replace dir with const
+        var filePath = config.storageDir + fileName;
         var stat = fs.statSync(filePath);
 
         response.writeHead(200, {
@@ -135,7 +128,6 @@ function parse(request, response) {
     request.headers.link &&
     request.headers.link.includes("http://pubsubhubbub.appspot.com/")
   ) {
-    // Parse feed data
     request.on("data", function(data) {
       parseString(data, function(err, parsedData) {
         if (err) {
@@ -162,7 +154,7 @@ function parse(request, response) {
             response.end();
             downloadAudio(id, title);
           } else {
-            log.info(`File ${title} already exists.`)
+            log.info(`File ${title} already exists.`);
           }
         }
       });

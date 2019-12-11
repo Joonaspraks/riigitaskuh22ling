@@ -41,7 +41,7 @@ function removeOldContent() {
   });
 }
 
-async function createRSS() {
+function createRSS() {
   var feed = new RSS({
     title: "Riigi Podcast",
     description:
