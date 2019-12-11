@@ -13,16 +13,14 @@ const topic = "hub.topic";
 const challenge = "hub.challenge";
 const file = "file";
 
-let currentCredentials = "";
-
-function downloadAudio(id, title) {
+function downloadAudio(id, title, credentials) {
   log.info("Downloading audio for " + title);
 
   ytdl.getBasicInfo(id, (err, info) => {
     if (err) log.error(err);
     else {
       soundFixer.extractAndEditAudio(ytdl(id), title).on("end", () => {
-        podBeanAPI.startUploading(title, info.description, currentCredentials);
+        podBeanAPI.startUploading(title, info.description, credentials);
         localFileManager.createDescription(title, info.description);
         localFileManager.removeOldContent();
       });
@@ -50,9 +48,8 @@ function parse(request, response) {
     )
   ) {
     log.info("Websub request from " + requestUrl.query[topic]);
-    var challengeCode = requestUrl.query[challenge];
 
-    if (challengeCode) {
+    if (requestUrl.query[challenge]) {
       response.writeHead("200");
       response.write(challengeCode);
       response.end();
@@ -60,7 +57,6 @@ function parse(request, response) {
   }
 
   if (method === "GET" && requestUrl.path === "/") {
-    
     response.writeHead(
       200 /* , {"Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload"} */
     );
@@ -89,16 +85,14 @@ function parse(request, response) {
       if (fileNames.length >= requestedFileNum) {
         const fileName = fileNames[requestedFileNum - 1];
 
-        var filePath = config.storageDir + fileName;
-        var stat = fs.statSync(filePath);
+        const filePath = config.storageDir + fileName;
 
         response.writeHead(200, {
           "Content-Type": "audio/mpeg",
-          "Content-Length": stat.size
+          "Content-Length": fs.statSync(filePath).size
         });
 
-        var readStream = fs.createReadStream(filePath);
-        readStream.pipe(response);
+        fs.createReadStream(filePath).pipe(response);
       }
     }
   }
@@ -113,18 +107,14 @@ function parse(request, response) {
         if (err) {
           log.error(err);
         }
-        var entry = parsedData.feed.entry[0];
+        const entry = parsedData.feed.entry[0];
 
-        var channelId = entry["yt:channelId"][0];
+        const channelId = entry["yt:channelId"][0];
 
         if (config.youTubeChannels.includes(channelId)) {
-          currentCredentials = config.podbeanCredentials;
           log.info("Notification from channel " + channelId);
-        }
-        if (currentCredentials !== "") {
-          var title = entry.title[0];
+          const title = entry.title[0];
           if (localFileManager.checkIfFileIsNew(title)) {
-            var id = entry["yt:videoId"][0];
             log.info("Video title: " + title);
             // When should this header be sent? Immediately after link has been fetched? Depends on how often the notifications are sent.
             // Should anything happen then it can be a good thing if another notification is sent
@@ -132,7 +122,11 @@ function parse(request, response) {
             // Stops the notifications for current item
             response.writeHead("200");
             response.end();
-            downloadAudio(id, title);
+            downloadAudio(
+              entry["yt:videoId"][0],
+              title,
+              config.podbeanCredentials
+            );
           } else {
             log.info(`File ${title} already exists.`);
           }

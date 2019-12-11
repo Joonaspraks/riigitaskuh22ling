@@ -39,7 +39,7 @@ function extractAndEditAudio(readableStream, title) {
 
       .on("progress", progress =>
         log.info(
-          "The timestamp of the current frame in seconds: " + progress.timemark
+          `Processing ${title}: ${progress.timemark}`
         )
       )
       .on("error", error => log.error(error))
