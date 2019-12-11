@@ -11,13 +11,14 @@ function extractAndEditAudio(readableStream, title) {
   /*   const writableStream = fs.createWriteStream(
     config.storageDir + title + config.mediaExtension
   ); */
-/*   return ffmpeg(readableStream)
+  /*   return ffmpeg(readableStream)
     .preset("podcast")
     .on("error", error => log.error(error))
     .save(config.storageDir + title + config.mediaExtension); */
   return (
     ffmpeg(readableStream)
-      .format("mp3") //ffmpeg cant determine format from a stream
+      .audioBitrate("24k")
+      //.format("mp3") //ffmpeg cant determine format from a stream
       //noise removal
       //detect general audio level to cut silence
       //note that questioneers mic sound can be lower than the ministers
@@ -42,7 +43,6 @@ function extractAndEditAudio(readableStream, title) {
         )
       )
       .on("error", error => log.error(error))
-      //.outputOption('-preset veryslow')
       //.save('earwaxIstung2.mp3');
       //.outputOption('-metadata', `title=${description}`)
       .save(config.storageDir + title + config.mediaExtension)
