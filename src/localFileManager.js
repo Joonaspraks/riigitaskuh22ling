@@ -75,6 +75,30 @@ function createRSS() {
   return feed.xml();
 }
 
+function createHTML() {
+  const mediaFiles = getMediaFilesSortedByDate();
+  return (
+    "<html><head><meta charset='UTF-8'" +
+    "name='google-site-verification' content='71QmVVJaUYxxAbp0YHhwaQ-gHcNnct4LtzaTt4ESPV0' /></head>" +
+    "<body><h1>Riigi Podcast</h1>" +
+    "<ul>" +
+    mediaFiles
+      .map((name, index) => {
+        return (
+          "<li>" +
+          "<a href='" +
+          `/?file=${index + 1}'>` +
+          `<h3>${name}</h3>` +
+          "</a>" +
+          "</li>"
+        );
+      })
+      .join("") +
+    "</ul>" +
+    "</body></html>"
+  );
+}
+
 function getDescriptionFileOfMediaFile(mediaFileName) {
   return mediaFileName.replace(
     new RegExp(`${config.mediaExtension}$`),
@@ -107,5 +131,6 @@ module.exports = {
   createDescription: createDescription,
   createRSS: createRSS,
   getMediaFilesSortedByDate: getMediaFilesSortedByDate,
-  removeOldContent: removeOldContent
+  removeOldContent: removeOldContent,
+  createHTML: createHTML
 };

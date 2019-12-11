@@ -60,30 +60,11 @@ function parse(request, response) {
   }
 
   if (method === "GET" && requestUrl.path === "/") {
-    const fileNames = localFileManager.getMediaFilesSortedByDate();
+    
     response.writeHead(
       200 /* , {"Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload"} */
     );
-    response.write(
-      "<html><head><meta charset='UTF-8'" +
-        "name='google-site-verification' content='71QmVVJaUYxxAbp0YHhwaQ-gHcNnct4LtzaTt4ESPV0' /></head>" +
-        "<body><h1>Riigi Podcast</h1>" +
-        "<ul>" +
-        fileNames
-          .map((name, index) => {
-            return (
-              "<li>" +
-              "<a href='" +
-              `/?file=${index + 1}'>` +
-              `<h3>${name}</h3>` +
-              "</a>" +
-              "</li>"
-            );
-          })
-          .join("") +
-        "</ul>" +
-        "</body></html>"
-    );
+    response.write(localFileManager.createHTML());
     response.end();
   }
 
