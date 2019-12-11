@@ -48,8 +48,9 @@ function parse(request, response) {
     )
   ) {
     log.info("Websub request from " + requestUrl.query[topic]);
-
-    if (requestUrl.query[challenge]) {
+  
+    const challengeCode = requestUrl.query[challenge];
+    if (challengeCode) {
       response.writeHead("200");
       response.write(challengeCode);
       response.end();
