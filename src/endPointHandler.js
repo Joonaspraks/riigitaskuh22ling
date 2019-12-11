@@ -69,12 +69,11 @@ function parse(request, response) {
   }
 
   if (method === "GET" && requestUrl.path === "/feed") {
-    localFileManager.createRSS();
     response.writeHead(200, {
       "Content-Type": "application/rss+xml"
     });
 
-    response.write(result);
+    response.write(localFileManager.createRSS());
     response.end();
   }
 
