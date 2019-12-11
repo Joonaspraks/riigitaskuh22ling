@@ -42,6 +42,7 @@ function extractAndEditAudio(readableStream, title) {
         )
       )
       .on("error", error => log.error(error))
+      .outputOption('-preset veryslow')
       //.save('earwaxIstung2.mp3');
       //.outputOption('-metadata', `title=${description}`)
       .save(config.storageDir + title + config.mediaExtension)
