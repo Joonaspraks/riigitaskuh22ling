@@ -1,11 +1,10 @@
 const RSS = require("rss");
 const fs = require("fs");
-var ffprobe = require("fluent-ffmpeg").ffprobe;
 
 const config = require("./config.js");
 const log = require("./logger.js");
 
-const siteUrl = "www.riigipodcast.ee:" + config.port + "/";
+const siteUrl = config.protocol + "www.riigipodcast.ee:" + config.port + "/";
 
 function checkIfFileIsNew(incomingFile) {
   return (
