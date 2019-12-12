@@ -116,24 +116,30 @@ function parse(request, response) {
               if (err) log.error(err);
               else {
                 // TODO 1) compare id with all ids of stored media
-                // TODO 2) if true, replace oldfile's name and description
-                // TODO 3) else, the usual
-                const existingMedia = localFileManager.getMediaById(id);
-                if (existingMedia) {
-                  localFileManager.replaceMediaData();
-                } else {
-                  log.info("Downloading audio for " + title);
+                localFileManager.getMediaById(id).then(existingMedia => {
+                  // TODO 2) if true, replace oldfile's name and description
+                  if (existingMedia) {
+                    localFileManager.replaceMediaData();
+                  } else {
+                    // TODO 3) else, the usual
+                    log.info("Downloading audio for " + title);
 
-                  audioProcessor.processAudio(ytdl(id), title).on("end", () => {
-                    podBeanAPI.startUploading(
-                      title,
-                      info.description,
-                      config.podbeanCredentials
-                    );
-                    localFileManager.createDescription(title, info.description);
-                    localFileManager.removeOldContent();
-                  });
-                }
+                    audioProcessor
+                      .processAudio(ytdl(id), title)
+                      .on("end", () => {
+                        podBeanAPI.startUploading(
+                          title,
+                          info.description,
+                          config.podbeanCredentials
+                        );
+                        localFileManager.createDescription(
+                          title,
+                          info.description
+                        );
+                        localFileManager.removeOldContent();
+                      });
+                  }
+                });
               }
             });
           } else {
