@@ -1,32 +1,16 @@
 const parseString = require("xml2js").parseString;
 const url = require("url");
-const ytdl = require("ytdl-core");
 const fs = require("fs");
 
 const config = require("./config.js");
 const log = require("./logger.js");
 const podBeanAPI = require("./podBeanAPI.js");
 const localFileManager = require("./localFileManager.js");
-const soundFixer = require("./soundFixer.js");
+const audioProcessor = require("./audioProcessor.js");
 
 const topic = "hub.topic";
 const challenge = "hub.challenge";
 const file = "file";
-
-function downloadAudio(id, title, credentials) {
-  log.info("Downloading audio for " + title);
-
-  ytdl.getBasicInfo(id, (err, info) => {
-    if (err) log.error(err);
-    else {
-      soundFixer.extractAndEditAudio(ytdl(id), title).on("end", () => {
-        podBeanAPI.startUploading(title, info.description, credentials);
-        localFileManager.createDescription(title, info.description);
-        localFileManager.removeOldContent();
-      });
-    }
-  });
-}
 
 function parse(request, response) {
   const method = request.method;
@@ -48,7 +32,7 @@ function parse(request, response) {
     )
   ) {
     log.info("Websub request from " + requestUrl.query[topic]);
-  
+
     const challengeCode = requestUrl.query[challenge];
     if (challengeCode) {
       response.writeHead("200");
@@ -115,6 +99,8 @@ function parse(request, response) {
         if (config.youTubeChannels.includes(channelId)) {
           log.info("Notification from channel " + channelId);
           const title = entry.title[0];
+          // Why this check needed if I compare IDs later anyway?
+          // Because this check ignores file, the later one replaces.
           if (localFileManager.checkIfFileIsNew(title)) {
             log.info("Video title: " + title);
             // When should this header be sent? Immediately after link has been fetched? Depends on how often the notifications are sent.
@@ -123,11 +109,43 @@ function parse(request, response) {
             // Stops the notifications for current item
             response.writeHead("200");
             response.end();
-            downloadAudio(
-              entry["yt:videoId"][0],
-              title,
-              config.podbeanCredentials
-            );
+            const id = entry["yt:videoId"][0];
+
+            log.info("Downloading audio for " + title);
+
+            ytdl.getBasicInfo(id, (err, info) => {
+              if (err) log.error(err);
+              else {
+                audioProcessor
+                  .processAudio(entry["yt:videoId"][0], title)
+                  .on("end", () => {
+                    podBeanAPI.startUploading(
+                      title,
+                      description,
+                      config.podbeanCredentials
+                    );
+                    localFileManager.createDescription(title, description);
+                    localFileManager.removeOldContent();
+                  });
+              }
+            });
+
+            ytdl.getBasicInfo(id, (err, info) => {
+              if (err) log.error(err);
+              else {
+                audioProcessor
+                  .extractAndEditAudio(ytdl(id), title)
+                  .on("end", () => {
+                    /*podBeanAPI.startUploading(
+                      title,
+                      info.description,
+                      config.podbeanCredentials
+                    );
+                    localFileManager.createDescription(title, info.description);
+                    localFileManager.removeOldContent(); */
+                  });
+              }
+            });
           } else {
             log.info(`File ${title} already exists.`);
           }

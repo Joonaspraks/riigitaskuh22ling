@@ -1,10 +1,16 @@
 const ffmpeg = require("fluent-ffmpeg");
 const fs = require("fs");
+const ytdl = require("ytdl-core");
 
 const log = require("./logger.js");
 const config = require("./config.js");
 
-function extractAndEditAudio(readableStream, title) {
+function processAudio(id, title) {
+  const videoStream = ytdl(id);
+  return editAudio(videoStream, title);
+}
+
+function editAudio(readableStream, title) {
   // create new file immediately to discourage double file creation
 
   // TODO if file later empty, remove
@@ -38,15 +44,15 @@ function extractAndEditAudio(readableStream, title) {
       ) //what dB constitutes a 'silence'
 
       .on("progress", progress =>
-        log.info(
-          `Processing ${title}: ${progress.timemark}`
-        )
+        log.info(`Processing ${title}: ${progress.timemark}`)
       )
       .on("error", error => log.error(error))
       //.save('earwaxIstung2.mp3');
-      //.outputOption('-metadata', `title=${description}`)
+      .outputOption("-metadata", `title=${title}`)
       .save(config.storageDir + title + config.mediaExtension)
   );
 }
 
-module.exports = { extractAndEditAudio: extractAndEditAudio };
+module.exports = {
+  processAudio: processAudio
+};
