@@ -1,5 +1,6 @@
-const a = Promise.reject();
-const b = Promise.reject();
+const a = Promise.resolve();
+a.then((value)=> console.log(value));
+/* const b = Promise.reject();
 const c = Promise.resolve("Found ID!");
 
 function oneSuccess(promises) {
@@ -18,7 +19,7 @@ function oneSuccess(promises) {
   );
 }
 
-oneSuccess([a, b, c]);
+oneSuccess([a, b, c]); */
 
 /*   var promise1 = Promise.reject(3);
   var promise2 = 42;

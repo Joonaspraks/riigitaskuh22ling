@@ -101,7 +101,7 @@ function parse(request, response) {
           const title = entry.title[0];
           // Why this check needed if I compare IDs later anyway?
           // Because this check ignores file, the later one replaces.
-          if (localFileManager.checkIfFileIsNew(title)) {
+          if (localFileManager.getMediaFile(title)) {
             log.info("Video title: " + title);
             // When should this header be sent? Immediately after link has been fetched? Depends on how often the notifications are sent.
             // Should anything happen then it can be a good thing if another notification is sent
@@ -115,11 +115,17 @@ function parse(request, response) {
             ytdl.getBasicInfo(id, (err, info) => {
               if (err) log.error(err);
               else {
+                const description = info.description;
                 // TODO 1) compare id with all ids of stored media
                 localFileManager.getMediaById(id).then(existingMedia => {
                   // TODO 2) if true, replace oldfile's name and description
                   if (existingMedia) {
-                    localFileManager.replaceMediaData();
+                    localFileManager.replaceMediaData(
+                      existingMedia,
+                      title,
+                      description
+                    );
+                    // TODO update file on podbean
                   } else {
                     // TODO 3) else, the usual
                     log.info("Downloading audio for " + title);
@@ -129,13 +135,10 @@ function parse(request, response) {
                       .on("end", () => {
                         podBeanAPI.startUploading(
                           title,
-                          info.description,
+                          description,
                           config.podbeanCredentials
                         );
-                        localFileManager.createDescription(
-                          title,
-                          info.description
-                        );
+                        localFileManager.createDescription(title, description);
                         localFileManager.removeOldContent();
                       });
                   }

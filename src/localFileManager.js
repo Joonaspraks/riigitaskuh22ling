@@ -7,7 +7,7 @@ const log = require("./logger.js");
 
 const siteUrl = config.protocol + "www.riigipodcast.ee:" + config.port + "/";
 
-function getMediaById(givenId) {
+async function getMediaById(givenId) {
   let matchingMediaFile;
   let promises = [];
   getMediaFiles().forEach(currentMediaFile => {
@@ -28,33 +28,26 @@ function getMediaById(givenId) {
     );
   });
   // Return when first promise resolves or when all reject
-  return Promise.all(
-    promises.map(p => {
-      // Swapping reject and resolve cases
-      // Promise.all() returns when there is one resolve or all rejects
-      return p.then(
-        val => Promise.reject(val),
-        err => Promise.resolve(err)
-      );
-    })
-  ).then(
-    () => {},
-    value => {
-      return matchingMediaFile;
-    }
-  );
+  try {
+    await Promise.all(
+      promises.map(p => {
+        // Swapping reject and resolve cases
+        // Promise.all() returns when there is one resolve or all rejects
+        return p.then(
+          val => Promise.reject(val),
+          err => Promise.resolve(err)
+        );
+      })
+    );
+  } catch (value_1) {
+    return matchingMediaFile;
+  }
 }
 
-function replaceMediaData(title) {}
-
-function checkIfFileIsNew(incomingFile) {
-  return (
-    getMediaFiles().filter(
-      existingFile =>
-        existingFile.replace(new RegExp(`${config.mediaExtension}$`), "") ===
-        incomingFile
-    ).length === 0
-  );
+function replaceMediaData(existingMedia, incomingMedia, incomingDescription) {
+  fs.renameSync(existingMedia, incomingMedia);
+  fs.unlinkSync(getDescriptionFileOfMediaFile(existingMedia));
+  createDescription(incomingMedia, incomingDescription);
 }
 
 function createDescription(title, description) {
@@ -146,6 +139,14 @@ function getDescriptionFileOfMediaFile(mediaFileName) {
   );
 }
 
+function getMediaFile(givenFileName) {
+  getMediaFiles().filter(
+    existingFileName =>
+      existingFileName.replace(new RegExp(`${config.mediaExtension}$`), "") ===
+      givenFileName
+  );
+}
+
 function getMediaFiles() {
   return fs
     .readdirSync(config.storageDir)
@@ -167,10 +168,10 @@ function getMediaFilesSortedByDate() {
 }
 
 module.exports = {
-  checkIfFileIsNew: checkIfFileIsNew,
   createDescription: createDescription,
   createRSS: createRSS,
   getMediaById: getMediaById,
+  getMediaFile: getMediaFile,
   getMediaFilesSortedByDate: getMediaFilesSortedByDate,
   removeOldContent: removeOldContent,
   replaceMediaData: replaceMediaData,
