@@ -1,10 +1,51 @@
 const RSS = require("rss");
 const fs = require("fs");
+const ffmpeg = require("fluent-ffmpeg");
 
 const config = require("./config.js");
 const log = require("./logger.js");
 
 const siteUrl = config.protocol + "www.riigipodcast.ee:" + config.port + "/";
+
+function getMediaById(givenId) {
+  let matchingMediaFile;
+  let promises = [];
+  getMediaFiles().forEach(currentMediaFile => {
+    promises.push(
+      new Promise((resolve, reject) => {
+        ffmpeg.ffprobe(currentMediaFile, (err, metadata) => {
+          if (err) {
+            log.error(err);
+          }
+          if (metadata.format.tags.title === givenId) {
+            matchingMediaFile = currentMediaFile;
+            resolve();
+          } else {
+            reject();
+          }
+        });
+      })
+    );
+  });
+  // Return when first promise resolves or when all reject
+  return Promise.all(
+    promises.map(p => {
+      // Swapping reject and resolve cases
+      // Promise.all() returns when there is one resolve or all rejects
+      return p.then(
+        val => Promise.reject(val),
+        err => Promise.resolve(err)
+      );
+    })
+  ).then(
+    () => {},
+    value => {
+      return matchingMediaFile;
+    }
+  );
+}
+
+function replaceMediaData(title) {}
 
 function checkIfFileIsNew(incomingFile) {
   return (
@@ -129,7 +170,9 @@ module.exports = {
   checkIfFileIsNew: checkIfFileIsNew,
   createDescription: createDescription,
   createRSS: createRSS,
+  getMediaById: getMediaById,
   getMediaFilesSortedByDate: getMediaFilesSortedByDate,
   removeOldContent: removeOldContent,
+  replaceMediaData: replaceMediaData,
   createHTML: createHTML
 };

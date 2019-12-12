@@ -5,8 +5,7 @@ const ytdl = require("ytdl-core");
 const log = require("./logger.js");
 const config = require("./config.js");
 
-function processAudio(id, title) {
-  const videoStream = ytdl(id);
+function processAudio(videoStream, title) {
   return editAudio(videoStream, title);
 }
 

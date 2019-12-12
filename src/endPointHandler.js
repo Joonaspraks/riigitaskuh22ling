@@ -111,39 +111,29 @@ function parse(request, response) {
             response.end();
             const id = entry["yt:videoId"][0];
 
-            log.info("Downloading audio for " + title);
-
+            // maybe move ytdl related stuff to other file?
             ytdl.getBasicInfo(id, (err, info) => {
               if (err) log.error(err);
               else {
-                audioProcessor
-                  .processAudio(entry["yt:videoId"][0], title)
-                  .on("end", () => {
+                // TODO 1) compare id with all ids of stored media
+                // TODO 2) if true, replace oldfile's name and description
+                // TODO 3) else, the usual
+                const existingMedia = localFileManager.getMediaById(id);
+                if (existingMedia) {
+                  localFileManager.replaceMediaData();
+                } else {
+                  log.info("Downloading audio for " + title);
+
+                  audioProcessor.processAudio(ytdl(id), title).on("end", () => {
                     podBeanAPI.startUploading(
-                      title,
-                      description,
-                      config.podbeanCredentials
-                    );
-                    localFileManager.createDescription(title, description);
-                    localFileManager.removeOldContent();
-                  });
-              }
-            });
-
-            ytdl.getBasicInfo(id, (err, info) => {
-              if (err) log.error(err);
-              else {
-                audioProcessor
-                  .extractAndEditAudio(ytdl(id), title)
-                  .on("end", () => {
-                    /*podBeanAPI.startUploading(
                       title,
                       info.description,
                       config.podbeanCredentials
                     );
                     localFileManager.createDescription(title, info.description);
-                    localFileManager.removeOldContent(); */
+                    localFileManager.removeOldContent();
                   });
+                }
               }
             });
           } else {
