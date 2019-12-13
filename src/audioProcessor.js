@@ -21,6 +21,7 @@ function editAudio(readableStream, title, id) {
     .save(config.storageDir + title + config.mediaExtension); */
   return (
     ffmpeg(readableStream)
+      // TODO add .audioCodec("copy") and compare
       .audioBitrate("96k") //generally used for speech or low-quality streaming
       //.format("mp3") //ffmpeg cant determine format from a stream
       //noise removal
@@ -51,6 +52,21 @@ function editAudio(readableStream, title, id) {
   );
 }
 
+function editAudioMetadata(fileName, tagName, tagValue) {
+  const tmp = fileName + ".tmp";
+  fs.copyFileSync(fileName, tmp);
+
+  ffmpeg(tmp)
+    .audioCodec("copy")
+    .on("error", error => log.error(error))
+    .outputOption("-metadata", `${tagName}=${tagValue}`)
+    .save(fileName)
+    .on("end", () => {
+      fs.unlink(tmp, () => {});
+    });
+}
+
 module.exports = {
-  processAudio: processAudio
+  processAudio: processAudio,
+  editAudioMetadata: editAudioMetadata
 };

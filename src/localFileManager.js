@@ -13,17 +13,20 @@ async function getMediaById(givenId) {
   getMediaFiles().forEach(currentMediaFile => {
     promises.push(
       new Promise((resolve, reject) => {
-        ffmpeg.ffprobe(config.storageDir + currentMediaFile, (err, metadata) => {
-          if (err) {
-            log.error(err);
+        ffmpeg.ffprobe(
+          config.storageDir + currentMediaFile,
+          (err, metadata) => {
+            if (err) {
+              log.error(err);
+            }
+            if (metadata.format.tags.title === givenId) {
+              matchingMediaFile = currentMediaFile;
+              resolve();
+            } else {
+              reject();
+            }
           }
-          if (metadata.format.tags.title === givenId) {
-            matchingMediaFile = currentMediaFile;
-            resolve();
-          } else {
-            reject();
-          }
-        });
+        );
       })
     );
   });
@@ -45,8 +48,13 @@ async function getMediaById(givenId) {
 }
 
 function replaceMediaData(existingMedia, incomingMedia, incomingDescription) {
-  fs.renameSync(config.storageDir + existingMedia, config.storageDir + incomingMedia + config.mediaExtension);
-  fs.unlinkSync(config.storageDir + getDescriptionFileOfMediaFile(existingMedia));
+  fs.renameSync(
+    config.storageDir + existingMedia,
+    config.storageDir + incomingMedia + config.mediaExtension
+  );
+  fs.unlinkSync(
+    config.storageDir + getDescriptionFileOfMediaFile(existingMedia)
+  );
   createDescription(incomingMedia, incomingDescription);
 }
 

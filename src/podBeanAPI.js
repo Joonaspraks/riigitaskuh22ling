@@ -1,6 +1,7 @@
 const superagent = require("superagent");
 const fs = require("fs");
 
+const audioProcessor = require("./audioProcessor.js");
 const log = require("./logger.js");
 const config = require("./config.js");
 
@@ -33,8 +34,9 @@ function getPodBeanAccessToken(fileName, credentials) {
 }
 
 function authorizeUpload(fileName) {
-  var fileSize = fs.statSync(config.storageDir + fileName + config.mediaExtension)
-    .size;
+  var fileSize = fs.statSync(
+    config.storageDir + fileName + config.mediaExtension
+  ).size;
   superagent
     .get("https://api.podbean.com/v1/files/uploadAuthorize")
     .query({
@@ -90,8 +92,44 @@ function publishPodcast(fileName) {
         log.error(err);
       } else {
         log.info("Succesfully published");
+        // use audioProcessor to set TIT3 as mediaKey
+        audioProcessor.editAudioMetadata(
+          config.storageDir + fileName + config.mediaExtension,
+          "TIT3",
+          mediaKey
+        );
       }
     });
 }
 
-module.exports = { startUploading: startUploading };
+function updatePodcast() {
+  superagent
+    .post("https://api.podbean.com/v1/episodes")
+    .send({
+      access_token: accessToken,
+      type: "public",
+      title: fileName,
+      content: content,
+      status: config.publish ? "publish" : "draft",
+      media_key: mediaKey
+    })
+    .type("application/x-www-form-urlencoded")
+    .end((err, res) => {
+      if (err) {
+        log.error(err);
+      } else {
+        log.info("Succesfully published");
+        // use audioProcessor to set TIT3 as mediaKey
+        audioProcessor.editAudioMetadata(
+          config.storageDir + fileName + config.mediaExtension,
+          "TIT3",
+          mediaKey
+        );
+      }
+    });
+}
+
+module.exports = {
+  startUploading: startUploading,
+  updatePodcast: updatePodcast
+};
