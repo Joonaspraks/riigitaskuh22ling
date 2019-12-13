@@ -95,7 +95,7 @@ function createRSS() {
   });
 
   return Promise.all(audioDataPromises).then(values => {
-    values.forEach(audioData => {
+    values.forEach((audioData, index) => {
       feed.item({
         title: audioData.title,
         description: audioData.description,
