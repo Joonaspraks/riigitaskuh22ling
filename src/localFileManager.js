@@ -83,7 +83,9 @@ function createRSS() {
         });
 
         Promise.all([titlePromise, descriptionPromise])
-          .then(audioData => resolve(audioData))
+          .then(values =>
+            resolve({ audio, title: values[0], description: values[1] })
+          )
           .catch(err => {
             log.error(err);
             reject();
@@ -95,13 +97,13 @@ function createRSS() {
   return Promise.all(audioDataPromises).then(values => {
     values.forEach(audioData => {
       feed.item({
-        title: audioData[0],
-        description: audioData[1],
-        guid: audio,
+        title: audioData.title,
+        description: audioData.description,
+        guid: audioData.audio,
         url: siteUrl + "?file=" + (index + 1),
         enclosure: {
           url: siteUrl + "?file=" + (index + 1),
-          file: config.storageDir + audio
+          file: config.storageDir + audioData.audio
         }
       });
     });
