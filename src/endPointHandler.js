@@ -139,7 +139,7 @@ function parse(request, response) {
                     log.info("Downloading audio for " + title);
 
                     audioProcessor
-                      .processAudio(ytdl(id), title)
+                      .processAudio(ytdl(id), title, id)
                       .on("end", () => {
                         podBeanAPI.startUploading(
                           title,

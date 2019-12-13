@@ -4,11 +4,11 @@ const fs = require("fs");
 const log = require("./logger.js");
 const config = require("./config.js");
 
-function processAudio(videoStream, title) {
-  return editAudio(videoStream, title);
+function processAudio(videoStream, title, id) {
+  return editAudio(videoStream, title, id);
 }
 
-function editAudio(readableStream, title) {
+function editAudio(readableStream, title, id) {
   // create new file immediately to discourage double file creation
 
   // TODO if file later empty, remove
@@ -46,7 +46,7 @@ function editAudio(readableStream, title) {
       )
       .on("error", error => log.error(error))
       //.save('earwaxIstung2.mp3');
-      .outputOption("-metadata", `title=${title}`)
+      .outputOption("-metadata", `title=${id}`)
       .save(config.storageDir + title + config.mediaExtension)
   );
 }
