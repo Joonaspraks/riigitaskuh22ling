@@ -9,8 +9,8 @@ function processAudio(videoStream, title, id) {
 }
 
 function editAudio(readableStream, title, id) {
-  const fileName = config.storageDir + id + config.audioExtension;
-  const tmp = fileName + ".tmp";
+  const filePath = config.storageDir + id + config.audioExtension;
+  const tmp = filePath + ".tmp";
 
   // TODO if file later empty, remove
   /*   const writableStream = fs.createWriteStream(
@@ -52,24 +52,24 @@ function editAudio(readableStream, title, id) {
       .outputOption("-metadata", `title=${title}`)
       .save(tmp)
       .on("end", () => {
-        fs.renameSync(tmp, fileName);
+        fs.renameSync(tmp, filePath);
       })
   );
 }
 
 function editAudioMetadata(fileName, tagName, tagValue) {
+  const filePath = config.storageDir + fileName;
   const tmp = fileName + ".tmp";
-  fs.copyFileSync(fileName, tmp);
 
-  ffmpeg(fileName)
+  ffmpeg(filePath)
     .format("mp3")
     .audioCodec("copy")
     .on("error", error => log.error(error))
     .outputOption("-metadata", `${tagName}=${tagValue}`)
     .save(tmp)
     .on("end", () => {
-      fs.unlink(fileName, () => {
-        fs.renameSync(tmp, fileName);
+      fs.unlink(filePath, () => {
+        fs.renameSync(tmp, filePath);
       });
     });
 }

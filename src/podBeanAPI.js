@@ -98,7 +98,7 @@ function publishPodcast() {
 
         //set podcast id as file metadata for later updating if needed
         audioProcessor.editAudioMetadata(
-          config.storageDir + podBeanFileName,
+          podBeanFileName,
           "TIT3",
           res.body.episode.id
         );
