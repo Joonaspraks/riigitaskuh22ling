@@ -61,13 +61,16 @@ function editAudioMetadata(fileName, tagName, tagValue) {
   const tmp = fileName + ".tmp";
   fs.copyFileSync(fileName, tmp);
 
-  ffmpeg(tmp)
+  ffmpeg(fileName)
+    .format("mp3")
     .audioCodec("copy")
     .on("error", error => log.error(error))
     .outputOption("-metadata", `${tagName}=${tagValue}`)
-    .save(fileName)
+    .save(tmp)
     .on("end", () => {
-      fs.unlink(tmp, () => {});
+      fs.unlink(fileName, () => {
+        fs.renameSync(tmp, fileName);
+      });
     });
 }
 
