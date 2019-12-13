@@ -109,7 +109,7 @@ function parse(request, response) {
             response.writeHead("403");
             response.end();
             log.info(
-              `${title} with id ${youTubeId} already exists. Ignoring the file.`
+              `${title} with id ${youTubeId} is currently being processed. Ignoring the incoming change.`
             );
           } else {
             // When should this header be sent? Immediately after link has been fetched? Depends on how often the notifications are sent.
@@ -160,7 +160,10 @@ function parse(request, response) {
                         description,
                         credentials
                       );
-                      localFileManager.createDescription(youTubeId, description);
+                      localFileManager.createDescription(
+                        youTubeId,
+                        description
+                      );
                       localFileManager.removeOldContent();
                     });
                 }
