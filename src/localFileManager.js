@@ -29,8 +29,9 @@ function getMetadataFromAudio(audio, tag) {
       if (err) {
         log.error(err);
         reject(err);
+      } else {
+        resolve(metadata.format.tags[tag]);
       }
-      resolve(metadata.format.tags[tag]);
     });
   });
 }
@@ -67,9 +68,9 @@ function createRSS() {
   });
 
   const audioList = getAudioListSortedByDate();
-  const feedPromises = [];
-  audioList.forEach((audio, index) => {
-    feedPromises.push(
+  const audioDataPromises = [];
+  audioList.forEach(audio => {
+    audioDataPromises.push(
       new Promise((resolve, reject) => {
         const titlePromise = getMetadataFromAudio(audio, "title");
         const descriptionPromise = new Promise((resolve, reject) => {
@@ -82,19 +83,7 @@ function createRSS() {
         });
 
         Promise.all([titlePromise, descriptionPromise])
-          .then(values => {
-            feed.item({
-              title: values[0],
-              description: values[1],
-              guid: audio,
-              url: siteUrl + "?file=" + (index + 1),
-              enclosure: {
-                url: siteUrl + "?file=" + (index + 1),
-                file: config.storageDir + audio
-              }
-            });
-            resolve();
-          })
+          .then(audioData => resolve(audioData))
           .catch(err => {
             log.error(err);
             reject();
@@ -103,7 +92,20 @@ function createRSS() {
     );
   });
 
-  return Promise.all(feedPromises).then(() => {
+  return Promise.all(audioDataPromises).then(values => {
+    values.forEach(audioData => {
+      feed.item({
+        title: audioData[0],
+        description: audioData[1],
+        guid: audio,
+        url: siteUrl + "?file=" + (index + 1),
+        enclosure: {
+          url: siteUrl + "?file=" + (index + 1),
+          file: config.storageDir + audio
+        }
+      });
+    });
+
     return feed.xml();
   });
 }
