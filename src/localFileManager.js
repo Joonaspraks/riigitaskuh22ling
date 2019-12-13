@@ -69,36 +69,38 @@ function createRSS() {
   const audioList = getAudioListSortedByDate();
   const feedPromises = [];
   audioList.forEach((audio, index) => {
-    new Promise((resolve, reject) => {
-      const titlePromise = getMetadataFromAudio(audio, "title");
-      const descriptionPromise = new Promise((resolve, reject) => {
-        fs.readFile(
-          config.storageDir + getDescriptionFileOfAudio(audio),
-          (err, data) => {
-            err ? reject(err) : resolve(data);
-          }
-        );
-      });
-
-      Promise.all([titlePromise, descriptionPromise])
-        .then(values => {
-          feed.item({
-            title: values[0],
-            description: values[1],
-            guid: audio,
-            url: siteUrl + "?file=" + (index + 1),
-            enclosure: {
-              url: siteUrl + "?file=" + (index + 1),
-              file: config.storageDir + audio
+    feedPromises.push(
+      new Promise((resolve, reject) => {
+        const titlePromise = getMetadataFromAudio(audio, "title");
+        const descriptionPromise = new Promise((resolve, reject) => {
+          fs.readFile(
+            config.storageDir + getDescriptionFileOfAudio(audio),
+            (err, data) => {
+              err ? reject(err) : resolve(data);
             }
-          });
-          resolve();
-        })
-        .catch(err => {
-          log.error(err);
-          reject();
+          );
         });
-    });
+
+        Promise.all([titlePromise, descriptionPromise])
+          .then(values => {
+            feed.item({
+              title: values[0],
+              description: values[1],
+              guid: audio,
+              url: siteUrl + "?file=" + (index + 1),
+              enclosure: {
+                url: siteUrl + "?file=" + (index + 1),
+                file: config.storageDir + audio
+              }
+            });
+            resolve();
+          })
+          .catch(err => {
+            log.error(err);
+            reject();
+          });
+      })
+    );
   });
 
   return Promise.all(feedPromises).then(() => {
