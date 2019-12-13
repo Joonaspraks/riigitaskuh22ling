@@ -46,7 +46,7 @@ async function getMediaById(givenId) {
 
 function replaceMediaData(existingMedia, incomingMedia, incomingDescription) {
   fs.renameSync(config.storageDir + existingMedia, config.storageDir + incomingMedia);
-  fs.unlinkSync(getDescriptionFileOfMediaFile(existingMedia));
+  fs.unlinkSync(config.storageDir + getDescriptionFileOfMediaFile(existingMedia));
   createDescription(incomingMedia, incomingDescription);
 }
 
