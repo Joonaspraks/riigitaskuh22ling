@@ -101,58 +101,69 @@ function parse(request, response) {
           log.info("Notification from channel " + channelId);
           console.log("Notification from channel " + channelId);
           const title = entry.title[0];
-          // Why this check needed if I compare IDs later anyway?
-          // Because this check ignores file, the later one replaces.
-          if (localFileManager.getAudioByName(title)) {
-            log.info(`${title} already exists. Ignoring the file.`);
+          const youTubeId = entry["yt:videoId"][0];
+
+          // If audio matchin the ID is still processing, reject notification
+          if (localFileManager.getProcessingAudioById(youTubeId)) {
+            //tempAudio
+            response.writeHead("403");
+            response.end();
+            log.info(
+              `${title} with id ${youTubeId} already exists. Ignoring the file.`
+            );
           } else {
-            log.info("Video title: " + title);
             // When should this header be sent? Immediately after link has been fetched? Depends on how often the notifications are sent.
             // Should anything happen then it can be a good thing if another notification is sent
             // I'll assume that if a notification was received then it can be discarded
             // Stops the notifications for current item
             response.writeHead("200");
             response.end();
-            const id = entry["yt:videoId"][0];
-            console.log(id);
+            log.info("Video title: " + title);
 
-            // maybe move ytdl related stuff to other file?
-            ytdl.getBasicInfo(id, (err, info) => {
+            ytdl.getBasicInfo(youTubeId, (err, info) => {
               if (err) log.error(err);
               else {
                 const description = info.description;
                 const credentials = config.podbeanCredentials;
                 // compare the video id with all ids of stored media
-                localFileManager.getAudioById(id).then(existingMedia => {
+                const existingAudio = localFileManager.getAudioById(youTubeId);
+                if (existingAudio) {
                   // replace old file's name and description
-                  if (existingMedia) {
-                    log.info(
-                      `${title} exists, but its contents have been changed. Updating name and description.`
-                    );
-                    localFileManager.updateAudioData(
-                      existingMedia,
-                      title,
-                      description,
-                    );
-                    localFileManager.getPodcastIdFromMedia(title).then(episodeId =>{
-                      podBeanAPI.updatePodcast(episodeId, title, description, credentials);
+                  log.info(
+                    `${title} exists, but its contents have been changed. Updating name and description.`
+                  );
+                  audioProcessor.editAudioMetadata(
+                    existingAudio,
+                    "title",
+                    title
+                  );
+                  localFileManager.createDescription(youTubeId, description);
+                  localFileManager
+                    .getMetadataFromAudio(youTubeId, "TIT3")
+                    .then(episodeId => {
+                      podBeanAPI.updatePodcast(
+                        episodeId,
+                        title,
+                        description,
+                        credentials
+                      );
                     });
-                  } else {
-                    log.info("Downloading audio for " + title);
+                } else {
+                  log.info("Downloading audio for " + title);
 
-                    audioProcessor
-                      .processAudio(ytdl(id), title, id)
-                      .on("end", () => {
-                        podBeanAPI.startUploading(
-                          title,
-                          description,
-                          credentials
-                        );
-                        localFileManager.createDescription(title, description);
-                        localFileManager.removeOldContent();
-                      });
-                  }
-                });
+                  audioProcessor
+                    .processAudio(ytdl(youTubeId), title, youTubeId)
+                    .on("end", () => {
+                      podBeanAPI.startUploading(
+                        youTubeId,
+                        title,
+                        description,
+                        credentials
+                      );
+                      localFileManager.createDescription(youTubeId, description);
+                      localFileManager.removeOldContent();
+                    });
+                }
               }
             });
           }

@@ -9,7 +9,8 @@ function processAudio(videoStream, title, id) {
 }
 
 function editAudio(readableStream, title, id) {
-  // create new file immediately to discourage double file creation
+  const fileName = config.storageDir + id + config.audioExtension;
+  const tmp = fileName + ".tmp";
 
   // TODO if file later empty, remove
   /*   const writableStream = fs.createWriteStream(
@@ -21,6 +22,7 @@ function editAudio(readableStream, title, id) {
     .save(config.storageDir + title + config.audioExtension); */
   return (
     ffmpeg(readableStream)
+      .format("mp3")
       // TODO add .audioCodec("copy") and compare
       .audioBitrate("96k") //generally used for speech or low-quality streaming
       //.format("mp3") //ffmpeg cant determine format from a stream
@@ -47,22 +49,26 @@ function editAudio(readableStream, title, id) {
       )
       .on("error", error => log.error(error))
       //.save('earwaxIstung2.mp3');
-      .outputOption("-metadata", `title=${id}`)
-      .save(config.storageDir + title + config.audioExtension)
+      .outputOption("-metadata", `title=${title}`)
+      .save(tmp)
+      .on("end", () => {
+        fs.renameSync(tmp, fileName);
+      })
   );
 }
 
 function editAudioMetadata(fileName, tagName, tagValue) {
   const tmp = fileName + ".tmp";
-  fs.copyFileSync(fileName, tmp);
 
-  ffmpeg(tmp)
+  ffmpeg(fileName)
     .audioCodec("copy")
     .on("error", error => log.error(error))
     .outputOption("-metadata", `${tagName}=${tagValue}`)
-    .save(fileName)
+    .save(tmp)
     .on("end", () => {
-      fs.unlink(tmp, () => {});
+      fs.unlink(fileName, () => {
+        fs.renameSync(tmp, fileName);
+      });
     });
 }
 

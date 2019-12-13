@@ -6,13 +6,15 @@ const log = require("./logger.js");
 const config = require("./config.js");
 
 let accessToken = "";
-let content = "";
-let fileName = "";
 let mediaKey = "";
+let podBeanContent = "";
+let podBeanFileName = "";
+let podBeanTitle = "";
 
-function startUploading(incomingFileName, description, credentials) {
-  content = description;
-  fileName = incomingFileName;
+function startUploading(id, title, description, credentials) {
+  podBeanContent = description;
+  podBeanFileName = id + config.audioExtension;
+  podBeanTitle = title;
   getPodBeanAccessToken(credentials, authorizeUpload);
 }
 
@@ -37,13 +39,13 @@ function getPodBeanAccessToken(credentials, callback) {
 
 function authorizeUpload() {
   var fileSize = fs.statSync(
-    config.storageDir + fileName + config.audioExtension
+    config.storageDir + podBeanFileName
   ).size;
   superagent
     .get("https://api.podbean.com/v1/files/uploadAuthorize")
     .query({
       access_token: accessToken,
-      filename: fileName + config.audioExtension,
+      filename: podBeanFileName,
       filesize: fileSize,
       content_type: "audio/mpeg"
     })
@@ -53,7 +55,7 @@ function authorizeUpload() {
       } else {
         mediaKey = res.body.file_key;
         log.info("Succesfully authorized");
-        uploadPodcast(res.body.presigned_url, fileName);
+        uploadPodcast(res.body.presigned_url, podBeanFileName);
       }
     });
 }
@@ -63,28 +65,27 @@ function uploadPodcast(url) {
     .put(url)
     .type("audio/mpeg")
     .attach(
-      fileName,
-      fs.readFileSync(config.storageDir + fileName + config.audioExtension)
+      podBeanFileName,
+      fs.readFileSync(config.storageDir + podBeanFileName)
     )
     .end((err, res) => {
       if (err) {
         log.error(err);
       } else {
         log.info("Succesfully uploaded");
-        publishPodcast(fileName);
+        publishPodcast(podBeanFileName);
       }
     });
 }
 
 function publishPodcast() {
-  fileName + config.audioExtension;
   superagent
     .post("https://api.podbean.com/v1/episodes")
     .send({
       access_token: accessToken,
       type: "public",
-      title: fileName,
-      content: content,
+      title: podBeanTitle,
+      content: podBeanContent,
       status: config.publish ? "publish" : "draft",
       media_key: mediaKey
     })
@@ -97,7 +98,7 @@ function publishPodcast() {
 
         //set podcast id as file metadata for later updating if needed
         audioProcessor.editAudioMetadata(
-          config.storageDir + fileName + config.audioExtension,
+          config.storageDir + podBeanFileName,
           "TIT3",
           res.body.episode.id
         );
@@ -114,14 +115,14 @@ function updatePodcast(episodeId, title, description, credentials) {
         type: "public",
         title: title,
         content: description,
-        status: config.publish ? "publish" : "draft",
+        status: config.publish ? "publish" : "draft"
       })
       .type("application/x-www-form-urlencoded")
       .end((err, res) => {
         if (err) {
           log.error(err);
         } else {
-          log.info(`Succesfully updated ${title}`);
+          log.info(`Succesfully updated podcast ${title}`);
         }
       });
   });

@@ -7,7 +7,23 @@ const log = require("./logger.js");
 
 const siteUrl = config.protocol + "www.riigipodcast.ee:" + config.port + "/";
 
-async function getAudioById(givenId) {
+function getProcessingAudioById(givenId) {
+  return getAudioFiles(true).find(
+    existingId =>
+      existingId.replace(new RegExp(`${config.audioExtension}.tmp$`), "") ===
+      givenId
+  );
+}
+
+function getAudioById(givenId) {
+  return getAudioFiles(false).find(
+    existingId =>
+      existingId.replace(new RegExp(`${config.audioExtension}$`), "") ===
+      givenId
+  );
+}
+
+/* async function getAudioById(givenId) {
   let matchingMediaFile;
   let promises = [];
   getMediaFiles().forEach(currentMediaFile => {
@@ -45,35 +61,24 @@ async function getAudioById(givenId) {
   } catch (value_1) {
     return matchingMediaFile;
   }
-}
+} */
 
-function updateAudioData(existingAudio, incomingAudio, incomingDescription) {
-  fs.renameSync(
-    config.storageDir + existingAudio,
-    config.storageDir + incomingAudio + config.audioExtension
-  );
-  fs.unlinkSync(
-    config.storageDir + getDescriptionFileOfMediaFile(existingAudio)
-  );
-  createDescription(incomingAudio, incomingDescription);
-}
-
-function getPodcastIdFromMedia(audioName) {
-  // TODO change all 'media' to 'audio'
-  const audio = getAudioByName(audioName);
-  return new Promise(resolve => {
+function getMetadataFromAudio(id, tag) {
+  const audio = getAudioById(id);
+  return new Promise((resolve, reject) => {
     ffmpeg.ffprobe(config.storageDir + audio, (err, metadata) => {
       if (err) {
         log.error(err);
+        reject(err);
       }
-      resolve(metadata.format.tags.TIT3);
+      resolve(metadata.format.tags[tag]);
     });
   });
 }
 
-function createDescription(title, description) {
+function createDescription(fileName, description) {
   fs.writeFileSync(
-    config.storageDir + title + config.descriptionExtension,
+    config.storageDir + fileName + config.descriptionExtension,
     description
   );
 }
@@ -81,14 +86,12 @@ function createDescription(title, description) {
 function removeOldContent() {
   const maxSize = 20;
 
-  const mediaFilesToBeRemoved = getAudioListSortedByDate().slice(maxSize);
+  const audioFilesToBeRemoved = getAudioListSortedByDate().slice(maxSize);
 
-  mediaFilesToBeRemoved.forEach(mediaFileName => {
+  audioFilesToBeRemoved.forEach(audio => {
     try {
-      fs.unlinkSync(config.storageDir + mediaFileName);
-      fs.unlinkSync(
-        config.storageDir + getDescriptionFileOfMediaFile(mediaFileName)
-      );
+      fs.unlinkSync(config.storageDir + audio);
+      fs.unlinkSync(config.storageDir + getDescriptionFileOfAudio(audio));
     } catch (err) {
       log.error(err);
     }
@@ -104,25 +107,32 @@ function createRSS() {
     site_url: siteUrl
   });
 
-  const mediaFileNames = getAudioListSortedByDate();
-  mediaFileNames.forEach((mediaFileName, index) => {
-    let description = "";
-    try {
-      description = fs.readFileSync(
-        config.storageDir + getDescriptionFileOfMediaFile(mediaFileName)
-      );
-    } catch (err) {
-      log.error(err);
-    }
-    feed.item({
-      title: mediaFileName,
-      description,
-      guid: mediaFileName,
-      url: siteUrl + "?file=" + (index + 1),
-      enclosure: {
+  const audioList = getAudioListSortedByDate();
+  audioList.forEach((audio, index) => {
+    const promises = [];
+    promises.push(getMetadataFromAudio(audio /* remove extension */, "title"));
+    promises.push(
+      new Promise((resolve, reject) => {
+        fs.readFile(
+          config.storageDir + getDescriptionFileOfAudio(audio),
+          (err, data) => {
+            err ? reject(err) : resolve(data);
+          }
+        );
+      })
+    );
+
+    Promise.all(promises).then(values => {
+      feed.item({
+        title: values[0],
+        description: values[1],
+        guid: audio,
         url: siteUrl + "?file=" + (index + 1),
-        file: config.storageDir + mediaFileName
-      }
+        enclosure: {
+          url: siteUrl + "?file=" + (index + 1),
+          file: config.storageDir + audio
+        }
+      });
     });
   });
 
@@ -140,29 +150,30 @@ function createHTML() {
   );
 }
 
-function getDescriptionFileOfMediaFile(mediaFileName) {
-  return mediaFileName.replace(
+function getDescriptionFileOfAudio(audio) {
+  return audio.replace(
     new RegExp(`${config.audioExtension}$`),
     config.descriptionExtension
   );
 }
 
 function getAudioByName(givenFileName) {
-  return getMediaFiles().find(
+  return getAudioFiles(false).find(
     existingFileName =>
       existingFileName.replace(new RegExp(`${config.audioExtension}$`), "") ===
       givenFileName
   );
 }
 
-function getMediaFiles() {
-  return fs
-    .readdirSync(config.storageDir)
-    .filter(fileName => fileName.match(`${config.audioExtension}$`));
+function getAudioFiles(findTemporaries) {
+  const pattern = findTemporaries
+    ? `${config.audioExtension}.tmp$`
+    : `${config.audioExtension}$`;
+  return fs.readdirSync(config.storageDir).filter(file => file.match(pattern));
 }
 
 function getAudioListSortedByDate() {
-  return getMediaFiles()
+  return getAudioFiles(false)
     .map(name => {
       return {
         name: name,
@@ -181,8 +192,8 @@ module.exports = {
   getAudioById: getAudioById,
   getAudioByName: getAudioByName,
   getAudioListSortedByDate: getAudioListSortedByDate,
-  getPodcastIdFromMedia: getPodcastIdFromMedia,
+  getMetadataFromAudio: getMetadataFromAudio,
+  getProcessingAudioById: getProcessingAudioById,
   removeOldContent: removeOldContent,
-  updateAudioData: updateAudioData,
   createHTML: createHTML
 };
