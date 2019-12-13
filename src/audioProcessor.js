@@ -1,6 +1,5 @@
 const ffmpeg = require("fluent-ffmpeg");
 const fs = require("fs");
-const ytdl = require("ytdl-core");
 
 const log = require("./logger.js");
 const config = require("./config.js");

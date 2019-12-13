@@ -1,6 +1,7 @@
 const parseString = require("xml2js").parseString;
 const url = require("url");
 const fs = require("fs");
+const ytdl = require("ytdl-core");
 
 const config = require("./config.js");
 const log = require("./logger.js");
