@@ -55,8 +55,13 @@ function parse(request, response) {
       "Content-Type": "application/rss+xml"
     });
 
-    response.write(localFileManager.createRSS());
-    response.end();
+    localFileManager
+      .createRSS()
+      .then(feed => {
+        response.write(feed);
+        response.end();
+      })
+      .catch(err => log.error(err));
   }
 
   if (method === "GET" && requestUrl.query[file]) {
@@ -66,12 +71,12 @@ function parse(request, response) {
       requestedFileNum > 0 &&
       requestedFileNum < 20 //replace with const
     ) {
-      const fileNames = localFileManager.getAudioListSortedByDate();
+      const audioList = localFileManager.getAudioListSortedByDate();
       //Making sure that there exists a file for the request
-      if (fileNames.length >= requestedFileNum) {
-        const fileName = fileNames[requestedFileNum - 1];
+      if (audioList.length >= requestedFileNum) {
+        const audio = audioList[requestedFileNum - 1];
 
-        const filePath = config.storageDir + fileName;
+        const filePath = config.storageDir + audio;
 
         response.writeHead(200, {
           "Content-Type": "audio/mpeg",
