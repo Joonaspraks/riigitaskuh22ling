@@ -13,7 +13,7 @@ async function getMediaById(givenId) {
   getMediaFiles().forEach(currentMediaFile => {
     promises.push(
       new Promise((resolve, reject) => {
-        ffmpeg.ffprobe(currentMediaFile, (err, metadata) => {
+        ffmpeg.ffprobe(config.storageDir + currentMediaFile, (err, metadata) => {
           if (err) {
             log.error(err);
           }
