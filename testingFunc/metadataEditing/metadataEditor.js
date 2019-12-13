@@ -1,14 +1,18 @@
 const ffmpeg = require("fluent-ffmpeg");
 const fs = require("fs");
 
-/* ffmpeg.ffprobe('song2.mp3', (err, metadata) => {
-  if (err) {
-    log.error(err);
-  }
-  console.log(metadata);
-}); */
+const promise = new Promise((resolve) => {
+  ffmpeg.ffprobe("song2.mp3", (err, metadata) => {
+    if (err) {
+      log.error(err);
+    }
+    resolve (metadata.format.tags.TIT3);
+  });
+});
 
-function editAudioMetadata(fileName, tagName, tagValue) {
+promise.then(subtitles=> console.log(subtitles));
+
+/* function editAudioMetadata(fileName, tagName, tagValue) {
   const tmp = fileName + ".tmp";
   fs.copyFileSync(fileName, tmp);
 
@@ -21,4 +25,4 @@ function editAudioMetadata(fileName, tagName, tagValue) {
       });
 }
 
-editAudioMetadata("./song.mp3", "TIT3", "aajeee subtitles");
+editAudioMetadata("./song.mp3", "TIT3", "aajeee subtitles"); */

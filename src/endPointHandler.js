@@ -66,7 +66,7 @@ function parse(request, response) {
       requestedFileNum > 0 &&
       requestedFileNum < 20 //replace with const
     ) {
-      const fileNames = localFileManager.getMediaFilesSortedByDate();
+      const fileNames = localFileManager.getAudioListSortedByDate();
       //Making sure that there exists a file for the request
       if (fileNames.length >= requestedFileNum) {
         const fileName = fileNames[requestedFileNum - 1];
@@ -103,7 +103,7 @@ function parse(request, response) {
           const title = entry.title[0];
           // Why this check needed if I compare IDs later anyway?
           // Because this check ignores file, the later one replaces.
-          if (localFileManager.getMediaFile(title)) {
+          if (localFileManager.getAudioByName(title)) {
             log.info(`${title} already exists. Ignoring the file.`);
           } else {
             log.info("Video title: " + title);
@@ -121,21 +121,23 @@ function parse(request, response) {
               if (err) log.error(err);
               else {
                 const description = info.description;
-                // TODO 1) compare id with all ids of stored media
-                localFileManager.getMediaById(id).then(existingMedia => {
-                  // TODO 2) if true, replace oldfile's name and description
+                const credentials = config.podbeanCredentials;
+                // compare the video id with all ids of stored media
+                localFileManager.getAudioById(id).then(existingMedia => {
+                  // replace old file's name and description
                   if (existingMedia) {
                     log.info(
                       `${title} exists, but its contents have been changed. Updating name and description.`
                     );
-                    localFileManager.replaceMediaData(
+                    localFileManager.updateAudioData(
                       existingMedia,
                       title,
-                      description
+                      description,
                     );
-                    // TODO update file on podbean
+                    localFileManager.getPodcastIdFromMedia(title).then(episodeId =>{
+                      podBeanAPI.updatePodcast(episodeId, title, description, credentials);
+                    });
                   } else {
-                    // TODO 3) else, the usual
                     log.info("Downloading audio for " + title);
 
                     audioProcessor
@@ -144,7 +146,7 @@ function parse(request, response) {
                         podBeanAPI.startUploading(
                           title,
                           description,
-                          config.podbeanCredentials
+                          credentials
                         );
                         localFileManager.createDescription(title, description);
                         localFileManager.removeOldContent();

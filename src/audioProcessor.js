@@ -13,12 +13,12 @@ function editAudio(readableStream, title, id) {
 
   // TODO if file later empty, remove
   /*   const writableStream = fs.createWriteStream(
-    config.storageDir + title + config.mediaExtension
+    config.storageDir + title + config.audioExtension
   ); */
   /*   return ffmpeg(readableStream)
     .preset("podcast")
     .on("error", error => log.error(error))
-    .save(config.storageDir + title + config.mediaExtension); */
+    .save(config.storageDir + title + config.audioExtension); */
   return (
     ffmpeg(readableStream)
       // TODO add .audioCodec("copy") and compare
@@ -48,7 +48,7 @@ function editAudio(readableStream, title, id) {
       .on("error", error => log.error(error))
       //.save('earwaxIstung2.mp3');
       .outputOption("-metadata", `title=${id}`)
-      .save(config.storageDir + title + config.mediaExtension)
+      .save(config.storageDir + title + config.audioExtension)
   );
 }
 

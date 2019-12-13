@@ -33,7 +33,7 @@ config =
       };
 
 config.descriptionExtension = ".txt";
-config.mediaExtension = ".mp3";
+config.audioExtension = ".mp3";
 config.podbeanCredentials = {
   // riigiPodcast.podbean
   id: "1405d6a0497f64f70d6d1",

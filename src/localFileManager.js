@@ -7,7 +7,7 @@ const log = require("./logger.js");
 
 const siteUrl = config.protocol + "www.riigipodcast.ee:" + config.port + "/";
 
-async function getMediaById(givenId) {
+async function getAudioById(givenId) {
   let matchingMediaFile;
   let promises = [];
   getMediaFiles().forEach(currentMediaFile => {
@@ -47,15 +47,28 @@ async function getMediaById(givenId) {
   }
 }
 
-function replaceMediaData(existingMedia, incomingMedia, incomingDescription) {
+function updateAudioData(existingAudio, incomingAudio, incomingDescription) {
   fs.renameSync(
-    config.storageDir + existingMedia,
-    config.storageDir + incomingMedia + config.mediaExtension
+    config.storageDir + existingAudio,
+    config.storageDir + incomingAudio + config.audioExtension
   );
   fs.unlinkSync(
-    config.storageDir + getDescriptionFileOfMediaFile(existingMedia)
+    config.storageDir + getDescriptionFileOfMediaFile(existingAudio)
   );
-  createDescription(incomingMedia, incomingDescription);
+  createDescription(incomingAudio, incomingDescription);
+}
+
+function getPodcastIdFromMedia(audioName) {
+  // TODO change all 'media' to 'audio'
+  const audio = getAudioByName(audioName);
+  return new Promise(resolve => {
+    ffmpeg.ffprobe(config.storageDir + audio, (err, metadata) => {
+      if (err) {
+        log.error(err);
+      }
+      resolve(metadata.format.tags.TIT3);
+    });
+  });
 }
 
 function createDescription(title, description) {
@@ -68,7 +81,7 @@ function createDescription(title, description) {
 function removeOldContent() {
   const maxSize = 20;
 
-  const mediaFilesToBeRemoved = getMediaFilesSortedByDate().slice(maxSize);
+  const mediaFilesToBeRemoved = getAudioListSortedByDate().slice(maxSize);
 
   mediaFilesToBeRemoved.forEach(mediaFileName => {
     try {
@@ -91,7 +104,7 @@ function createRSS() {
     site_url: siteUrl
   });
 
-  const mediaFileNames = getMediaFilesSortedByDate();
+  const mediaFileNames = getAudioListSortedByDate();
   mediaFileNames.forEach((mediaFileName, index) => {
     let description = "";
     try {
@@ -117,7 +130,7 @@ function createRSS() {
 }
 
 function createHTML() {
-  const mediaFiles = getMediaFilesSortedByDate();
+  const mediaFiles = getAudioListSortedByDate();
   return (
     "<html><head><meta charset='UTF-8'" +
     "name='google-site-verification' content='71QmVVJaUYxxAbp0YHhwaQ-gHcNnct4LtzaTt4ESPV0' /></head>" +
@@ -142,15 +155,15 @@ function createHTML() {
 
 function getDescriptionFileOfMediaFile(mediaFileName) {
   return mediaFileName.replace(
-    new RegExp(`${config.mediaExtension}$`),
+    new RegExp(`${config.audioExtension}$`),
     config.descriptionExtension
   );
 }
 
-function getMediaFile(givenFileName) {
+function getAudioByName(givenFileName) {
   return getMediaFiles().find(
     existingFileName =>
-      existingFileName.replace(new RegExp(`${config.mediaExtension}$`), "") ===
+      existingFileName.replace(new RegExp(`${config.audioExtension}$`), "") ===
       givenFileName
   );
 }
@@ -158,10 +171,10 @@ function getMediaFile(givenFileName) {
 function getMediaFiles() {
   return fs
     .readdirSync(config.storageDir)
-    .filter(fileName => fileName.match(`${config.mediaExtension}$`));
+    .filter(fileName => fileName.match(`${config.audioExtension}$`));
 }
 
-function getMediaFilesSortedByDate() {
+function getAudioListSortedByDate() {
   return getMediaFiles()
     .map(name => {
       return {
@@ -178,10 +191,11 @@ function getMediaFilesSortedByDate() {
 module.exports = {
   createDescription: createDescription,
   createRSS: createRSS,
-  getMediaById: getMediaById,
-  getMediaFile: getMediaFile,
-  getMediaFilesSortedByDate: getMediaFilesSortedByDate,
+  getAudioById: getAudioById,
+  getAudioByName: getAudioByName,
+  getAudioListSortedByDate: getAudioListSortedByDate,
+  getPodcastIdFromMedia: getPodcastIdFromMedia,
   removeOldContent: removeOldContent,
-  replaceMediaData: replaceMediaData,
+  updateAudioData: updateAudioData,
   createHTML: createHTML
 };

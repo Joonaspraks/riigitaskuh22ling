@@ -5,16 +5,18 @@ const audioProcessor = require("./audioProcessor.js");
 const log = require("./logger.js");
 const config = require("./config.js");
 
-let content = "";
-let mediaKey = "";
 let accessToken = "";
+let content = "";
+let fileName = "";
+let mediaKey = "";
 
-function startUploading(fileName, description, credentials) {
+function startUploading(incomingFileName, description, credentials) {
   content = description;
-  getPodBeanAccessToken(fileName, credentials);
+  fileName = incomingFileName;
+  getPodBeanAccessToken(credentials, authorizeUpload);
 }
 
-function getPodBeanAccessToken(fileName, credentials) {
+function getPodBeanAccessToken(credentials, callback) {
   superagent
     .post("https://api.podbean.com/v1/oauth/token")
     .send({
@@ -28,20 +30,20 @@ function getPodBeanAccessToken(fileName, credentials) {
       } else {
         accessToken = res.body.access_token;
         log.info("Succesfully received accessToken");
-        authorizeUpload(fileName);
+        callback();
       }
     });
 }
 
-function authorizeUpload(fileName) {
+function authorizeUpload() {
   var fileSize = fs.statSync(
-    config.storageDir + fileName + config.mediaExtension
+    config.storageDir + fileName + config.audioExtension
   ).size;
   superagent
     .get("https://api.podbean.com/v1/files/uploadAuthorize")
     .query({
       access_token: accessToken,
-      filename: fileName + config.mediaExtension,
+      filename: fileName + config.audioExtension,
       filesize: fileSize,
       content_type: "audio/mpeg"
     })
@@ -56,13 +58,13 @@ function authorizeUpload(fileName) {
     });
 }
 
-function uploadPodcast(url, fileName) {
+function uploadPodcast(url) {
   superagent
     .put(url)
     .type("audio/mpeg")
     .attach(
       fileName,
-      fs.readFileSync(config.storageDir + fileName + config.mediaExtension)
+      fs.readFileSync(config.storageDir + fileName + config.audioExtension)
     )
     .end((err, res) => {
       if (err) {
@@ -74,8 +76,8 @@ function uploadPodcast(url, fileName) {
     });
 }
 
-function publishPodcast(fileName) {
-  fileName + config.mediaExtension;
+function publishPodcast() {
+  fileName + config.audioExtension;
   superagent
     .post("https://api.podbean.com/v1/episodes")
     .send({
@@ -92,41 +94,37 @@ function publishPodcast(fileName) {
         log.error(err);
       } else {
         log.info("Succesfully published");
-        // use audioProcessor to set TIT3 as mediaKey
+
+        //set podcast id as file metadata for later updating if needed
         audioProcessor.editAudioMetadata(
-          config.storageDir + fileName + config.mediaExtension,
+          config.storageDir + fileName + config.audioExtension,
           "TIT3",
-          mediaKey
+          res.body.episode.id
         );
       }
     });
 }
 
-function updatePodcast() {
-  superagent
-    .post("https://api.podbean.com/v1/episodes")
-    .send({
-      access_token: accessToken,
-      type: "public",
-      title: fileName,
-      content: content,
-      status: config.publish ? "publish" : "draft",
-      media_key: mediaKey
-    })
-    .type("application/x-www-form-urlencoded")
-    .end((err, res) => {
-      if (err) {
-        log.error(err);
-      } else {
-        log.info("Succesfully published");
-        // use audioProcessor to set TIT3 as mediaKey
-        audioProcessor.editAudioMetadata(
-          config.storageDir + fileName + config.mediaExtension,
-          "TIT3",
-          mediaKey
-        );
-      }
-    });
+function updatePodcast(episodeId, title, description, credentials) {
+  getPodBeanAccessToken(credentials, () => {
+    superagent
+      .post(`https://api.podbean.com/v1/episodes/${episodeId}`)
+      .send({
+        access_token: accessToken,
+        type: "public",
+        title: title,
+        content: description,
+        status: config.publish ? "publish" : "draft",
+      })
+      .type("application/x-www-form-urlencoded")
+      .end((err, res) => {
+        if (err) {
+          log.error(err);
+        } else {
+          log.info(`Succesfully updated ${title}`);
+        }
+      });
+  });
 }
 
 module.exports = {
