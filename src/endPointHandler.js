@@ -120,6 +120,7 @@ function parse(request, response) {
                 localFileManager.getMediaById(id).then(existingMedia => {
                   // TODO 2) if true, replace oldfile's name and description
                   if (existingMedia) {
+                    log.info(`${title} already exists! Updating name and description.`)
                     localFileManager.replaceMediaData(
                       existingMedia,
                       title,
