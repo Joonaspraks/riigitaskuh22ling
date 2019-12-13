@@ -99,6 +99,7 @@ function parse(request, response) {
 
         if (config.youTubeChannels.includes(channelId)) {
           log.info("Notification from channel " + channelId);
+          console.log("Notification from channel " + channelId);
           const title = entry.title[0];
           // Why this check needed if I compare IDs later anyway?
           // Because this check ignores file, the later one replaces.
@@ -113,6 +114,7 @@ function parse(request, response) {
             response.writeHead("200");
             response.end();
             const id = entry["yt:videoId"][0];
+            console.log(id);
 
             // maybe move ytdl related stuff to other file?
             ytdl.getBasicInfo(id, (err, info) => {
