@@ -58,7 +58,7 @@ function editAudio(readableStream, title, id) {
 }
 
 function editAudioMetadata(fileName, tagName, tagValue) {
-  const tmp = fileName + ".tmp";
+  const tmp = fileName + ".tma";
 
   ffmpeg(fileName)
     .audioCodec("copy")
