@@ -149,7 +149,6 @@ module.exports = {
   createDescription: createDescription,
   createRSS: createRSS,
   getAudioById: getAudioById,
-  getAudioByName: getAudioByName,
   getAudioListSortedByDate: getAudioListSortedByDate,
   getMetadataFromAudio: getMetadataFromAudio,
   getProcessingAudioById: getProcessingAudioById,
