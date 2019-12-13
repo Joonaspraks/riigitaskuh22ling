@@ -140,7 +140,7 @@ function getDescriptionFileOfMediaFile(mediaFileName) {
 }
 
 function getMediaFile(givenFileName) {
-  getMediaFiles().find(
+  return getMediaFiles().find(
     existingFileName =>
       existingFileName.replace(new RegExp(`${config.mediaExtension}$`), "") ===
       givenFileName
