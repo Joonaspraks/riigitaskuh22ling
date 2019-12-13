@@ -59,16 +59,15 @@ function editAudio(readableStream, title, id) {
 
 function editAudioMetadata(fileName, tagName, tagValue) {
   const tmp = fileName + ".tmp";
+  fs.copyFileSync(fileName, tmp);
 
-  ffmpeg(fileName)
-    //.audioCodec("copy")
+  ffmpeg(tmp)
+    .audioCodec("copy")
     .on("error", error => log.error(error))
     .outputOption("-metadata", `${tagName}=${tagValue}`)
-    .save(tmp)
+    .save(fileName)
     .on("end", () => {
-      fs.unlink(fileName, () => {
-        fs.renameSync(tmp, fileName);
-      });
+      fs.unlink(tmp, () => {});
     });
 }
 
