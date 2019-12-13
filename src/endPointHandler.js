@@ -102,6 +102,8 @@ function parse(request, response) {
           // Why this check needed if I compare IDs later anyway?
           // Because this check ignores file, the later one replaces.
           if (localFileManager.getMediaFile(title)) {
+            log.info(`${title} already exists. Ignoring the file.`);
+          } else {
             log.info("Video title: " + title);
             // When should this header be sent? Immediately after link has been fetched? Depends on how often the notifications are sent.
             // Should anything happen then it can be a good thing if another notification is sent
@@ -120,7 +122,9 @@ function parse(request, response) {
                 localFileManager.getMediaById(id).then(existingMedia => {
                   // TODO 2) if true, replace oldfile's name and description
                   if (existingMedia) {
-                    log.info(`${title} exists, but its contents have been changed. Updating name and description.`)
+                    log.info(
+                      `${title} exists, but its contents have been changed. Updating name and description.`
+                    );
                     localFileManager.replaceMediaData(
                       existingMedia,
                       title,
@@ -146,8 +150,6 @@ function parse(request, response) {
                 });
               }
             });
-          } else {
-            log.info(`${title} already exists. Ignoring the file.`);
           }
         }
       });
