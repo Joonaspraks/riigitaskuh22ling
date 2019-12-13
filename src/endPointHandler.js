@@ -139,7 +139,7 @@ function parse(request, response) {
                   );
                   localFileManager.createDescription(youTubeId, description);
                   localFileManager
-                    .getMetadataFromAudio(youTubeId, "TIT3")
+                    .getMetadataFromAudio(existingAudio, "TIT3")
                     .then(episodeId => {
                       podBeanAPI.updatePodcast(
                         episodeId,

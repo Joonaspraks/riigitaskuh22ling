@@ -23,48 +23,7 @@ function getAudioById(givenId) {
   );
 }
 
-/* async function getAudioById(givenId) {
-  let matchingMediaFile;
-  let promises = [];
-  getMediaFiles().forEach(currentMediaFile => {
-    promises.push(
-      new Promise((resolve, reject) => {
-        ffmpeg.ffprobe(
-          config.storageDir + currentMediaFile,
-          (err, metadata) => {
-            if (err) {
-              log.error(err);
-            }
-            if (metadata.format.tags.title === givenId) {
-              matchingMediaFile = currentMediaFile;
-              resolve();
-            } else {
-              reject();
-            }
-          }
-        );
-      })
-    );
-  });
-  // Return when first promise resolves or when all reject
-  try {
-    await Promise.all(
-      promises.map(p => {
-        // Swapping reject and resolve cases
-        // Promise.all() returns when there is one resolve or all rejects
-        return p.then(
-          val => Promise.reject(val),
-          err => Promise.resolve(err)
-        );
-      })
-    );
-  } catch (value_1) {
-    return matchingMediaFile;
-  }
-} */
-
-function getMetadataFromAudio(id, tag) {
-  const audio = getAudioById(id);
+function getMetadataFromAudio(audio, tag) {
   return new Promise((resolve, reject) => {
     ffmpeg.ffprobe(config.storageDir + audio, (err, metadata) => {
       if (err) {
@@ -108,35 +67,43 @@ function createRSS() {
   });
 
   const audioList = getAudioListSortedByDate();
+  const feedPromises = [];
   audioList.forEach((audio, index) => {
-    const promises = [];
-    promises.push(getMetadataFromAudio(audio /* remove extension */, "title"));
-    promises.push(
-      new Promise((resolve, reject) => {
+    new Promise((resolve, reject) => {
+      const titlePromise = getMetadataFromAudio(audio, "title");
+      const descriptionPromise = new Promise((resolve, reject) => {
         fs.readFile(
           config.storageDir + getDescriptionFileOfAudio(audio),
           (err, data) => {
             err ? reject(err) : resolve(data);
           }
         );
-      })
-    );
-
-    Promise.all(promises).then(values => {
-      feed.item({
-        title: values[0],
-        description: values[1],
-        guid: audio,
-        url: siteUrl + "?file=" + (index + 1),
-        enclosure: {
-          url: siteUrl + "?file=" + (index + 1),
-          file: config.storageDir + audio
-        }
       });
+
+      Promise.all([titlePromise, descriptionPromise])
+        .then(values => {
+          feed.item({
+            title: values[0],
+            description: values[1],
+            guid: audio,
+            url: siteUrl + "?file=" + (index + 1),
+            enclosure: {
+              url: siteUrl + "?file=" + (index + 1),
+              file: config.storageDir + audio
+            }
+          });
+          resolve();
+        })
+        .catch(err => {
+          log.error(err);
+          reject();
+        });
     });
   });
 
-  return feed.xml();
+  return Promise.all(feedPromises).then(() => {
+    return feed.xml();
+  });
 }
 
 function createHTML() {
@@ -157,16 +124,8 @@ function getDescriptionFileOfAudio(audio) {
   );
 }
 
-function getAudioByName(givenFileName) {
-  return getAudioFiles(false).find(
-    existingFileName =>
-      existingFileName.replace(new RegExp(`${config.audioExtension}$`), "") ===
-      givenFileName
-  );
-}
-
-function getAudioFiles(findTemporaries) {
-  const pattern = findTemporaries
+function getAudioFiles(findTemporaryFiles) {
+  const pattern = findTemporaryFiles
     ? `${config.audioExtension}.tmp$`
     : `${config.audioExtension}$`;
   return fs.readdirSync(config.storageDir).filter(file => file.match(pattern));
