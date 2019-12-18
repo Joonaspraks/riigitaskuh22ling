@@ -159,7 +159,7 @@ module.exports = {
   getAudioById: getAudioById,
   getAudioListSortedByDate: getAudioListSortedByDate,
   getMetadataFromAudio: getMetadataFromAudio,
-  getProcessingAudio: getProcessingAudio,
+  getTemporaryAudioFile: getTemporaryAudioFile,
   removeOldContent: removeOldContent,
   createHTML: createHTML
 };
