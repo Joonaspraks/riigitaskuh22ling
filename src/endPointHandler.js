@@ -98,7 +98,7 @@ function parse(request, response) {
     const contentHash = request.headers["x-hub-signature"];
     request.on("data", data => {
       hmac.update(data);
-      if (contentHash === hmac.digest("hex")) {
+      if (contentHash === "sha1=" + hmac.digest("hex")) {
         log.info("Hashes match, content is valid");
 
         parseString(data, (err, parsedData) => {
