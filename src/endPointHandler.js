@@ -130,7 +130,7 @@ function parse(request, response) {
               response.writeHead("403");
               response.end();
               log.info(
-                `${title} with id ${youTubeId} is currently being processed. Ignoring the incoming change.`
+                `Another file is currently being processed. Ignoring ${title} with id ${youTubeId} at the moment.`
               );
             } else {
               log.info("Video title: " + title);
