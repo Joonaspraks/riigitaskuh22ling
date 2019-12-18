@@ -125,20 +125,14 @@ function parse(request, response) {
             const youTubeId = entry["yt:videoId"][0];
 
             // If audio matchin the ID is still processing, reject notification
-            if (localFileManager.getProcessingAudioById(youTubeId)) {
-              //tempAudio
+            // NEW VER: If ANY audio still processing, reject notification (For memory reasons);
+            if (localFileManager.getTemporaryAudioFile()) {
               response.writeHead("403");
               response.end();
               log.info(
                 `${title} with id ${youTubeId} is currently being processed. Ignoring the incoming change.`
               );
             } else {
-              // When should this header be sent? Immediately after link has been fetched? Depends on how often the notifications are sent.
-              // Should anything happen then it can be a good thing if another notification is sent
-              // I'll assume that if a notification was received then it can be discarded
-              // Stops the notifications for current item
-              response.writeHead("200");
-              response.end();
               log.info("Video title: " + title);
 
               ytdl.getBasicInfo(youTubeId, (err, info) => {
@@ -151,6 +145,8 @@ function parse(request, response) {
                     youTubeId
                   );
                   if (existingAudio) {
+                    response.writeHead("200");
+                    response.end();
                     // replace old file's name and description
                     log.info(
                       `${title} exists, but its contents have been changed. Updating name and description.`
@@ -177,6 +173,9 @@ function parse(request, response) {
                     audioProcessor
                       .processAudio(ytdl(youTubeId), title, youTubeId)
                       .on("end", () => {
+                        //Response after ffmpeg has succesfully processed the audio
+                        response.writeHead("200");
+                        response.end();
                         podBeanAPI.startUploading(
                           youTubeId,
                           title,

@@ -7,16 +7,16 @@ const log = require("./logger.js");
 
 const siteUrl = config.protocol + "www.riigipodcast.ee:" + config.port + "/";
 
-function getProcessingAudioById(givenId) {
+/* function getProcessingAudioById(givenId) {
   return getAudioFiles(true).find(
     existingId =>
       existingId.replace(new RegExp(`${config.audioExtension}.tmp$`), "") ===
       givenId
   );
-}
+} */
 
 function getAudioById(givenId) {
-  return getAudioFiles(false).find(
+  return getAudioFiles().find(
     existingId =>
       existingId.replace(new RegExp(`${config.audioExtension}$`), "") ===
       givenId
@@ -131,15 +131,16 @@ function getDescriptionFileOfAudio(audio) {
   );
 }
 
-function getAudioFiles(findTemporaryFiles) {
-  const pattern = findTemporaryFiles
-    ? `${config.audioExtension}.tmp$`
-    : `${config.audioExtension}$`;
-  return fs.readdirSync(config.storageDir).filter(file => file.match(pattern));
+function getAudioFiles() {
+  return fs.readdirSync(config.storageDir).filter(file => file.match(`${config.audioExtension}$`));
+}
+
+function getTemporaryAudioFile() {
+  return fs.readdirSync(config.storageDir).find(file => file.match(`${config.audioExtension}.tmp$`));
 }
 
 function getAudioListSortedByDate() {
-  return getAudioFiles(false)
+  return getAudioFiles()
     .map(name => {
       return {
         name: name,
@@ -158,7 +159,7 @@ module.exports = {
   getAudioById: getAudioById,
   getAudioListSortedByDate: getAudioListSortedByDate,
   getMetadataFromAudio: getMetadataFromAudio,
-  getProcessingAudioById: getProcessingAudioById,
+  getProcessingAudio: getProcessingAudio,
   removeOldContent: removeOldContent,
   createHTML: createHTML
 };
