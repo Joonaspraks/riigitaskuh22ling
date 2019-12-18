@@ -1,0 +1,9 @@
+const crypto = require("crypto");
+const hmac = crypto.createHmac("sha1", "BigSecret");
+
+const obj = { a: {}, b: [] };
+
+// hmac.update("some data to hash");
+//hmac.update('"{"feed":{"$":{"xmlns:yt":"http://www.youtube.com/xml/schemas/2015","xmlns":"http://www.w3.org/2005/Atom"},"link":[{"$":{"rel":"hub","href":"https://pubsubhubbub.appspot.com"}},{"$":{"rel":"self","href":"https://www.youtube.com/xml/feeds/videos.xml?channel_id=UCl2a12GbW8e9itYOJDyjNoA"}}],"title":["YouTube video feed"],"updated":["2019-12-18T09:02:42.150231398+00:00"],"entry":[{"id":["yt:video:KlsGHiV3Xf4"],"yt:videoId":["KlsGHiV3Xf4"],"yt:channelId":["UCl2a12GbW8e9itYOJDyjNoA"],"title":["Veerev rehv 190"],"link":[{"$":{"rel":"alternate","href":"https://www.youtube.com/watch?v=KlsGHiV3Xf4"}}],"author":[{"name":["Joonas Praks"],"uri":["https://www.youtube.com/channel/UCl2a12GbW8e9itYOJDyjNoA"]}],"published":["2019-08-18T22:56:41+00:00"],"updated":["2019-12-18T09:02:42.150231398+00:00"]}]}}"');
+hmac.update('"{"feed":{"$":{"xmlns:yt":"http://www.youtube.com/xml/schemas/2015","xmlns":"http://www.w3.org/2005/Atom"},"link":[{"$":{"rel":"hub","href":"https://pubsubhubbub.appspot.com"}},{"$":{"rel":"self","href":"https://www.youtube.com/xml/feeds/videos.xml?channel_id=UCl2a12GbW8e9itYOJDyjNoA"}}],"title":["YouTube video feed"],"updated":["2019-12-18T09:02:42.150231398+00:00"],"entry":[{"id":["yt:video:KlsGHiV3Xf4"],"yt:videoId":["KlsGHiV3Xf4"],"yt:channelId":["UCl2a12GbW8e9itYOJDyjNoA"],"title":["Veerev rehv 190"],"link":[{"$":{"rel":"alternate","href":"https://www.youtube.com/watch?v=KlsGHiV3Xf4"}}],"author":[{"name":["Joonas Praks"],"uri":["https://www.youtube.com/channel/UCl2a12GbW8e9itYOJDyjNoA"]}],"published":["2019-08-18T22:56:41+00:00"],"updated":["2019-12-18T09:02:42.150231398+00:00"]}]}}"'.replace(/\"([^(\")"]+)\":/g,"$1:"));
+console.log(hmac.digest("hex"));
