@@ -17,7 +17,7 @@ config =
       }
     : {
         loggerDir: "./logs/productionLogs/",
-        hmacSecret = "NjPWAxQeykUoixaYt1HJ",
+        hmacSecret: "NjPWAxQeykUoixaYt1HJ",
         port: 443,
         protocol: "https://",
         publish: true,
