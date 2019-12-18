@@ -95,7 +95,7 @@ function parse(request, response) {
     request.headers.link.includes("http://pubsubhubbub.appspot.com/")
   ) {
     const hmac = crypto.createHmac("sha1", config.hmacSecret);
-    const contentHash = request.headers["X-Hub-Signature"];
+    const contentHash = request.headers["x-hub-signature"];
     request.on("data", data => {
       hmac.update(data);
       if (contentHash === hmac.digest("hex")) {
