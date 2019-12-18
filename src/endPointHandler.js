@@ -126,7 +126,7 @@ function parse(request, response) {
 
             // If audio matchin the ID is still processing, reject notification
             // NEW VER: If ANY audio still processing, reject notification (For memory reasons);
-            if (localFileManager.getTemporaryAudioFile()) {
+            if (localFileManager.getProcessingAudioFile()) {
               response.writeHead("403");
               response.end();
               log.info(

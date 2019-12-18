@@ -135,7 +135,7 @@ function getAudioFiles() {
   return fs.readdirSync(config.storageDir).filter(file => file.match(`${config.audioExtension}$`));
 }
 
-function getTemporaryAudioFile() {
+function getProcessingAudioFile() {
   return fs.readdirSync(config.storageDir).find(file => file.match(`${config.audioExtension}.tmp$`));
 }
 
@@ -159,7 +159,7 @@ module.exports = {
   getAudioById: getAudioById,
   getAudioListSortedByDate: getAudioListSortedByDate,
   getMetadataFromAudio: getMetadataFromAudio,
-  getTemporaryAudioFile: getTemporaryAudioFile,
+  getProcessingAudioFile: getProcessingAudioFile,
   removeOldContent: removeOldContent,
   createHTML: createHTML
 };
