@@ -4,7 +4,6 @@ const fs = require("fs");
 const ytdl = require("ytdl-core");
 
 const crypto = require("crypto");
-const hmac = crypto.createHmac("sha1", config.hmacSecret);
 
 const config = require("./config.js");
 const log = require("./logger.js");
@@ -95,6 +94,7 @@ function parse(request, response) {
     request.headers.link &&
     request.headers.link.includes("http://pubsubhubbub.appspot.com/")
   ) {
+    const hmac = crypto.createHmac("sha1", config.hmacSecret);
     const contentHash = request.headers["X-Hub-Signature"];
     request.on("data", data => {
       hmac.update(data);
