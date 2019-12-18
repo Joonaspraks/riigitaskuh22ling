@@ -32,8 +32,7 @@ function parse(request, response) {
       false
     )
   ) {
-    log.info("Websub request from " + requestUrl.query[topic]);
-
+    log.info("Confirmed subscription from " + requestUrl.query[topic]);
     const challengeCode = requestUrl.query[challenge];
     if (challengeCode) {
       response.writeHead("200");
@@ -93,8 +92,11 @@ function parse(request, response) {
     request.headers.link &&
     request.headers.link.includes("http://pubsubhubbub.appspot.com/")
   ) {
-    request.on("data", function(data) {
-      parseString(data, function(err, parsedData) {
+    let data = [];
+
+    request.on("data", data => {
+      console.log(data);
+      parseString(data, (err, parsedData) => {
         if (err) {
           log.error(err);
         }
@@ -103,6 +105,7 @@ function parse(request, response) {
         const channelId = entry["yt:channelId"][0];
 
         if (config.youTubeChannels.includes(channelId)) {
+          // Unnecessary after HMAC?
           log.info("Notification from channel " + channelId);
           console.log("Notification from channel " + channelId);
           const title = entry.title[0];

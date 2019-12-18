@@ -97,6 +97,7 @@ function createRSS() {
   return Promise.all(audioDataPromises).then(values => {
     values.forEach((audioData, index) => {
       feed.item({
+        // add file date for proper sorting when imported by an aggregator?
         title: audioData.title,
         description: audioData.description,
         guid: audioData.audio,
