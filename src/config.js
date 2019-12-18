@@ -7,7 +7,7 @@ config =
   env === "dev"
     ? {
         loggerDir: "./logs/devLogs/",
-        hmacSecret = "qVt5FXH8RpHprlFetynj",
+        hmacSecret: "qVt5FXH8RpHprlFetynj",
         port: 8080,
         protocol: "http://",
         publish: false,
