@@ -21,7 +21,7 @@ function parse(request, response) {
   log.info(
     "Server was called with Method: " + method + " and Url: " + requestUrl.path
   );
-
+  request.headers.link && log.info("With link: " + request.headers.link);
   // move this to subscriber.js
   if (
     method === "GET" &&
@@ -94,11 +94,18 @@ function parse(request, response) {
     request.headers.link &&
     request.headers.link.includes("http://pubsubhubbub.appspot.com/")
   ) {
-    const hmac = crypto.createHmac("sha1", config.hmacSecret);
     const contentHash = request.headers["x-hub-signature"];
+    // parse request.headers["x-hub-signature"] into algorithm and key
+    const hmac = crypto.createHmac(
+      "sha1" /* use algorithm const */,
+      config.hmacSecret
+    );
     request.on("data", data => {
       hmac.update(data);
-      if (contentHash === "sha1=" + hmac.digest("hex")) {
+      if (
+        /*use key const*/ contentHash ===
+        /*remove this string*/ "sha1=" + hmac.digest("hex")
+      ) {
         log.info("Hashes match, content is valid");
 
         parseString(data, (err, parsedData) => {
