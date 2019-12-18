@@ -7,6 +7,7 @@ config =
   env === "dev"
     ? {
         loggerDir: "./logs/devLogs/",
+        hmacSecret = "qVt5FXH8RpHprlFetynj",
         port: 8080,
         protocol: "http://",
         publish: false,
@@ -16,6 +17,7 @@ config =
       }
     : {
         loggerDir: "./logs/productionLogs/",
+        hmacSecret = "NjPWAxQeykUoixaYt1HJ",
         port: 443,
         protocol: "https://",
         publish: true,
@@ -39,6 +41,5 @@ config.podbeanCredentials = {
   id: "1405d6a0497f64f70d6d1",
   secret: "2872053f56f0b2e656d4f"
 };
-config.hmacSecret = "NjPWAxQeykUoixaYt1HJ"
 
 module.exports = config;

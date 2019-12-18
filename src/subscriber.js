@@ -19,7 +19,8 @@ function renewSubscriptions() {
         "hub.topic":
           "https://www.youtube.com/xml/feeds/videos.xml?channel_id=" + channel,
         "hub.verify": "async",
-        "hub.callback": config.protocol + "www.riigipodcast.ee:" + config.port
+        "hub.callback": config.protocol + "www.riigipodcast.ee:" + config.port,
+        "hub.secret": config.hmacSecret
       })
       .end((err, res) => {
         if (err) {
