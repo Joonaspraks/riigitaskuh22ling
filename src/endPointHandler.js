@@ -3,6 +3,12 @@ const url = require("url");
 const fs = require("fs");
 const ytdl = require("ytdl-core");
 
+const crypto = require("crypto");
+const hmac = crypto.createHmac("sha1", "BigSecret");
+const hmac2 = crypto.createHmac("sha1", "BigSecret");
+const hmac3 = crypto.createHmac("sha1", "BigSecret");
+
+
 const config = require("./config.js");
 const log = require("./logger.js");
 const podBeanAPI = require("./podBeanAPI.js");
@@ -96,10 +102,19 @@ function parse(request, response) {
 
     request.on("data", data => {
       console.log(data);
+      hmac.update(data);
+      console.log("HMAC data digest: " + hmac.digest('hex'));
+      const JSONSTR = JSON.stringify(data);
+      hmac2.update(JSONSTR);
+      console.log("HMAC2 JSON data digest: " + hmac.digest('hex'));
+      hmac.update(JSONSTR);
+      console.log("HMAC JSON data digest: " + hmac.digest('hex'));
       parseString(data, (err, parsedData) => {
         if (err) {
           log.error(err);
         }
+        hmac3.update(JSONSTR);
+        console.log("HMAC3 parsed data digest: " + hmac.digest('hex'));
         const entry = parsedData.feed.entry[0];
 
         const channelId = entry["yt:channelId"][0];
