@@ -4,10 +4,7 @@ const fs = require("fs");
 const ytdl = require("ytdl-core");
 
 const crypto = require("crypto");
-const hmac = crypto.createHmac("sha1", "BigSecret");
-const hmac2 = crypto.createHmac("sha1", "BigSecret");
-const hmac3 = crypto.createHmac("sha1", "BigSecret");
-
+const hmac = crypto.createHmac("sha1", config.hmacSecret);
 
 const config = require("./config.js");
 const log = require("./logger.js");
@@ -98,103 +95,104 @@ function parse(request, response) {
     request.headers.link &&
     request.headers.link.includes("http://pubsubhubbub.appspot.com/")
   ) {
-    let data = [];
-
+    const contentHash = request.headers["X-Hub-Signature"];
     request.on("data", data => {
-      console.log(data);
       hmac.update(data);
-      console.log("HMAC data digest: " + hmac.digest('hex'));
-      const JSONSTR = JSON.stringify(data);
-      hmac2.update(JSONSTR);
-      console.log("HMAC2 JSON data digest: " + hmac.digest('hex'));
-      hmac.update(JSONSTR);
-      console.log("HMAC JSON data digest: " + hmac.digest('hex'));
-      parseString(data, (err, parsedData) => {
-        if (err) {
-          log.error(err);
-        }
-        hmac3.update(JSONSTR);
-        console.log("HMAC3 parsed data digest: " + hmac.digest('hex'));
-        const entry = parsedData.feed.entry[0];
+      if (contentHash === hmac.digest("hex")) {
+        log.info("Hashes match, content is valid");
 
-        const channelId = entry["yt:channelId"][0];
-
-        if (config.youTubeChannels.includes(channelId)) {
-          // Unnecessary after HMAC?
-          log.info("Notification from channel " + channelId);
-          console.log("Notification from channel " + channelId);
-          const title = entry.title[0];
-          const youTubeId = entry["yt:videoId"][0];
-
-          // If audio matchin the ID is still processing, reject notification
-          if (localFileManager.getProcessingAudioById(youTubeId)) {
-            //tempAudio
-            response.writeHead("403");
-            response.end();
-            log.info(
-              `${title} with id ${youTubeId} is currently being processed. Ignoring the incoming change.`
-            );
-          } else {
-            // When should this header be sent? Immediately after link has been fetched? Depends on how often the notifications are sent.
-            // Should anything happen then it can be a good thing if another notification is sent
-            // I'll assume that if a notification was received then it can be discarded
-            // Stops the notifications for current item
-            response.writeHead("200");
-            response.end();
-            log.info("Video title: " + title);
-
-            ytdl.getBasicInfo(youTubeId, (err, info) => {
-              if (err) log.error(err);
-              else {
-                const description = info.description;
-                const credentials = config.podbeanCredentials;
-                // compare the video id with all ids of stored media
-                const existingAudio = localFileManager.getAudioById(youTubeId);
-                if (existingAudio) {
-                  // replace old file's name and description
-                  log.info(
-                    `${title} exists, but its contents have been changed. Updating name and description.`
-                  );
-                  audioProcessor.editAudioMetadata(
-                    existingAudio,
-                    "title",
-                    title
-                  );
-                  localFileManager.createDescription(youTubeId, description);
-                  localFileManager
-                    .getMetadataFromAudio(existingAudio, "TIT3")
-                    .then(episodeId => {
-                      podBeanAPI.updatePodcast(
-                        episodeId,
-                        title,
-                        description,
-                        credentials
-                      );
-                    });
-                } else {
-                  log.info("Downloading audio for " + title);
-
-                  audioProcessor
-                    .processAudio(ytdl(youTubeId), title, youTubeId)
-                    .on("end", () => {
-                      podBeanAPI.startUploading(
-                        youTubeId,
-                        title,
-                        description,
-                        credentials
-                      );
-                      localFileManager.createDescription(
-                        youTubeId,
-                        description
-                      );
-                      localFileManager.removeOldContent();
-                    });
-                }
-              }
-            });
+        parseString(data, (err, parsedData) => {
+          if (err) {
+            log.error(err);
+            //TODO hard exit after error?
           }
-        }
-      });
+          const entry = parsedData.feed.entry[0];
+
+          const channelId = entry["yt:channelId"][0];
+
+          if (config.youTubeChannels.includes(channelId)) {
+            // Unnecessary after HMAC?
+            log.info("Notification from channel " + channelId);
+            console.log("Notification from channel " + channelId);
+            const title = entry.title[0];
+            const youTubeId = entry["yt:videoId"][0];
+
+            // If audio matchin the ID is still processing, reject notification
+            if (localFileManager.getProcessingAudioById(youTubeId)) {
+              //tempAudio
+              response.writeHead("403");
+              response.end();
+              log.info(
+                `${title} with id ${youTubeId} is currently being processed. Ignoring the incoming change.`
+              );
+            } else {
+              // When should this header be sent? Immediately after link has been fetched? Depends on how often the notifications are sent.
+              // Should anything happen then it can be a good thing if another notification is sent
+              // I'll assume that if a notification was received then it can be discarded
+              // Stops the notifications for current item
+              response.writeHead("200");
+              response.end();
+              log.info("Video title: " + title);
+
+              ytdl.getBasicInfo(youTubeId, (err, info) => {
+                if (err) log.error(err);
+                else {
+                  const description = info.description;
+                  const credentials = config.podbeanCredentials;
+                  // compare the video id with all ids of stored media
+                  const existingAudio = localFileManager.getAudioById(
+                    youTubeId
+                  );
+                  if (existingAudio) {
+                    // replace old file's name and description
+                    log.info(
+                      `${title} exists, but its contents have been changed. Updating name and description.`
+                    );
+                    audioProcessor.editAudioMetadata(
+                      existingAudio,
+                      "title",
+                      title
+                    );
+                    localFileManager.createDescription(youTubeId, description);
+                    localFileManager
+                      .getMetadataFromAudio(existingAudio, "TIT3")
+                      .then(episodeId => {
+                        podBeanAPI.updatePodcast(
+                          episodeId,
+                          title,
+                          description,
+                          credentials
+                        );
+                      });
+                  } else {
+                    log.info("Downloading audio for " + title);
+
+                    audioProcessor
+                      .processAudio(ytdl(youTubeId), title, youTubeId)
+                      .on("end", () => {
+                        podBeanAPI.startUploading(
+                          youTubeId,
+                          title,
+                          description,
+                          credentials
+                        );
+                        localFileManager.createDescription(
+                          youTubeId,
+                          description
+                        );
+                        localFileManager.removeOldContent();
+                      });
+                  }
+                }
+              });
+            }
+          }
+        });
+      } else {
+        log.info("Hashes not matching, content is invalid");
+        response.writeHead("200");
+        response.end();
+      }
     });
   }
 
