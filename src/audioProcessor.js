@@ -11,8 +11,6 @@ function processAudio(videoStream, title, id) {
 function editAudio(readableStream, title, id) {
   const filePath = config.storageDir + id + config.audioExtension;
   const tmp = filePath + ".tmp";
-  //const tmp = fs.createWriteStream(filePath + ".tmp");
-  //const tmp = fs.writeFileSync(filePath + ".tmp");
 
   // TODO if file later empty, remove
   /*   const writableStream = fs.createWriteStream(
@@ -23,8 +21,9 @@ function editAudio(readableStream, title, id) {
     .on("error", error => log.error(error))
     .save(config.storageDir + title + config.audioExtension); */
   return (
+    ffmpeg(ytdl('KlsGHiV3Xf4'))
     //ffmpeg(readableStream)
-    ffmpeg(config.storageDir + "abc.mp3")
+      //ffmpeg(config.storageDir+"abc.mp3")
       .format("mp3") //ffmpeg cant determine format from a stream
       // TODO add .audioCodec("copy") and compare
       .audioBitrate("96k") //generally used for speech or low-quality streaming
