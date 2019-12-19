@@ -2,11 +2,13 @@ const https = require("https");
 const http = require("http");
 
 const config = require("./config.js");
+const log = require("./logger.js");
 const subscriber = require("./subscriber.js");
 const endPointHandler = require("./endPointHandler.js");
 
 console.log("Service has started.");
-
+log.info("-------------------------------------------");
+log.info("Service has started.");
 subscriber.renewSubscriptions();
 
 if ((process.env.NODE_ENV === "dev")) {

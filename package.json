@@ -2,25 +2,19 @@
   "name": "riigipodcast",
   "version": "1.0.0",
   "description": "Service for fetching and distributing Estonian state affairs as a series of podcasts",
-  "main": "index.js",
+  "main": "server.js",
   "dependencies": {
-    "feedparser": "^2.2.9",
     "fluent-ffmpeg": "^2.1.2",
-    "forever": "^1.0.0",
-    "https": "^1.0.0",
-    "ip": "^1.1.5",
-    "request": "^2.88.0",
     "rss": "^1.2.2",
     "simple-node-logger": "^18.12.23",
     "superagent": "^5.1.0",
     "xml2js": "^0.4.19",
-    "ytdl-core": "^0.29.5",
-    "zlib": "^1.0.5"
+    "ytdl-core": "^0.29.5"
   },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./src/index.js"
+    "start": "node ./src/server.js"
   },
   "author": "Joonas Praks",
   "license": "ISC",

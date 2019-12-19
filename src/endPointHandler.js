@@ -7,7 +7,7 @@ const crypto = require("crypto");
 
 const config = require("./config.js");
 const log = require("./logger.js");
-const podBeanAPI = require("./podBeanAPI.js");
+const podBeanManager = require("./podBeanManager.js");
 const localFileManager = require("./localFileManager.js");
 const audioProcessor = require("./audioProcessor.js");
 
@@ -160,7 +160,7 @@ function parse(request, response) {
                     localFileManager
                       .getMetadataFromAudio(existingAudio, "TIT3")
                       .then(episodeId => {
-                        podBeanAPI.updatePodcast(
+                        podBeanManager.updatePodcast(
                           episodeId,
                           title,
                           description,
@@ -176,7 +176,7 @@ function parse(request, response) {
                         //Response after ffmpeg has succesfully processed the audio
                         response.writeHead("200");
                         response.end();
-                        podBeanAPI.startUploading(
+                        podBeanManager.startUploading(
                           youTubeId,
                           title,
                           description,

@@ -96,7 +96,6 @@ function publishPodcast() {
       } else {
         log.info("Succesfully published");
 
-        //set podcast id as file metadata for later updating if needed
         audioProcessor.editAudioMetadata(
           podBeanFileName,
           "TIT3",
