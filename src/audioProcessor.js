@@ -10,7 +10,7 @@ function processAudio(videoStream, title, id) {
 
 function editAudio(readableStream, title, id) {
   const filePath = config.storageDir + id + config.audioExtension;
-  const tmp = filePath + ".tmp";
+  const tmp = fs.createWriteStream(filePath + ".tmp");
 
   // TODO if file later empty, remove
   /*   const writableStream = fs.createWriteStream(
