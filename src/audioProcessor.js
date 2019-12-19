@@ -24,10 +24,9 @@ function editAudio(readableStream, title, id) {
     .save(config.storageDir + title + config.audioExtension); */
   return (
     ffmpeg(readableStream)
-      .format("mp3")
+      .format("mp3")//ffmpeg cant determine format from a stream
       // TODO add .audioCodec("copy") and compare
       .audioBitrate("96k") //generally used for speech or low-quality streaming
-      //.format("mp3") //ffmpeg cant determine format from a stream
       //noise removal
       //detect general audio level to cut silence
       //note that questioneers mic sound can be lower than the ministers
