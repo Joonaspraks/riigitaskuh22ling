@@ -1,6 +1,5 @@
 const ffmpeg = require("fluent-ffmpeg");
 const fs = require("fs");
-const ytdl = require("ytdl-core");
 
 const log = require("./logger.js");
 const config = require("./config.js");
@@ -22,8 +21,7 @@ function editAudio(readableStream, title, id) {
     .on("error", error => log.error(error))
     .save(config.storageDir + title + config.audioExtension); */
   return (
-    ffmpeg(ytdl('KlsGHiV3Xf4'))
-    //ffmpeg(readableStream)
+    ffmpeg(readableStream)
       //ffmpeg(config.storageDir+"abc.mp3")
       .format("mp3") //ffmpeg cant determine format from a stream
       // TODO add .audioCodec("copy") and compare
