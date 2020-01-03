@@ -95,16 +95,17 @@ function createRSS() {
   });
 
   return Promise.all(audioDataPromises).then(values => {
-    values.forEach((audioData, index) => {
+    values.forEach((audioData) => {
+      const audio = audioData.audio;
       feed.item({
         // add file date for proper sorting when imported by an aggregator?
         title: audioData.title,
         description: audioData.description,
-        guid: audioData.audio,
-        url: siteUrl + "?file=" + (index + 1),
+        guid: audio,
+        url: siteUrl + "?file=" + audio,
         enclosure: {
-          url: siteUrl + "?file=" + (index + 1),
-          file: config.storageDir + audioData.audio
+          url: siteUrl + "?file=" + audio,
+          file: config.storageDir + audio
         }
       });
     });
@@ -157,7 +158,6 @@ module.exports = {
   createDescription: createDescription,
   createRSS: createRSS,
   getAudioById: getAudioById,
-  getAudioListSortedByDate: getAudioListSortedByDate,
   getMetadataFromAudio: getMetadataFromAudio,
   getProcessingAudioFile: getProcessingAudioFile,
   removeOldContent: removeOldContent,
