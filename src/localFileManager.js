@@ -7,14 +7,6 @@ const log = require("./logger.js");
 
 const siteUrl = config.protocol + "www.riigipodcast.ee:" + config.port + "/";
 
-/* function getProcessingAudioById(givenId) {
-  return getAudioFiles(true).find(
-    existingId =>
-      existingId.replace(new RegExp(`${config.audioExtension}.tmp$`), "") ===
-      givenId
-  );
-} */
-
 function getAudioById(givenId) {
   return getAudioFiles().find(
     existingId =>
@@ -67,6 +59,7 @@ function createRSS() {
     site_url: siteUrl
   });
 
+  //Because of promises, the data will not actually be sorted in the end.
   const audioList = getAudioListSortedByDate();
   const audioDataPromises = [];
   audioList.forEach(audio => {
@@ -95,16 +88,16 @@ function createRSS() {
   });
 
   return Promise.all(audioDataPromises).then(values => {
-    values.forEach((audioData) => {
+    values.forEach(audioData => {
       const audio = audioData.audio;
       feed.item({
         // add file date for proper sorting when imported by an aggregator?
         title: audioData.title,
         description: audioData.description,
         guid: audio,
-        url: siteUrl + "?file=" + audio,
+        url: siteUrl + "?file=" + getIdOfAudio(audio),
         enclosure: {
-          url: siteUrl + "?file=" + audio,
+          url: siteUrl + "?file=" + getIdOfAudio(audio),
           file: config.storageDir + audio
         }
       });
@@ -125,19 +118,18 @@ function createHTML() {
   );
 }
 
-function getDescriptionFileOfAudio(audio) {
-  return audio.replace(
-    new RegExp(`${config.audioExtension}$`),
-    config.descriptionExtension
+function getAudioById(givenId) {
+  return getAudioFiles().find(
+    existingId =>
+      existingId.replace(new RegExp(`${config.audioExtension}$`), "") ===
+      givenId
   );
 }
 
 function getAudioFiles() {
-  return fs.readdirSync(config.storageDir).filter(file => file.match(`${config.audioExtension}$`));
-}
-
-function getProcessingAudioFile() {
-  return fs.readdirSync(config.storageDir).find(file => file.match(`${config.audioExtension}.tmp$`));
+  return fs
+    .readdirSync(config.storageDir)
+    .filter(file => file.match(`${config.audioExtension}$`));
 }
 
 function getAudioListSortedByDate() {
@@ -152,6 +144,39 @@ function getAudioListSortedByDate() {
     .map(file => {
       return file.name;
     });
+}
+
+function getDescriptionFileOfAudio(audio) {
+  return audio.replace(
+    new RegExp(`${config.audioExtension}$`),
+    config.descriptionExtension
+  );
+}
+
+function getIdOfAudio(audio) {
+  return audio.replace(
+    new RegExp(`${config.audioExtension}$`),
+    ""
+  );
+}
+
+function getMetadataFromAudio(audio, tag) {
+  return new Promise((resolve, reject) => {
+    ffmpeg.ffprobe(config.storageDir + audio, (err, metadata) => {
+      if (err) {
+        log.error(err);
+        reject(err);
+      } else {
+        resolve(metadata.format.tags[tag]);
+      }
+    });
+  });
+}
+
+function getProcessingAudioFile() {
+  return fs
+    .readdirSync(config.storageDir)
+    .find(file => file.match(`${config.audioExtension}.tmp$`));
 }
 
 module.exports = {
