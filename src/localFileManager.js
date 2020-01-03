@@ -59,25 +59,35 @@ function createRSS() {
     site_url: siteUrl
   });
 
-  //Because of promises, the data will not actually be sorted in the end.
-  const audioList = getAudioListSortedByDate();
+  const audioList = getAudioFiles();
   const audioDataPromises = [];
   audioList.forEach(audio => {
     audioDataPromises.push(
       new Promise((resolve, reject) => {
+        //Create promises for fetching file title, description and creationTime
         const titlePromise = getMetadataFromAudio(audio, "title");
         const descriptionPromise = new Promise((resolve, reject) => {
           fs.readFile(
             config.storageDir + getDescriptionFileOfAudio(audio),
             (err, data) => {
-              err ? reject(err) : resolve(data);
+              err ? {reject(err)} : resolve(data);
             }
           );
         });
+        const creationPromise = new Promise((resolve, reject) => {
+          fs.stat(config.storageDir + audioObject.audio, (err, data) => {
+            err ? reject(err) : resolve(data.birthtime);
+          });
+        });
 
-        Promise.all([titlePromise, descriptionPromise])
+        Promise.all([titlePromise, descriptionPromise, creationPromise])
           .then(values =>
-            resolve({ audio, title: values[0], description: values[1] })
+            resolve({
+              audio: audio,
+              title: values[0],
+              description: values[1],
+              date: values[2]
+            })
           )
           .catch(err => {
             log.error(err);
@@ -87,13 +97,16 @@ function createRSS() {
     );
   });
 
-  return Promise.all(audioDataPromises).then(values => {
-    values.forEach(audioData => {
-      const audio = audioData.audio;
+  return Promise.all(audioDataPromises).then(audioObjects => {
+    audioObjects.sort(
+      (audioObject1, audioObject2) => audioObject2.date - audioObject1.date
+    );
+    audioObjects.forEach(audioObject => {
+      const audio = audioObject.audio;
       feed.item({
-        // add file date for proper sorting when imported by an aggregator?
-        title: audioData.title,
-        description: audioData.description,
+        title: audioObject.title,
+        description: audioObject.description,
+        date: audioObject.date,
         guid: audio,
         url: siteUrl + "?file=" + getIdOfAudio(audio),
         enclosure: {
@@ -134,10 +147,10 @@ function getAudioFiles() {
 
 function getAudioListSortedByDate() {
   return getAudioFiles()
-    .map(name => {
+    .map(audio => {
       return {
-        name: name,
-        time: fs.statSync(config.storageDir + name).birthtime
+        name: audio,
+        time: fs.statSync(config.storageDir + audio).birthtime
       };
     })
     .sort((file1, file2) => file2.time - file1.time)
@@ -154,10 +167,7 @@ function getDescriptionFileOfAudio(audio) {
 }
 
 function getIdOfAudio(audio) {
-  return audio.replace(
-    new RegExp(`${config.audioExtension}$`),
-    ""
-  );
+  return audio.replace(new RegExp(`${config.audioExtension}$`), "");
 }
 
 function getMetadataFromAudio(audio, tag) {
