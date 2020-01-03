@@ -75,7 +75,7 @@ function createRSS() {
           );
         });
         const datePromise = new Promise((resolve, reject) => {
-          fs.stat(config.storageDir + audioObject.audio, (err, data) => {
+          fs.stat(config.storageDir + audio, (err, data) => {
             err ? reject(err) : resolve(data.birthtime);
           });
         });
