@@ -70,17 +70,17 @@ function createRSS() {
           fs.readFile(
             config.storageDir + getDescriptionFileOfAudio(audio),
             (err, data) => {
-              err ? {reject(err)} : resolve(data);
+              err ? reject(err) : resolve(data);
             }
           );
         });
-        const creationPromise = new Promise((resolve, reject) => {
+        const datePromise = new Promise((resolve, reject) => {
           fs.stat(config.storageDir + audioObject.audio, (err, data) => {
             err ? reject(err) : resolve(data.birthtime);
           });
         });
 
-        Promise.all([titlePromise, descriptionPromise, creationPromise])
+        Promise.all([titlePromise, descriptionPromise, datePromise])
           .then(values =>
             resolve({
               audio: audio,
