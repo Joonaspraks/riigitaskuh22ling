@@ -45,14 +45,14 @@ function parse(request, response) {
 
   if (method === "GET" && requestUrl.path === "/") {
     response.writeHead(
-      200 /* , {"Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload"} */
+      "200" /* , {"Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload"} */
     );
     response.write(localFileManager.createHTML());
     response.end();
   }
 
   if (method === "GET" && requestUrl.path === "/feed") {
-    response.writeHead(200, {
+    response.writeHead("200", {
       "Content-Type": "application/rss+xml"
     });
 
@@ -66,26 +66,22 @@ function parse(request, response) {
   }
 
   if (method === "GET" && requestUrl.query[file]) {
-    const requestedFileNum = parseInt(requestUrl.query[file]);
-    if (
-      !isNaN(requestedFileNum) &&
-      requestedFileNum > 0 &&
-      requestedFileNum < 20 //replace with const
-    ) {
-      const audioList = localFileManager.getAudioListSortedByDate();
-      //Making sure that there exists a file for the request
-      if (audioList.length >= requestedFileNum) {
-        const audio = audioList[requestedFileNum - 1];
+    const requestedFileId = requestUrl.query[file];
 
-        const filePath = config.storageDir + audio;
+    const audio = localFileManager.getAudioById(requestedFileId);
 
-        response.writeHead(200, {
-          "Content-Type": "audio/mpeg",
-          "Content-Length": fs.statSync(filePath).size
-        });
+    if (audio) {
+      const filePath = config.storageDir + audio;
 
-        fs.createReadStream(filePath).pipe(response);
-      }
+      response.writeHead("200", {
+        "Content-Type": "audio/mpeg",
+        "Content-Length": fs.statSync(filePath).size
+      });
+
+      fs.createReadStream(filePath).pipe(response);
+    } else {
+      response.writeHead("404");
+      response.end();
     }
   }
 
