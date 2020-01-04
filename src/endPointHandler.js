@@ -44,9 +44,7 @@ function parse(request, response) {
   }
 
   if (method === "GET" && requestUrl.path === "/") {
-    response.writeHead(
-      "200" /* , {"Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload"} */
-    );
+    response.writeHead("200");
     response.write(localFileManager.createHTML());
     response.end();
   }
@@ -66,9 +64,7 @@ function parse(request, response) {
   }
 
   if (method === "GET" && requestUrl.query[file]) {
-    const requestedFileId = requestUrl.query[file];
-
-    const audio = localFileManager.getAudioById(requestedFileId);
+    const audio = localFileManager.getAudioById(requestUrl.query[file]);
 
     if (audio) {
       const filePath = config.storageDir + audio;
@@ -123,7 +119,7 @@ function parse(request, response) {
             // If audio matchin the ID is still processing, reject notification
             // NEW VER: If ANY audio still processing, reject notification (For memory reasons);
             if (localFileManager.getProcessingAudioFile()) {
-              response.writeHead("403");
+              //response.writeHead("403");
               response.end();
               log.info(
                 `Another file is currently being processed. Ignoring ${title} with id ${youTubeId} at the moment.`
@@ -167,7 +163,7 @@ function parse(request, response) {
                     log.info("Downloading audio for " + title);
 
                     audioProcessor
-                      .processAudio(ytdl(youTubeId), title, youTubeId)
+                      .editAudio(ytdl(youTubeId), title, youTubeId)
                       .on("end", () => {
                         //Response after ffmpeg has succesfully processed the audio
                         response.writeHead("200");

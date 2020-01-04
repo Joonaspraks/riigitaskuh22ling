@@ -4,10 +4,6 @@ const fs = require("fs");
 const log = require("./logger.js");
 const config = require("./config.js");
 
-function processAudio(videoStream, title, id) {
-  return editAudio(videoStream, title, id);
-}
-
 function editAudio(readableStream, title, id) {
   const filePath = config.storageDir + id + config.audioExtension;
   const tmp = filePath + ".tmp";
@@ -75,6 +71,6 @@ function editAudioMetadata(fileName, tagName, tagValue) {
 }
 
 module.exports = {
-  processAudio: processAudio,
+  editAudio: editAudio,
   editAudioMetadata: editAudioMetadata
 };
