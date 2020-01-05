@@ -8,10 +8,6 @@ function editAudio(readableStream, title, id) {
   const filePath = config.storageDir + id + config.audioExtension;
   const tmp = filePath + ".tmp";
 
-  // TODO if file later empty, remove
-  /*   const writableStream = fs.createWriteStream(
-    config.storageDir + title + config.audioExtension
-  ); */
   /*   return ffmpeg(readableStream)
     .preset("podcast")
     .on("error", error => log.error(error))

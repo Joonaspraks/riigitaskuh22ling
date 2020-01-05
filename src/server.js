@@ -28,7 +28,7 @@ if ((process.env.NODE_ENV === "dev")) {
     .createServer(function(req, res) {
       res.writeHead(301, {
         "Content-Type": "text/plain",
-        Location: "https://" + req.headers.host + req.url
+        Location: config.protocol + req.headers.host + req.url
       });
       res.end("Redirecting to SSL\n");
     })

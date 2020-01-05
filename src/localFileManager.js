@@ -7,47 +7,11 @@ const log = require("./logger.js");
 
 const siteUrl = config.protocol + "www.riigipodcast.ee:" + config.port + "/";
 
-function getAudioById(givenId) {
-  return getAudioFiles().find(
-    existingId =>
-      existingId.replace(new RegExp(`${config.audioExtension}$`), "") ===
-      givenId
-  );
-}
-
-function getMetadataFromAudio(audio, tag) {
-  return new Promise((resolve, reject) => {
-    ffmpeg.ffprobe(config.storageDir + audio, (err, metadata) => {
-      if (err) {
-        log.error(err);
-        reject(err);
-      } else {
-        resolve(metadata.format.tags[tag]);
-      }
-    });
-  });
-}
-
 function createDescription(fileName, description) {
   fs.writeFileSync(
     config.storageDir + fileName + config.descriptionExtension,
     description
   );
-}
-
-function removeOldContent() {
-  const maxSize = 20;
-
-  const audioFilesToBeRemoved = getAudioListSortedByDate().slice(maxSize);
-
-  audioFilesToBeRemoved.forEach(audio => {
-    try {
-      fs.unlinkSync(config.storageDir + audio);
-      fs.unlinkSync(config.storageDir + getDescriptionFileOfAudio(audio));
-    } catch (err) {
-      log.error(err);
-    }
-  });
 }
 
 function createRSS() {
@@ -129,6 +93,21 @@ function createHTML() {
     "või lisades <a href='https://riigipodcast.ee/feed'>https://riigipodcast.ee/feed</a> oma valitud RSS agregaatorisse</p>" +
     "</body></html>"
   );
+}
+
+function removeOldContent() {
+  const maxSize = 20;
+
+  const audioFilesToBeRemoved = getAudioListSortedByDate().slice(maxSize);
+
+  audioFilesToBeRemoved.forEach(audio => {
+    try {
+      fs.unlinkSync(config.storageDir + audio);
+      fs.unlinkSync(config.storageDir + getDescriptionFileOfAudio(audio));
+    } catch (err) {
+      log.error(err);
+    }
+  });
 }
 
 function getAudioById(givenId) {

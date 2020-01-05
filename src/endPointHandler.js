@@ -119,7 +119,7 @@ function parse(request, response) {
             // If audio matchin the ID is still processing, reject notification
             // NEW VER: If ANY audio still processing, reject notification (For memory reasons);
             if (localFileManager.getProcessingAudioFile()) {
-              //response.writeHead("403");
+              response.writeHead("503");
               response.end();
               log.info(
                 `Another file is currently being processed. Ignoring ${title} with id ${youTubeId} at the moment.`
