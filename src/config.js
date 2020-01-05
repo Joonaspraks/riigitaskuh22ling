@@ -13,7 +13,7 @@ config =
         publish: false,
         storageDir: "./audioStorage/devAudio/",
         useReroute: false,
-        youTubeChannels: ["UCl2a12GbW8e9itYOJDyjNoA, UC0FfpQ9PI9TSjuDl4byyjKQ"], // Joonas Praks, riigiPodcastDemo
+        youTubeChannels: ["UCl2a12GbW8e9itYOJDyjNoA", "UC0FfpQ9PI9TSjuDl4byyjKQ"], // Joonas Praks, riigiPodcastDemo
         podbeanCredentials: {
           // riigiPodcastDemo.podbean
           id: "c49783cc3a2a051139b2c",
