@@ -114,7 +114,7 @@ function updatePodcast(episodeId, title, description, credentials) {
         type: "public",
         title: title,
         content: description,
-        status: config.publish ? "publish" : "draft"
+        status: "publish"
       })
       .type("application/x-www-form-urlencoded")
       .end((err, res) => {
