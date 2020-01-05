@@ -2,7 +2,7 @@ const ffmpeg = require("fluent-ffmpeg");
 const fs = require("fs");
 
 const promise = new Promise((resolve) => {
-  ffmpeg.ffprobe("song2.mp3", (err, metadata) => {
+  ffmpeg.ffprobe("song.mp3", (err, metadata) => {
     if (err) {
       log.error(err);
     }
@@ -25,4 +25,6 @@ promise.then(subtitles=> console.log(subtitles));
       });
 }
 
-editAudioMetadata("./song.mp3", "TIT3", "aajeee subtitles"); */
+editAudioMetadata("./song.mp3", "TIT3", `string text line 1
+string text line 2`);
+ */
