@@ -165,7 +165,7 @@ function getMetadataFromAudio(audio, tag) {
 function getProcessingAudioFile() {
   return fs
     .readdirSync(config.storageDir)
-    .find(file => file.match(`${config.audioExtension}.tmp$`));
+    .find(file => file.match(`.tmp$`));
 }
 
 module.exports = {
