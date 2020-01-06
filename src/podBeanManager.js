@@ -86,7 +86,7 @@ function publishPodcast() {
       type: "public",
       title: podBeanTitle,
       content: podBeanContent,
-      status: config.publish ? "publish" : "draft",
+      status: "publish",
       media_key: mediaKey
     })
     .type("application/x-www-form-urlencoded")
