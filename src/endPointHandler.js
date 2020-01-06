@@ -22,7 +22,7 @@ function parse(request, response) {
     "Server was called with Method: " + method + " and Url: " + requestUrl.path
   );
   request.headers.link && log.info("With link: " + request.headers.link);
-  // move this to subscriber.js
+
   if (
     method === "GET" &&
     config.youTubeChannels.reduce(
@@ -87,37 +87,27 @@ function parse(request, response) {
     request.headers.link.includes("http://pubsubhubbub.appspot.com/")
   ) {
     const contentHash = request.headers["x-hub-signature"];
-    // parse request.headers["x-hub-signature"] into algorithm and key
-    const hmac = crypto.createHmac(
-      "sha1" /* use algorithm const */,
-      config.hmacSecret
-    );
+    const hmac = crypto.createHmac("sha1", config.hmacSecret);
     request.on("data", data => {
       hmac.update(data);
-      if (
-        /*use key const*/ contentHash ===
-        /*remove this string*/ "sha1=" + hmac.digest("hex")
-      ) {
+      if (contentHash === "sha1=" + hmac.digest("hex")) {
         log.info("Hashes match, content is valid");
 
         parseString(data, (err, parsedData) => {
           if (err) {
             log.error(err);
-            //TODO hard exit after error?
           }
           const entry = parsedData.feed.entry[0];
 
           const channelId = entry["yt:channelId"][0];
 
           if (config.youTubeChannels.includes(channelId)) {
-            // Unnecessary after HMAC?
             log.info("Notification from channel " + channelId);
             console.log("Notification from channel " + channelId);
             const title = entry.title[0];
             const youTubeId = entry["yt:videoId"][0];
 
-            // If audio matchin the ID is still processing, reject notification
-            // NEW VER: If ANY audio still processing, reject notification (For memory reasons);
+            // If ANY audio still processing, reject notification
             if (localFileManager.getProcessingAudioFile()) {
               response.writeHead("503");
               response.end();
@@ -193,9 +183,6 @@ function parse(request, response) {
       }
     });
   }
-
-  /*   response.writeHead(404);
-  response.end(); */
 }
 
 module.exports = { parse: parse };
