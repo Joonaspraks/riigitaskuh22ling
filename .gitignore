@@ -30,4 +30,5 @@ testingFiles/
 *.mp3
 *.mp4
 *.log*
+*.txt*
 *Secrets.json

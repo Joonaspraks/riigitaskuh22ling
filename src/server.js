@@ -1,15 +1,20 @@
 const https = require("https");
 const http = require("http");
+const fs = require("fs");
 
 const config = require("./config.js");
 const log = require("./logger.js");
 const subscriber = require("./subscriber.js");
 const endPointHandler = require("./endPointHandler.js");
+const localFileManager = require("./localFileManager.js");
 
 console.log("Service has started.");
 log.info("-------------------------------------------");
 log.info("Service has started.");
 subscriber.renewSubscriptions();
+const processingFile = localFileManager.getProcessingAudioFile();
+if (processingFile)
+  fs.unlinkSync(".audioStorage/productionAudio/"+processingFile);
 
 if ((process.env.NODE_ENV === "dev")) {
   http
