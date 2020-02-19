@@ -10,7 +10,6 @@ config =
         hmacSecret: "qVt5FXH8RpHprlFetynj",
         port: 9090,
         protocol: "http://",
-        publish: false,
         storageDir: "./audioStorage/devAudio/",
         useReroute: false,
         youTubeChannels: ["UCl2a12GbW8e9itYOJDyjNoA", "UC0FfpQ9PI9TSjuDl4byyjKQ"], // Joonas Praks, riigiPodcastDemo
@@ -25,7 +24,6 @@ config =
         hmacSecret: "NjPWAxQeykUoixaYt1HJ",
         port: 443,
         protocol: "https://",
-        publish: true,
         SSLCert: {
             key: fs.readFileSync(
                 "/etc/letsencrypt/live/riigipodcast.ee/privkey.pem"

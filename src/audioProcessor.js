@@ -8,19 +8,10 @@ function editAudio(readableStream, title, id) {
   const filePath = config.storageDir + id + config.audioExtension;
   const tmp = filePath + ".tmp";
 
-  /*   return ffmpeg(readableStream)
-    .preset("podcast")
-    .on("error", error => log.error(error))
-    .save(config.storageDir + title + config.audioExtension); */
   return (
     ffmpeg(readableStream)
-      //ffmpeg(config.storageDir+"abc.mp3")
       .format("mp3") //ffmpeg cant determine format from a stream
-      // TODO add .audioCodec("copy") and compare
       .audioBitrate("96k") //generally used for speech or low-quality streaming
-      //noise removal
-      //detect general audio level to cut silence
-      //note that questioneers mic sound can be lower than the ministers
       .audioFilters(
         "silenceremove=" +
         /*             'start_periods=0:'+ //trim until 1 non-silence
@@ -30,17 +21,13 @@ function editAudio(readableStream, title, id) {
         "stop_periods=-1:" + //negative value means that silencing will occur in the middle of the file, '1' means that 'trim until 1 non-silence'
         "stop_duration=3:" + //atleast that amount of seconds to be a 'silence'
           "stop_threshold=-35dB",
-
-        //'earwax'+
-        //'loudnorm',
         "dynaudnorm"
-      ) //what dB constitutes a 'silence'
+      ) 
 
       .on("progress", progress =>
         log.info(`Processing ${title}: ${progress.timemark}`)
       )
       .on("error", error => log.error(error))
-      //.save('earwaxIstung2.mp3');
       .outputOption("-metadata", `title=${title}`)
       .save(tmp)
       .on("end", () => {
