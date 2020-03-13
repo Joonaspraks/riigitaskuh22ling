@@ -13,10 +13,10 @@ log.info("-------------------------------------------");
 log.info("Service has started.");
 subscriber.renewSubscriptions();
 const processingFile = localFileManager.getProcessingAudioFile();
-if (processingFile)
-  fs.unlinkSync(".audioStorage/productionAudio/"+processingFile);
-
-if ((process.env.NODE_ENV === "dev")) {
+if (processingFile) {
+  fs.unlinkSync(config.storageDir + processingFile);
+}
+if (process.env.NODE_ENV === "dev") {
   http
     .createServer(function(request, response) {
       endPointHandler.parse(request, response);
