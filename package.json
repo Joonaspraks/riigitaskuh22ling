@@ -6,7 +6,7 @@
   "dependencies": {
     "feedparser": "^2.2.9",
     "fluent-ffmpeg": "^2.1.2",
-    "forever": "^1.0.0",
+    "forever": "^2.0.0",
     "https": "^1.0.0",
     "ip": "^1.1.5",
     "request": "^2.88.0",
